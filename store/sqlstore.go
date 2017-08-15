@@ -5,7 +5,7 @@ import (
 	l4g "github.com/alecthomas/log4go"
 	"github.com/go-gorp/gorp"
 	_ "github.com/go-sql-driver/mysql"
-	//"insure/model"
+	"salv_prj/model"
 	"os"
 	"strings"
 	"time"
@@ -107,7 +107,7 @@ func setupConnection(con_type string, driver string, dataSource string, maxIdle 
 	var dbmap *gorp.DbMap
 	dbmap = &gorp.DbMap{Db: db, TypeConverter:userConverter{} , Dialect: gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8MB4"}}
 	//dbmap.AddTableWithName(model.Insurer{}, "insurer").SetKeys(true, "insurer_id")
-	//dbmap.AddTableWithName(model.User{}, "insurer_user").SetKeys(true, "insurer_user_id")
+	dbmap.AddTableWithName(model.User{}, "user").SetKeys(true, "user_id")
 	//dbmap.AddTableWithName(model.Role{}, "insurer_user_role").SetKeys(true, "insurer_user_role_id")
 
 	return dbmap

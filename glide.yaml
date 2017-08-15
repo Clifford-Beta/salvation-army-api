@@ -1,0 +1,16 @@
+package: sendyit/private_api
+import:
+- package: github.com/dgrijalva/jwt-go
+- package: github.com/go-kit/kit
+  subpackages:
+  - auth/jwt
+  - endpoint
+  - log
+  - metrics
+  - metrics/prometheus
+  - transport/http
+- package: github.com/gorilla/mux
+- package: github.com/prometheus/client_golang
+  subpackages:
+  - prometheus
+- package: github.com/spf13/viper

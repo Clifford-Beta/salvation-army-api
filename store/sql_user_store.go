@@ -220,7 +220,7 @@ func (s SqlUserStore) GetByEmailAndPassword(email, password string) StoreChannel
 		}
 
 		//pl.AddUser(&user)
-		//user.Sanitize()
+		user.Sanitize()
 		result.Data = user
 
 		storeChannel <- result
@@ -240,9 +240,9 @@ func (s SqlUserStore)GetMany() StoreChannel  {
 			result.Err = model.NewLocAppError("SqlUsertore.GetMany", "store.sql_insurer_user.getmany.app_error", nil, err.Error())
 
 		}else {
-			//for _,user := range users {
-			//	user.Sanitize()
-			//}
+			for _,user := range users {
+				user.Sanitize()
+			}
 			result.Data = users
 		}
 		storeChannel<-result
