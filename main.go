@@ -13,6 +13,7 @@ import (
 			//ordersvc "salv_prj/orderservice"
 			//partnersvc "salv_prj/partnerservice"
 	usersvc "salv_prj/user"
+	schoolsvc "salv_prj/school"
 	"salv_prj/auth"
 	"salv_prj/store"
 	"github.com/go-kit/kit/log"
@@ -69,29 +70,16 @@ func main() {
 		Help:      "The result of each count method.",
 	}, []string{}) // no fields here
 
-	//var customer customersvc.CustomerService
-	//customer = customersvc.Customeservice{}
-	//customer = customersvc.LoggingMiddleware{logger, customer}
-	//customer = customersvc.InstrumentingMiddleware{requestCount, requestLatency, countResult, customer}
-	//
-	//
-	//var order ordersvc.OrderService
-	//order = ordersvc.Orderservice{}
-	//order = ordersvc.LoggingMiddleware{logger, order}
-	//order = ordersvc.InstrumentingMiddleware{requestCount, requestLatency, countResult, order}
-	//
-	//var partner partnersvc.PartnerService
-	//partner = partnersvc.Partnerservice{}
-	//partner = partnersvc.LoggingMiddleware{logger, partner}
-	//partner = partnersvc.InstrumentingMiddleware{requestCount, requestLatency, countResult, partner}
-
 
 	var user usersvc.UserService
 	user = usersvc.Userservice{}
 	user = usersvc.LoggingMiddleware{logger, user}
 	user = usersvc.InstrumentingMiddleware{requestCount, requestLatency, countResult, user}
 
-
+	var school  schoolsvc.SchoolService
+	school = schoolsvc.Schoolservice{}
+	school = schoolsvc.LoggingMiddleware{logger,school}
+	school = schoolsvc.InstrumentingMiddleware{requestCount,requestLatency,countResult,school}
 
 
 	//var customerTestEndpoint endpoint.Endpoint
@@ -136,7 +124,23 @@ func main() {
 		getAllUsersEndpoint = usersvc.MakeGetAllEndpoint(user)
 		getAllUsersEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllUsersEndpoint)
 	}
-//auth endpoint
+
+//school endpoint
+	var schoolCreateEndpoint endpoint.Endpoint
+	{
+		schoolCreateEndpoint = schoolsvc.MakeCreateEndpoint(school)
+		schoolCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(schoolCreateEndpoint)
+	}
+	var getOneSchoolEndpoint endpoint.Endpoint
+	{
+		getOneSchoolEndpoint = schoolsvc.MakeGetOneEndpoint(school)
+		getOneSchoolEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getOneSchoolEndpoint)
+	}
+	var getAllSchoolsEndpoint endpoint.Endpoint
+	{
+		getAllSchoolsEndpoint = schoolsvc.MakeGetAllEndpoint(school)
+		getAllSchoolsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllSchoolsEndpoint)
+	}
 
 
 
@@ -195,9 +199,33 @@ func main() {
 		jwtOptions...,
 	)
 
+	schoolHandler := httptransport.NewServer(
+		schoolCreateEndpoint,
+		schoolsvc.DecodeCreateRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	getOneSchoolHandler := httptransport.NewServer(
+		getOneSchoolEndpoint,
+		schoolsvc.DecodeGetOneRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	getAllSchoolsHandler := httptransport.NewServer(
+		getAllSchoolsEndpoint,
+		schoolsvc.DecodeGetAllRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
 
 	var routes = Routes{
-
+		Route{
+			"User",
+			"POST",
+			"/user",
+			userHandler,
+		},
 		Route{
 			"User ",
 			"GET",
@@ -210,30 +238,32 @@ func main() {
 			"/users",
 			getAllUsersHandler,
 		},
-		//Route{
-		//	"Order Test",
-		//	"POST",
-		//	"/order",
-		//	orderTestHandler,
-		//},
-		//Route{
-		//	"Partner Test",
-		//	"POST",
-		//	"/partner",
-		//	partnerTestHandler,
-		//},
+		Route{
+			"School",
+			"POST",
+			"/school",
+			schoolHandler,
+		},
+		Route{
+			"School ",
+			"GET",
+			"/school/{id}",
+			getOneSchoolHandler,
+		},
+		Route{
+			"Schools ",
+			"GET",
+			"/schools",
+			getAllSchoolsHandler,
+		},
+
 		Route{
 			"Auth",
 			"POST",
 			"/auth",
 			authHandler,
 		},
-		Route{
-			"User",
-			"POST",
-			"/user",
-			userHandler,
-		},
+
 	}
 	r := APINewRouter(routes)
 	version1 := r.PathPrefix("/v1").Subrouter()

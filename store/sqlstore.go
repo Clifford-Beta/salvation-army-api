@@ -108,6 +108,7 @@ func setupConnection(con_type string, driver string, dataSource string, maxIdle 
 	dbmap = &gorp.DbMap{Db: db, TypeConverter:userConverter{} , Dialect: gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8MB4"}}
 	//dbmap.AddTableWithName(model.Insurer{}, "insurer").SetKeys(true, "insurer_id")
 	dbmap.AddTableWithName(model.User{}, "user").SetKeys(true, "user_id")
+	dbmap.AddTableWithName(model.School{}, "school").SetKeys(true, "school_id")
 	//dbmap.AddTableWithName(model.Role{}, "insurer_user_role").SetKeys(true, "insurer_user_role_id")
 
 	return dbmap
