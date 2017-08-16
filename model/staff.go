@@ -30,6 +30,21 @@ type Staff struct {
 	Status	int	`db:"staff_status" json:"status"`
 }
 
+type StaffResult struct {
+	ID          int       `json:"id" db:"id"`
+	Name        string    `json:"name" db:"name"`
+	Email       string    `json:"email" db:"email"`
+	Phone       string    `json:"phone" db:"phone"`
+	Role        string    `json:"role" db:"role"`
+	Photo       string    `json:"photo" db:"photo"`
+	School      string    `json:"school" db:"school"`
+	Title       string    `json:"title" db:"title"`
+	Password    string    `json:"password" db:"password"`
+	DateCreated time.Time `json:"date_created" db:"date_created"`
+	TimeStamp   time.Time `json:"time_stamp" db:"timestamp"`
+	Status      int       `json:"status" db:"status"`
+}
+
 
 func (o *Staff) ToJson() string {
 	//set password to null
