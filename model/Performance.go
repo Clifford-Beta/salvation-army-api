@@ -29,7 +29,10 @@ type BestStudent struct {
 	Gender string `db:"best_student_gender" json:"gender"`
 	Technique string `db:"best_student_technique" json:"technique"`
 	Photo string `db:"best_student_photo" json:"photo"`
+	Year	int	`db:"best_student_year" json:"year"`
 	Status	int	`db:"best_student_status" json:"status"`
+	TimeStamp time.Time `db:"timestamp" json:"time_stamp"`
+
 
 }
 
@@ -45,7 +48,9 @@ type BestTeacher struct {
 	Gender string `db:"best_teacher_gender" json:"gender"`
 	Technique string `db:"best_teacher_technique" json:"technique"`
 	Photo string `db:"best_teacher_photo" json:"photo"`
+	Year	int	`db:"best_teacher_year" json:"year"`
 	Status	int	`db:"best_teacher_status" json:"status"`
+	TimeStamp time.Time `db:"timestamp" json:"time_stamp"`
 
 }
 
