@@ -98,6 +98,12 @@ func (o *User) ToJson() string {
 	}
 }
 
+func (o *User) Sanitize() *User {
+	//set password to null
+	o.Password = ""
+	return o
+}
+
 func UserFromJson(data io.Reader) *User {
 	decoder := json.NewDecoder(data)
 	var o User

@@ -10,7 +10,7 @@ var(
 	DB_USER = "root"
 	DB_PASSWORD = ""
 	DB_URL = "localhost:3306"
-	DB_DATASTORE = "parcel"
+	DB_DATASTORE = "salvation_army_db"
 	DB_DRIVER = "mysql"
 	DB_POOL = 10
 	DB_MAX_IDLE = 3

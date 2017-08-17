@@ -5,7 +5,7 @@ import (
 	l4g "github.com/alecthomas/log4go"
 	"github.com/go-gorp/gorp"
 	_ "github.com/go-sql-driver/mysql"
-	//"insure/model"
+	"salv_prj/model"
 	"os"
 	"strings"
 	"time"
@@ -107,7 +107,23 @@ func setupConnection(con_type string, driver string, dataSource string, maxIdle 
 	var dbmap *gorp.DbMap
 	dbmap = &gorp.DbMap{Db: db, TypeConverter:userConverter{} , Dialect: gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8MB4"}}
 	//dbmap.AddTableWithName(model.Insurer{}, "insurer").SetKeys(true, "insurer_id")
-	//dbmap.AddTableWithName(model.User{}, "insurer_user").SetKeys(true, "insurer_user_id")
+	dbmap.AddTableWithName(model.User{}, "user").SetKeys(true, "user_id")
+	dbmap.AddTableWithName(model.School{}, "school").SetKeys(true, "school_id")
+	dbmap.AddTableWithName(model.Category{}, "category").SetKeys(true, "category_id")
+	dbmap.AddTableWithName(model.BestStudent{}, "best_student").SetKeys(true, "best_student_id")
+	dbmap.AddTableWithName(model.BestTeacher{}, "best_teacher").SetKeys(true, "best_teacher_id")
+	dbmap.AddTableWithName(model.ExtraCurricularActivity{}, "ext_activity").SetKeys(true, "ext_activity_id")
+	dbmap.AddTableWithName(model.ExtraCurricular{}, "ext_curricular").SetKeys(true, "ext_curricular_id")
+	dbmap.AddTableWithName(model.ExtraCurricularLevel{}, "ext_level").SetKeys(true, "ext_level_id")
+	dbmap.AddTableWithName(model.File{}, "file").SetKeys(true, "file_id")
+	dbmap.AddTableWithName(model.FileType{}, "file_type").SetKeys(true, "file_type_id")
+	dbmap.AddTableWithName(model.InfrastructureType{}, "i_type").SetKeys(true, "i_type_id")
+	dbmap.AddTableWithName(model.Infrastructure{}, "infrastructure").SetKeys(true, "infrastructure_id")
+	dbmap.AddTableWithName(model.Message{}, "message").SetKeys(true, "message_id")
+	dbmap.AddTableWithName(model.Project{}, "project").SetKeys(true, "project_id")
+	dbmap.AddTableWithName(model.SchoolPerformance{}, "s_performance").SetKeys(true, "s_performance_id")
+	dbmap.AddTableWithName(model.Staff{}, "staff").SetKeys(true, "staff_id")
+	dbmap.AddTableWithName(model.StaffRole{}, "staff_role").SetKeys(true, "staff_role_id")
 	//dbmap.AddTableWithName(model.Role{}, "insurer_user_role").SetKeys(true, "insurer_user_role_id")
 
 	return dbmap
