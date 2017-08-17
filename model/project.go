@@ -19,6 +19,18 @@ type Project struct {
 }
 
 
+type ProjectResult struct {
+	Id int `db:"id" json:"id"`
+	School string `db:"school" json:"school"`
+	Name string `db:"name" json:"name"`
+	Description string `db:"description" json:"description"`
+	Start time.Time `db:"start" json:"start"`
+	Duration int `db:"duration" json:"duration"`
+	Progress int `db:"progress" json:"progress"`
+	TimeStamp time.Time `db:"time_stamp" json:"time_stamp"`
+}
+
+
 func (o *Project) ToJson() string {
 	b, err := json.Marshal(o)
 	if err != nil {

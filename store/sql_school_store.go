@@ -41,6 +41,112 @@ func (s SqlSchoolStore) Save(school *model.School) StoreChannel {
 	return storeChannel
 }
 
+func (s SqlSchoolStore)RecordPerformance(p *model.SchoolPerformance) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		if err := s.GetMaster().Insert(p); err != nil {
+
+			result.Err = model.NewLocAppError("SqlSchoolStore.RecordPerformance", "store.sql_school.save.app_error", nil, err.Error())
+
+		} else {
+			//user.Sanitize()
+			result.Data = p
+		}
+
+		storeChannel <- result
+		close(storeChannel)
+	}()
+
+	return storeChannel
+}
+
+
+
+func (s SqlSchoolStore)RetrieveBestPerfomingSchool(filter map[string]interface{}) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	var err error
+	go func() {
+		result := StoreResult{}
+		var sch model.SchoolPerformanceResult
+		if _, ok := filter["From"]; ok {
+			if _,ok := filter["To"]; ok {
+				err  = s.master.SelectOne(&sch,
+					`select school.school_id as id, school.school_name as school,school.school_location as location,
+						school.school_description as description,  tier_name as tier ,max(s_performance.s_performance_mark) as mark,
+						s_performance_year as year, category_name as category,
+						school.date_registered
+						from school
+						inner join s_performance on school = school_id
+						left join category on s_performance_cat = category_id
+						inner join tier on school_category = tier_id
+						where school_status = 1  and s_performance_year between :From and :To `,filter )
+			}else {
+					result.Err = model.NewLocAppError("SqlSqlSchoolStoreStore.Get", "The filter value for year is not a valid year", nil, err.Error())
+					storeChannel <- result
+					close(storeChannel)
+					return
+
+			}
+		}else {
+			err  = s.master.SelectOne(&sch,
+				`select school.school_id as id, school.school_name as school,school.school_location as location,
+						school.school_description as description,  tier_name as tier ,max(s_performance.s_performance_mark) as mark,
+						s_performance_year as year, category_name as category,
+						school.date_registered
+						from school
+						inner join s_performance on school = school_id
+						left join category on s_performance_cat = category_id
+						inner join tier on school_category = tier_id
+						where school_status = 1 `)
+		}
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlSqlSchoolStoreStore.Get", "store.sql_school.get.app_error", nil, err.Error())
+			storeChannel <- result
+			close(storeChannel)
+			return
+		}
+		result.Data = sch
+		storeChannel <- result
+		close(storeChannel)
+
+	}()
+	return storeChannel
+}
+
+
+func (s SqlSchoolStore)RankAllSchools() StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		var sch []model.SchoolPerformanceResult
+		_,err := s.master.Select(&sch,
+			"select school.school_id as id, school.school_name as school,school.school_location as `location`,"+
+			"school.school_description as `description`,  tier_name as tier ,s_performance.s_performance_mark as mark,"+
+			"s_performance_year as year, category_name as category, "+
+			"school.date_registered "+
+			"from school "+
+			"inner join s_performance on school = `school_id` "+
+			"left join category on s_performance_cat = category_id " +
+			"inner join tier on school_category = tier_id " +
+			"where school_status = 1 " +
+			"order by mark desc" )
+
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlSqlSchoolStoreStore.Rank", "store.sql_school.get.app_error", nil, err.Error())
+			storeChannel <- result
+			close(storeChannel)
+			return
+		}
+		result.Data = sch
+		storeChannel <- result
+		close(storeChannel)
+
+	}()
+	return storeChannel
+}
+
+
 //func (s SqlUserStore) Update(user *model.User) StoreChannel {
 //	storeChannel := make(StoreChannel, 1)
 //	go func() {

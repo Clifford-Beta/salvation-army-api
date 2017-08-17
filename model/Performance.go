@@ -16,6 +16,17 @@ type SchoolPerformance struct {
 	Status	int	`db:"s_performance_status" json:"status"`
 }
 
+type SchoolPerformanceResult struct {
+	Id int `db:"id" json:"id"`
+	Mark float64 `db:"mark" json:"mark"`
+	School string `db:"school" json:"school"`
+	Category string `db:"category" json:"category"`
+	Location string `db:"location" json:"location"`
+	Tier string `db:"tier" json:"tier"`
+	Description string `db:"description" json:"description"`
+	Year int `db:"year" json:"year"`
+	DateRegistered time.Time `db:"date_registered" json:"date_registered"`
+}
 
 
 type BestStudent struct {
