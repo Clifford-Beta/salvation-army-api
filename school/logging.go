@@ -18,7 +18,7 @@ func (mw LoggingMiddleware) Create(school model.School) (output *model.School, e
 			"input": school,
 			"output": output,
 			"err": err,
-			"took": time.Since(begin)}).Info("method = ", "create")
+			"took": time.Since(begin)}).Info( "service = ","school ","method = ", "create")
 	}(time.Now())
 	output, err = mw.Next.Create(school)
 	return
@@ -28,9 +28,9 @@ func (mw LoggingMiddleware) GetOne(id int) (output model.School, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input": id ,
-			"output": output.ToJson(),
+			"output": output,
 			"err": err,
-			"took": time.Since(begin)}).Info("method = ", "getone",)
+			"took": time.Since(begin)}).Info("service = ","school ","method = ", "getone",)
 	}(time.Now())
 	output, err = mw.Next.GetOne(id)
 	return
@@ -41,7 +41,7 @@ func (mw LoggingMiddleware) GetAll() (output []*model.School, err error) {
 		mw.Logger.WithFields(log.Fields{
 			"output": output,
 			"err": err,
-			"took": time.Since(begin)}).Info("method = ", "getall")
+			"took": time.Since(begin)}).Info("service = ","school ","method = ", "getall")
 	}(time.Now())
 	output, err = mw.Next.GetAll()
 	return
@@ -53,7 +53,7 @@ func (mw LoggingMiddleware) RecordPerformance(performance *model.SchoolPerforman
 			"params":map[string]interface{}{"performance":performance},
 			"output": output,
 			"err": err,
-			"took": time.Since(begin)}).Info("method = ", "recordperformance")
+			"took": time.Since(begin)}).Info("service = ","school ","method = ", "recordperformance")
 	}(time.Now())
 	output, err = mw.Next.RecordPerformance(performance)
 	return
@@ -65,7 +65,7 @@ func (mw LoggingMiddleware) GetBestSchool(from,to int)(output model.SchoolPerfor
 			"params":map[string]interface{}{"from":from,"to":to},
 			"output": output,
 			"err": err,
-			"took": time.Since(begin)}).Info("method = ","getbestschool")
+			"took": time.Since(begin)}).Info("service = ","school ","method = ","getbestschool")
 	}(time.Now())
 	output, err = mw.Next.GetBestSchool(from,to)
 	return
@@ -77,7 +77,7 @@ func (mw LoggingMiddleware) RankAllSchools(from,to int)(output []*model.SchoolPe
 			"params":map[string]interface{}{"from":from,"to":to},
 			"output": output,
 			"err":err,
-			"took": time.Since(begin)}).Info("method = ","rankallschools")
+			"took": time.Since(begin)}).Info("service = ","school ","method = ","rankallschools")
 	}(time.Now())
 	output, err = mw.Next.RankAllSchools(from,to)
 	return

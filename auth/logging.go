@@ -2,7 +2,7 @@ package auth
 
 import (
 	"time"
-	"github.com/go-kit/kit/log"
+	log "github.com/sirupsen/logrus"
 )
 
 type LoggingAuthMiddleware struct {
@@ -12,13 +12,11 @@ type LoggingAuthMiddleware struct {
 
 func (mw LoggingAuthMiddleware) Auth(clientID string, clientSecret string) (token string, err error) {
 	defer func(begin time.Time) {
-		_ = mw.Logger.Log(
-			"method", "auth",
-			"clientID", clientID,
-			"token", token,
-			"err", err,
-			"took", time.Since(begin),
-		)
+		mw.Logger.WithFields(log.Fields{
+			"clientID": clientID,
+			"token": token,
+			"err": err,
+			"took": time.Since(begin)}).Info( "service = ","auth ","method = ", "auth")
 	}(time.Now())
 
 	token, err = mw.Next.Auth(clientID, clientSecret)

@@ -243,6 +243,10 @@ func (s SqlUserStore)GetMany() StoreChannel  {
 			for _,user := range users {
 				user.Sanitize()
 			}
+			if len(users) == 0 {
+				result.Err = model.NewLocAppError("SqlUserStore.GetMany", "store.sql_user.get_many.app_error", nil, "No records found")
+
+			}
 			result.Data = users
 		}
 		storeChannel<-result

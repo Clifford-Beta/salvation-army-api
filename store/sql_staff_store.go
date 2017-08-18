@@ -119,6 +119,10 @@ func (s SqlStaffStore) RetrieveAllStaffMembers() StoreChannel {
 			close(storeChannel)
 			return
 		}
+		if len(staff) == 0 {
+			result.Err = model.NewLocAppError("SqlStaffStore.RetrieveAll", "store.sql_staff.retrieve_all.app_error", nil, "No records found")
+
+		}
 		result.Data = staff
 
 		storeChannel <- result

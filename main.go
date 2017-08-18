@@ -14,6 +14,7 @@ import (
 			//partnersvc "salv_prj/partnerservice"
 	usersvc "salv_prj/user"
 	schoolsvc "salv_prj/school"
+	catsvc "salv_prj/category"
 	"salv_prj/auth"
 	"salv_prj/store"
 	"github.com/go-kit/kit/log"
@@ -21,10 +22,9 @@ import (
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/kit/endpoint"
-
 )
 
-var loggrer = logrus.New()
+var logger = logrus.New()
 
 func main() {
 
@@ -32,8 +32,8 @@ func main() {
 	defer store.Database.Close()
 
 	//ctx := context.Background()
-	logger := log.NewLogfmtLogger(os.Stderr)
-	loggrer.Out = os.Stdout
+	logit := log.NewLogfmtLogger(os.Stderr)
+	logger.Out = os.Stdout
 
 	//loggrer.Formatter = &logrus.JSONFormatter{}
 	//logrus.SetOutput(os.Stdout)
@@ -51,7 +51,7 @@ func main() {
 
 	jwtOptions := []httptransport.ServerOption{
 		httptransport.ServerErrorEncoder(auth.AuthErrorEncoder),
-		httptransport.ServerErrorLogger(logger),
+		httptransport.ServerErrorLogger(logit),
 		httptransport.ServerBefore(jwt.ToHTTPContext()),
 	}
 
@@ -83,13 +83,19 @@ func main() {
 
 	var user usersvc.UserService
 	user = usersvc.Userservice{}
-	user = usersvc.LoggingMiddleware{logger, user}
+	user = usersvc.LoggingMiddleware{*logger, user}
 	user = usersvc.InstrumentingMiddleware{requestCount, requestLatency, countResult, user}
 
 	var school  schoolsvc.SchoolService
 	school = schoolsvc.Schoolservice{}
-	school = schoolsvc.LoggingMiddleware{*loggrer,school}
+	school = schoolsvc.LoggingMiddleware{*logger,school}
 	school = schoolsvc.InstrumentingMiddleware{requestCount,requestLatency,countResult,school}
+
+	var category  catsvc.CategoryService
+	category = catsvc.Categoryservice{}
+	category = catsvc.LoggingMiddleware{*logger,category}
+	category = catsvc.InstrumentingMiddleware{requestCount,requestLatency,countResult,category}
+
 
 
 	var userCreateEndpoint endpoint.Endpoint
@@ -106,6 +112,39 @@ func main() {
 	{
 		getAllUsersEndpoint = usersvc.MakeGetAllEndpoint(user)
 		getAllUsersEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllUsersEndpoint)
+	}
+
+	//category endpoint
+
+	var categoryCreateEndpoint endpoint.Endpoint
+	{
+		categoryCreateEndpoint = catsvc.MakeCreateEndpoint(category)
+		categoryCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(categoryCreateEndpoint)
+	}
+	var getOneCategoryEndpoint endpoint.Endpoint
+	{
+		getOneCategoryEndpoint = catsvc.MakeGetOneEndpoint(category)
+		getOneCategoryEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getOneCategoryEndpoint)
+	}
+	var getAllCategoriesEndpoint endpoint.Endpoint
+	{
+		getAllCategoriesEndpoint = catsvc.MakeGetAllEndpoint(category)
+		getAllCategoriesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllCategoriesEndpoint)
+	}
+	var tierCreateEndpoint endpoint.Endpoint
+	{
+		tierCreateEndpoint = catsvc.MakeCreateTierEndpoint(category)
+		tierCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(tierCreateEndpoint)
+	}
+	var getOneTierEndpoint endpoint.Endpoint
+	{
+		getOneTierEndpoint = catsvc.MakeGetOneTierEndpoint(category)
+		getOneTierEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getOneTierEndpoint)
+	}
+	var getAllTiersEndpoint endpoint.Endpoint
+	{
+		getAllTiersEndpoint = catsvc.MakeGetAllTiersEndpoint(category)
+		getAllTiersEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllTiersEndpoint)
 	}
 
 //school endpoint
@@ -165,12 +204,12 @@ func main() {
 	}
 	var authy auth.AuthService
 	authy = auth.Authservice{key, clients}
-	authy = auth.LoggingAuthMiddleware{logger, authy.(auth.Authservice)}
+	authy = auth.LoggingAuthMiddleware{*logger, authy.(auth.Authservice)}
 	authy = auth.InstrumentingAuthMiddleware{requestAuthCount, requestAuthLatency, authy}
 
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorEncoder(auth.AuthErrorEncoder),
-		httptransport.ServerErrorLogger(logger),
+		httptransport.ServerErrorLogger(logit),
 	}
 
 	authHandler := httptransport.NewServer(
@@ -179,7 +218,7 @@ func main() {
 		auth.EncodeResponse,
 		options...,
 	)
-	//
+	// user handelers
 	userHandler := httptransport.NewServer(
 		userCreateEndpoint,
 		usersvc.DecodeCreateRequest,
@@ -198,6 +237,47 @@ func main() {
 		usersvc.EncodeResponse,
 		jwtOptions...,
 	)
+
+	//category handlers
+
+	createCategoryHandler := httptransport.NewServer(
+		categoryCreateEndpoint,
+		catsvc.DecodeCreateRequest,
+		catsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	createTierHandler := httptransport.NewServer(
+		tierCreateEndpoint,
+		catsvc.DecodeCreateTierRequest,
+		catsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	getOneCategoryHandler := httptransport.NewServer(
+		getOneCategoryEndpoint,
+		catsvc.DecodeGetOneRequest,
+		catsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	getOneTierHandler := httptransport.NewServer(
+		getOneTierEndpoint,
+		catsvc.DecodeGetOneRequest,
+		catsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	getAllCategoriesHandler := httptransport.NewServer(
+		getAllCategoriesEndpoint,
+		catsvc.DecodeGetAllRequest,
+		catsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	getAllTiersHandler := httptransport.NewServer(
+		getAllTiersEndpoint,
+		catsvc.DecodeGetAllRequest,
+		catsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	//school handlers
 
 	schoolHandler := httptransport.NewServer(
 		schoolCreateEndpoint,
@@ -255,8 +335,44 @@ func main() {
 		Route{
 			"Users ",
 			"GET",
-			"/users",
+			"/user",
 			getAllUsersHandler,
+		},
+		Route{
+			"Category",
+			"POST",
+			"/category",
+			createCategoryHandler,
+		},
+		Route{
+			"Category ",
+			"GET",
+			"/category/{id}",
+			getOneCategoryHandler,
+		},
+		Route{
+			"categories ",
+			"GET",
+			"/category",
+			getAllCategoriesHandler,
+		},
+		Route{
+			"Tier",
+			"POST",
+			"/tier",
+			createTierHandler,
+		},
+		Route{
+			"Tier ",
+			"GET",
+			"/tier/{id}",
+			getOneTierHandler,
+		},
+		Route{
+			"categories ",
+			"GET",
+			"/tier",
+			getAllTiersHandler,
 		},
 		Route{
 			"School",
@@ -285,7 +401,7 @@ func main() {
 		Route{
 			"Schools ",
 			"GET",
-			"/schools",
+			"/school",
 			getAllSchoolsHandler,
 		},
 		Route{
@@ -310,8 +426,8 @@ func main() {
 	AddRoutes(version2,routes)
 	//r.Handle()
 	r.Handle("/metrics", stdprometheus.Handler())
-	logger.Log("msg", "HTTP", "addr", ":8000")
-	logger.Log("err", http.ListenAndServe(":8000", r,))
+	logger.WithFields(logrus.Fields{"msg": "HTTP", "addr": ":8000"}).Info("Everything is ready, let's go !!!")
+	logger.WithFields(logrus.Fields{"err": http.ListenAndServe(":8000", r,)}).Fatal("Oops! the server crashed")
 	}
 
 	//

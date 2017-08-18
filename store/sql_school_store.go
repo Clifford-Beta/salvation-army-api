@@ -240,6 +240,10 @@ func (s SqlSchoolStore)GetMany() StoreChannel  {
 			result.Err = model.NewLocAppError("SqlUsertore.GetMany", "store.sql_school.getmany.app_error", nil, err.Error())
 
 		}else {
+			if len(schools) == 0 {
+				result.Err = model.NewLocAppError("SqlSchoolStore.GetMany", "store.sql_school.get_many.app_error", nil, "No records found")
+
+			}
 			result.Data = schools
 		}
 		storeChannel<-result

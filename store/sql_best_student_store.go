@@ -84,7 +84,11 @@ func (s SqlBestStudentStore)GetMany() StoreChannel  {
 			result.Err = model.NewLocAppError("SqlBestStudentStore.GetMany", "store.sql_best_student .getmany.app_error", nil, err.Error())
 
 		}else {
-			result.Data = bests
+			if len(bests) == 0 {
+				result.Err = model.NewLocAppError("SqlBestStudentStore.GetMany", "store.sql_best_student .getmany.app_error", nil, "No records found")
+
+			}
+				result.Data = bests
 		}
 		storeChannel<-result
 		close(storeChannel)

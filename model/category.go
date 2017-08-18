@@ -14,6 +14,14 @@ type Category struct {
 	Status	int	`db:"category_status" json:"status"`
 }
 
+type Tier struct {
+	Id int `db:"tier_id" json:"id"`
+	Name string `db:"tier_name" json:"name"`
+	Description string `db:"tier_description" json:"description"`
+	TimeStamp time.Time `db:"timestamp" json:"time_stamp"`
+	Status	int	`db:"tier_status" json:"status"`
+}
+
 
 func (o *Category) ToJson() string {
 	b, err := json.Marshal(o)

@@ -67,6 +67,10 @@ func (s SqlProjectStore)RetrieveAll()StoreChannel  {
 			close(storeChannel)
 			return
 		}
+		if len(project) == 0 {
+			result.Err = model.NewLocAppError("SqlProjectStore.RetrieveAll", "store.sql_project.retrieve_all.app_error", nil, "No records found")
+
+		}
 		result.Data = project
 		storeChannel <- result
 		close(storeChannel)
