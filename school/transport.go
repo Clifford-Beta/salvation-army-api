@@ -21,6 +21,28 @@ func MakeCreateEndpoint(svc SchoolService) endpoint.Endpoint {
 	}
 }
 
+func MakeRecordPerformanceEndpoint(svc SchoolService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.SchoolPerformance)
+		v, err := svc.RecordPerformance(&req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeRetrieveBestPerfomingSchoolEndpoint(svc SchoolService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(schoolRequest)
+		v, err := svc.GetBestSchool(req.From,req.To)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeGetOneEndpoint(svc SchoolService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(schoolRequest)
@@ -43,8 +65,43 @@ func MakeGetAllEndpoint(svc SchoolService) endpoint.Endpoint {
 	}
 }
 
+func MakeRankAllSchoolsEndpoint(svc SchoolService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(schoolRequest)
+		v, err := svc.RankAllSchools(req.From,req.To)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func DecodeCreateRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request model.School
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		return nil, err
+	}
+	return request, nil
+}
+
+func DecodeRecordPerformanceRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request model.SchoolPerformance
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		return nil, err
+	}
+	return request, nil
+}
+
+func DecodeGetBestSchoolRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request schoolRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		return nil, err
+	}
+	return request, nil
+}
+
+func DecodeRankAllSchoolsRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request schoolRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
@@ -84,6 +141,8 @@ func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface
 }
 type schoolRequest struct {
 	Id int `json:"id"`
+	From int `json:"from"`
+	To int `json:"to"`
 }
 
 //type userResponse struct {

@@ -17,11 +17,14 @@ import (
 	"salv_prj/auth"
 	"salv_prj/store"
 	"github.com/go-kit/kit/log"
+	"github.com/sirupsen/logrus"
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/kit/endpoint"
+
 )
 
+var loggrer = logrus.New()
 
 func main() {
 
@@ -30,6 +33,13 @@ func main() {
 
 	//ctx := context.Background()
 	logger := log.NewLogfmtLogger(os.Stderr)
+	loggrer.Out = os.Stdout
+
+	//loggrer.Formatter = &logrus.JSONFormatter{}
+	//logrus.SetOutput(os.Stdout)
+
+	// Only log the warning severity or above.
+	//logrus.SetLevel(logrus.WarnLevel)
 	//kf := func(token *stdjwt.Token) (interface{}, error) { return []byte("SigningString"), nil }
 
 //jwt
@@ -78,35 +88,8 @@ func main() {
 
 	var school  schoolsvc.SchoolService
 	school = schoolsvc.Schoolservice{}
-	school = schoolsvc.LoggingMiddleware{logger,school}
+	school = schoolsvc.LoggingMiddleware{*loggrer,school}
 	school = schoolsvc.InstrumentingMiddleware{requestCount,requestLatency,countResult,school}
-
-
-	//var customerTestEndpoint endpoint.Endpoint
-	//{
-	//	customerTestEndpoint = customersvc.MakeTestEndpoint(customer)
-	//	customerTestEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(customerTestEndpoint)
-	//	//customerTestEndpointcustomerTestEndpoint = jwt.NewSigner(
-	//	//	"kid",
-	//	//	[]byte("SigningString"),
-	//	//	stdjwt.SigningMethodHS256,
-	//	//	jwt.Claims{"user":"Beta C W"},
-	//	//)(customerTestEndpoint)
-	//}
-	//
-	//
-	//var ordersTestEndpoint endpoint.Endpoint
-	//{
-	//	//kf := func(token *stdjwt.Token) (interface{}, error) { return []byte("SigningString"), nil }
-	//	ordersTestEndpoint = ordersvc.MakeAddEndpoint(order)
-	//	ordersTestEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(ordersTestEndpoint)
-	//}
-	//
-	//var partnerTestEndpoint endpoint.Endpoint
-	//{
-	//	partnerTestEndpoint = partnersvc.MakeTestEndpoint(partner)
-	//	partnerTestEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(partnerTestEndpoint)
-	//}
 
 
 	var userCreateEndpoint endpoint.Endpoint
@@ -140,6 +123,23 @@ func main() {
 	{
 		getAllSchoolsEndpoint = schoolsvc.MakeGetAllEndpoint(school)
 		getAllSchoolsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllSchoolsEndpoint)
+	}
+
+	var getBestSchoolEndpoint endpoint.Endpoint
+	{
+		getBestSchoolEndpoint = schoolsvc.MakeRetrieveBestPerfomingSchoolEndpoint(school)
+		getBestSchoolEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getBestSchoolEndpoint)
+	}
+
+	var recordSchoolPerformanceEndpoint endpoint.Endpoint
+	{
+		recordSchoolPerformanceEndpoint = schoolsvc.MakeRecordPerformanceEndpoint(school)
+		recordSchoolPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(recordSchoolPerformanceEndpoint)
+	}
+	var rankAllSchoolsEndpoint endpoint.Endpoint
+	{
+		rankAllSchoolsEndpoint = schoolsvc.MakeRankAllSchoolsEndpoint(school)
+		rankAllSchoolsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(rankAllSchoolsEndpoint)
 	}
 
 
@@ -205,15 +205,35 @@ func main() {
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
 	)
+
+	recordPerformanceHandler := httptransport.NewServer(
+		recordSchoolPerformanceEndpoint,
+		schoolsvc.DecodeRecordPerformanceRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
 	getOneSchoolHandler := httptransport.NewServer(
 		getOneSchoolEndpoint,
 		schoolsvc.DecodeGetOneRequest,
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
 	)
+
+	getBestSchoolHandler := httptransport.NewServer(
+		getBestSchoolEndpoint,
+		schoolsvc.DecodeGetBestSchoolRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
 	getAllSchoolsHandler := httptransport.NewServer(
 		getAllSchoolsEndpoint,
 		schoolsvc.DecodeGetAllRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	rankAllSchoolsHandler := httptransport.NewServer(
+		rankAllSchoolsEndpoint,
+		schoolsvc.DecodeRankAllSchoolsRequest,
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
 	)
@@ -245,16 +265,34 @@ func main() {
 			schoolHandler,
 		},
 		Route{
+			"School Performance",
+			"POST",
+			"/school_performance",
+			recordPerformanceHandler,
+		},
+		Route{
 			"School ",
 			"GET",
 			"/school/{id}",
 			getOneSchoolHandler,
 		},
 		Route{
+			"Best School ",
+			"POST",
+			"/best_school",
+			getBestSchoolHandler,
+		},
+		Route{
 			"Schools ",
 			"GET",
 			"/schools",
 			getAllSchoolsHandler,
+		},
+		Route{
+			"Rank Schools ",
+			"POST",
+			"/ranking",
+			rankAllSchoolsHandler,
 		},
 
 		Route{
@@ -276,8 +314,6 @@ func main() {
 	logger.Log("err", http.ListenAndServe(":8000", r,))
 	}
 
-	//http.Handle("/uppercase", uppercaseHandler)
-	//http.Handle("/count", countHandler)
 	//
 	//logger.Log("msg", "HTTP", "addr", ":8080")
 	//logger.Log("err", http.ListenAndServe(":8080", nil))
