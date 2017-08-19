@@ -47,6 +47,23 @@ type BestStudent struct {
 
 }
 
+type BestStudentResult struct {
+	Id int `db:"id" json:"id"`
+	School string `db:"school" json:"school"`
+	Name string `db:"name" json:"name"`
+	Mark float64 `db:"mark" json:"mark"`
+	Class string `db:"class" json:"class"`
+	Category string `db:"category" json:"category"`
+	Age int `db:"age" json:"age"`
+	Gender string `db:"gender" json:"gender"`
+	Technique string `db:"technique" json:"technique"`
+	Photo string `db:"photo" json:"photo"`
+	Year	int	`db:"year" json:"year"`
+	TimeStamp time.Time `db:"time_stamp" json:"time_stamp"`
+
+
+}
+
 
 
 type BestTeacher struct {
@@ -62,6 +79,21 @@ type BestTeacher struct {
 	Year	int	`db:"best_teacher_year" json:"year"`
 	Status	int	`db:"best_teacher_status" json:"status"`
 	TimeStamp time.Time `db:"timestamp" json:"time_stamp"`
+
+}
+
+type BestTeacherResult struct {
+	Id int `db:"id" json:"id"`
+	School int `db:"school" json:"school"`
+	Name string `db:"name" json:"name"`
+	Mark float64 `db:"mark" json:"mark"`
+	Class string `db:"class" json:"class"`
+	Category string `db:"category" json:"category"`
+	Gender string `db:"gender" json:"gender"`
+	Technique string `db:"technique" json:"technique"`
+	Photo string `db:"photo" json:"photo"`
+	Year	int	`db:"year" json:"year"`
+	TimeStamp time.Time `db:"time_stamp" json:"time_stamp"`
 
 }
 
