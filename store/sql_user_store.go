@@ -4,6 +4,7 @@ import (
 	"salv_prj/model"
 	"net/http"
 	"strconv"
+	"log"
 )
 
 type SqlUserStore struct {
@@ -205,12 +206,15 @@ func (s SqlUserStore) GetByEmailAndPassword(email, password string) StoreChannel
 		//pl := model.NewUserList()
 		var user model.User
 		err := s.master.SelectOne(&user, "SELECT * from user WHERE email= :email", map[string]interface{}{"email": email})
+		//err := s.master.SelectOne(&user, "select * from user where email = :email and password = 12345",map[string]interface{}{"email": email,"password": password})
+		log.Println("This is the password provided",password, email)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlUserStore.GetByEmailAndPassword", "store.sql_user.get.app_error", nil, "user ="+email+", "+err.Error())
 			storeChannel <- result
 			close(storeChannel)
 			return
 		}
+		log.Println("This is the user password",user.Password, "And this is the provided password",model.HashPassword(password))
 		if !model.ComparePassword(user.Password, password) {
 			result.Err = model.NewLocAppError("SqlUserStore.GetEmailAndPassword", "store.sql_user.get.app_error", nil,
 				"user ="+email+":, The password provided does not match your current password")

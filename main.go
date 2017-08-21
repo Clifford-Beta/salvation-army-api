@@ -22,6 +22,8 @@ import (
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/go-kit/kit/endpoint"
+	"github.com/rs/cors"
+
 )
 
 var logger = logrus.New()
@@ -107,6 +109,12 @@ func main() {
 	{
 		getOneUserEndpoint = usersvc.MakeGetOneEndpoint(user)
 		getOneUserEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getOneUserEndpoint)
+	}
+
+	var loginUserEndpoint endpoint.Endpoint
+	{
+		loginUserEndpoint = usersvc.MakeLoginEndpoint(user)
+		loginUserEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(loginUserEndpoint)
 	}
 	var getAllUsersEndpoint endpoint.Endpoint
 	{
@@ -198,9 +206,9 @@ func main() {
 	}, authFieldKeys)
 
 	// API clients database
-	var clients = map[string]string{
-		"mobile": "m_secret",
-		"web":    "w_secret",
+	var clients = map[string]int{
+		"mobile": 1,
+		"web":    2,
 	}
 	var authy auth.AuthService
 	authy = auth.Authservice{key, clients}
@@ -228,6 +236,13 @@ func main() {
 	getOneUserHandler := httptransport.NewServer(
 		getOneUserEndpoint,
 		usersvc.DecodeGetOneRequest,
+		usersvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	loginUserHandler := httptransport.NewServer(
+		loginUserEndpoint,
+		usersvc.DecodeLoginRequest,
 		usersvc.EncodeResponse,
 		jwtOptions...,
 	)
@@ -339,6 +354,12 @@ func main() {
 			getAllUsersHandler,
 		},
 		Route{
+			"Login ",
+			"POST",
+			"/login",
+			loginUserHandler,
+		},
+		Route{
 			"Category",
 			"POST",
 			"/category",
@@ -400,8 +421,8 @@ func main() {
 		},
 		Route{
 			"Schools ",
-			"GET",
-			"/school",
+			"POST",
+			"/schools",
 			getAllSchoolsHandler,
 		},
 		Route{
@@ -420,6 +441,7 @@ func main() {
 
 	}
 	r := APINewRouter(routes)
+	handler := cors.Default().Handler(r)
 	version1 := r.PathPrefix("/v1").Subrouter()
 	version2 := r.PathPrefix("/v2").Subrouter()
 	AddRoutes(version1,routes)
@@ -427,7 +449,7 @@ func main() {
 	//r.Handle()
 	r.Handle("/metrics", stdprometheus.Handler())
 	logger.WithFields(logrus.Fields{"msg": "HTTP", "addr": ":8000"}).Info("Everything is ready, let's go !!!")
-	logger.WithFields(logrus.Fields{"err": http.ListenAndServe(":8000", r,)}).Fatal("Oops! the server crashed")
+	logger.WithFields(logrus.Fields{"err": http.ListenAndServe(":8000", corsHandler(handler))}).Fatal("Oops! the server crashed")
 	}
 
 	//
@@ -452,5 +474,20 @@ func basicAuth(username string, password string, h http.Handler) http.Handler {
 		}
 
 		h.ServeHTTP(w, r)
+	})
+}
+
+
+func corsHandler(h http.Handler) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "OPTIONS" {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+			w.WriteHeader(204)
+			logrus.Debug("I got here")
+			return
+		}
+		h.ServeHTTP(w,r)
 	})
 }

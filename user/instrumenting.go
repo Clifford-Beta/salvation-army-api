@@ -37,7 +37,18 @@ func (mw InstrumentingMiddleware) GetOne(id int) (output model.User, err error) 
 	return
 }
 
-func (mw InstrumentingMiddleware) GetAll() (output []*model.User, err error) {
+func (mw InstrumentingMiddleware) Login(email,password string)(output model.User, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "login", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Login(email,password)
+	return
+}
+
+func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.User, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getall", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)

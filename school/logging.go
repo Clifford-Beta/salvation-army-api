@@ -36,7 +36,17 @@ func (mw LoggingMiddleware) GetOne(id int) (output model.School, err error) {
 	return
 }
 
-func (mw LoggingMiddleware) GetAll() (output []*model.School, err error) {
+//func (mw LoggingMiddleware) GetAll() (output []*model.School, err error) {
+//	defer func(begin time.Time) {
+//		mw.Logger.WithFields(log.Fields{
+//			"output": output,
+//			"err": err,
+//			"took": time.Since(begin)}).Info("service = ","school ","method = ", "getall")
+//	}(time.Now())
+//	output, err = mw.Next.GetAll()
+//	return
+//}
+func (mw LoggingMiddleware) GetAll() (output map[string][]*model.School, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"output": output,

@@ -38,7 +38,20 @@ func (mw LoggingMiddleware) GetOne(id int) (output model.User, err error) {
 	return
 }
 
-func (mw LoggingMiddleware) GetAll() (output []*model.User, err error) {
+func (mw LoggingMiddleware) Login(email,password string)(output model.User, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input": email+password,
+			"output": output,
+			"err": err,
+			"took": time.Since(begin)}).Info("service = ","user ","method = ", "login")
+
+	}(time.Now())
+	output, err = mw.Next.Login(email,password)
+	return
+}
+
+func (mw LoggingMiddleware) GetAll() (output map[string][]*model.User, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input": "",

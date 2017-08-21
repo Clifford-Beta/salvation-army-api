@@ -12,7 +12,7 @@ type InstrumentingAuthMiddleware struct {
 	Next           AuthService
 }
 
-func (mw InstrumentingAuthMiddleware) Auth(clientID string, clientSecret string) (token string, err error) {
+func (mw InstrumentingAuthMiddleware) Auth(clientID int, clientSecret string) (token string, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "auth", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)

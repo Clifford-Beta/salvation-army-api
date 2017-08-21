@@ -73,3 +73,9 @@ the API at.
             - activities service
             - upload service
 
+
+
+
+
+
+* log in as user, then use the id to fetch the token - {"clientId":id}
