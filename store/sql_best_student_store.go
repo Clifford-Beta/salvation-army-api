@@ -49,13 +49,19 @@ func (s SqlBestStudentStore) Delete(best *model.BestStudent) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlBestStudentStore) Get(id int) StoreChannel {
+func (s SqlBestStudentStore) Get(from,to int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		//pl := model.NewUserList()
 		var best model.BestStudent
-		err := s.master.SelectOne(&best, "select * from best_student where best_student_id=?", id)
+		err := s.master.SelectOne(&best, `select best_student_id as id, school.school_name as school, best_student_name as name, best_student_class as
+			 class, best_student_year as year, best_student_technique as technique, best_student_photo as photo,
+			 max(best_student_mark) as mark,category.category_name as category, best_student.timestamp as time_stamp
+			 from best_student
+			 inner join school on best_student_school = school_id
+			 inner join category on best_student.category = category_id
+			 where best_student_status = 1`)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlBestStudentStore.Get", "store.sql_best_student.get.app_error", nil, "best student="+best.Name+", "+err.Error())
 			storeChannel <- result
@@ -78,8 +84,15 @@ func (s SqlBestStudentStore)GetMany() StoreChannel  {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var bests [] *model.BestStudent
-		_, err := s.GetMaster().Select(&bests, "SELECT * FROM best_student WHERE best_student_status=1")
+		var bests [] *model.BestStudentResult
+		_, err := s.GetMaster().Select(&bests, `select best_student_id as id, school.school_name as school, best_student_name as name, best_student_class as
+			 class, best_student_year as year, best_student_technique as technique, best_student_photo as photo,
+			 best_student_mark as mark,category.category_name as category, best_student.timestamp as time_stamp
+			 from best_student
+			 inner join school on best_student_school = school_id
+			 inner join category on best_student.category = category_id
+			 where best_student_status = 1
+			 order by mark desc`)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlBestStudentStore.GetMany", "store.sql_best_student .getmany.app_error", nil, err.Error())
 

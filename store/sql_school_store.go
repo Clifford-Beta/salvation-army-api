@@ -234,8 +234,13 @@ func (s SqlSchoolStore)GetMany() StoreChannel  {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var schools [] *model.School
-		_, err := s.GetMaster().Select(&schools, "SELECT * FROM school WHERE school_status=1")
+		var schools [] *model.SchoolResult
+		_, err := s.GetMaster().Select(&schools, `select school_id as id,school_name as name, school_postal_address as postal_address, school_phone as phone,
+														school_logo as logo, school_email as email, school_location as location,
+															school_description as description,date_registered,tier_name as category
+															from school
+															inner join tier on school.school_category = tier_id
+															where school_status = 1`)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlUsertore.GetMany", "store.sql_school.getmany.app_error", nil, err.Error())
 
