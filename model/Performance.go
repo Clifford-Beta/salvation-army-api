@@ -84,7 +84,7 @@ type BestTeacher struct {
 
 type BestTeacherResult struct {
 	Id int `db:"id" json:"id"`
-	School int `db:"school" json:"school"`
+	School string `db:"school" json:"school"`
 	Name string `db:"name" json:"name"`
 	Mark float64 `db:"mark" json:"mark"`
 	Class string `db:"class" json:"class"`

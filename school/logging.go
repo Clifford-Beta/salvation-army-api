@@ -36,16 +36,7 @@ func (mw LoggingMiddleware) GetOne(id int) (output model.School, err error) {
 	return
 }
 
-//func (mw LoggingMiddleware) GetAll() (output []*model.School, err error) {
-//	defer func(begin time.Time) {
-//		mw.Logger.WithFields(log.Fields{
-//			"output": output,
-//			"err": err,
-//			"took": time.Since(begin)}).Info("service = ","school ","method = ", "getall")
-//	}(time.Now())
-//	output, err = mw.Next.GetAll()
-//	return
-//}
+
 func (mw LoggingMiddleware) GetAll() (output map[string][]*model.SchoolResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
@@ -81,7 +72,7 @@ func (mw LoggingMiddleware) GetBestSchool(from,to int)(output model.SchoolPerfor
 	return
 }
 
-func (mw LoggingMiddleware) RankAllSchools(from,to int)(output []*model.SchoolPerformanceResult,err error)  {
+func (mw LoggingMiddleware) RankAllSchools(from,to int)(output map[string][]*model.SchoolPerformanceResult,err error)  {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"params":map[string]interface{}{"from":from,"to":to},

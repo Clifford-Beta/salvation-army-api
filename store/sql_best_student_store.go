@@ -54,7 +54,7 @@ func (s SqlBestStudentStore) Get(from,to int) StoreChannel {
 	go func() {
 		result := StoreResult{}
 		//pl := model.NewUserList()
-		var best model.BestStudent
+		var best model.BestStudentResult
 		err := s.master.SelectOne(&best, `select best_student_id as id, school.school_name as school, best_student_name as name, best_student_class as
 			 class, best_student_year as year, best_student_technique as technique, best_student_photo as photo,
 			 max(best_student_mark) as mark,category.category_name as category, best_student.timestamp as time_stamp
