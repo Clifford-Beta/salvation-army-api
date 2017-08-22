@@ -1,0 +1,28 @@
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IiIsImV4cCI6MjcwMzIzNDE2OSwiaWF0IjoxNTAzMjM0MTY5fQ.ioeDO8LitFwTQbCMboXr1xJHLrq5sFRs4BGxZi9HZHE
+
+
+how to use:
+Add authorization header to every requests
+Authorization Bearer {{token}}
+
+
+
+$.ajax({
+        type: "POST",
+        url: "http://localhost:8000/v1/auth",
+//        headers: "Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IiIsImV4cCI6MjcwMzIzNDE2OSwiaWF0IjoxNTAzMjM0MTY5fQ."+
+//        "ioeDO8LitFwTQbCMboXr1xJHLrq5sFRs4BGxZi9HZHE",
+        data: JSON.stringify({ phone_no: "091289713983" })
+    })
+
+        .done(function( msg ) {
+             console.log(msg);
+            if(msg=='ok'){
+                habari='Your new pin has been sent to '+ phone;
+//                document.getElementById('simu').value='';
+            }else{
+                habari="Invalid phone number ";
+            }
+//            $("#onyesha").html(habari);
+
+        });

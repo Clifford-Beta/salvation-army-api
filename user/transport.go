@@ -33,6 +33,17 @@ func MakeGetOneEndpoint(svc UserService) endpoint.Endpoint {
 	}
 }
 
+func MakeLoginEndpoint(svc UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(loginRequest)
+		v, err := svc.Login(req.Email,req.Password)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeGetAllEndpoint(svc UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		//req := request.(userRequest)
@@ -63,6 +74,14 @@ func DecodeGetOneRequest(_ context.Context, r *http.Request) (interface{}, error
 	return request, nil
 }
 
+func DecodeLoginRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request loginRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		return nil, err
+	}
+	return request, nil
+}
+
 func DecodeGetAllRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request userRequest
 	//if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -89,6 +108,11 @@ func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface
 }
 type userRequest struct {
 	Id int `json:"id"`
+}
+
+type loginRequest struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
 }
 
 //type userResponse struct {

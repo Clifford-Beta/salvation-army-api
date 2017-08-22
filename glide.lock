@@ -1,5 +1,5 @@
-hash: e5e64ddfc2a4810d4f073ea855ceb67bbb9192700083fafae363299fdfc7da68
-updated: 2017-07-20T16:41:43.426749233+03:00
+hash: 1ffad876b906797bd4feb11785079ce68f6b0911901c7a91bd5d5275c620d2ba
+updated: 2017-08-18T12:54:32.472397185+03:00
 imports:
 - name: github.com/alecthomas/log4go
   version: 18d87da5025a6e8bd58dede5ecffe3f62115bc4f
@@ -71,7 +71,7 @@ imports:
 - name: github.com/pborman/uuid
   version: e790cca94e6cc75c7064b1332e63811d4aae1a53
 - name: github.com/pelletier/go-toml
-  version: 69d355db5304c0f7f809a2edc054553e7142f016
+  version: 4692b8f9babfc93db58cc592ba2689d8736781de
 - name: github.com/prometheus/client_golang
   version: 95b6848b5c5bb71e3f68cd512ae5a8153c35e41f
   subpackages:
@@ -90,6 +90,8 @@ imports:
   version: e645f4e5aaa8506fc71d6edbc5c4ff02c04c46f2
   subpackages:
   - xfs
+- name: github.com/sirupsen/logrus
+  version: f006c2ac4710855cf0f916dd6b77acf6b048dc6e
 - name: github.com/spf13/afero
   version: 9be650865eab0c12963d8753212f4f9c66cdcf12
   subpackages:
@@ -101,7 +103,13 @@ imports:
 - name: github.com/spf13/pflag
   version: e57e3eeb33f795204c1ca35f56c44f83227c6e66
 - name: github.com/spf13/viper
-  version: c1de95864d73a5465492829d7cb2dd422b19ac96
+  version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
+- name: golang.org/x/crypto
+  version: b176d7def5d71bdd214203491f89843ed217f420
+  subpackages:
+  - bcrypt
+  - blowfish
+  - ssh/terminal
 - name: golang.org/x/net
   version: f01ecb60fe3835d80d9a0b7b2bf24b228c89260e
   subpackages:
@@ -113,9 +121,10 @@ imports:
   - lex/httplex
   - trace
 - name: golang.org/x/sys
-  version: 7a4fde3fda8ef580a89dbae8138c26041be14299
+  version: 43e60d72a8e2bd92ee98319ba9a384a0e9837c08
   subpackages:
   - unix
+  - windows
 - name: golang.org/x/text
   version: cfdf022e86b4ecfb646e1efbd7db175dd623a8fa
   subpackages:
@@ -144,5 +153,5 @@ imports:
   - tap
   - transport
 - name: gopkg.in/yaml.v2
-  version: 3b4ad1db5b2a649883ff3782f5f9f6fb52be71af
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 testImports: []

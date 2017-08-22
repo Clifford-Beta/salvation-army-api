@@ -186,8 +186,12 @@ func (s SqlExtraCurricularStore) GetAllLevels() StoreChannel {
 			storeChannel <- result
 			close(storeChannel)
 			return
-		}
+		}else {
+			if len(acts) == 0 {
+				result.Err = model.NewLocAppError("SqlBestTeacherStore.GetMany", "store.sql_best_teacher.getmany.app_error", nil, "No records found")
 
+			}
+		}
 		result.Data = acts
 
 		storeChannel <- result

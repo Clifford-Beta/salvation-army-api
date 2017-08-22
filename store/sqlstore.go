@@ -110,6 +110,7 @@ func setupConnection(con_type string, driver string, dataSource string, maxIdle 
 	dbmap.AddTableWithName(model.User{}, "user").SetKeys(true, "user_id")
 	dbmap.AddTableWithName(model.School{}, "school").SetKeys(true, "school_id")
 	dbmap.AddTableWithName(model.Category{}, "category").SetKeys(true, "category_id")
+	dbmap.AddTableWithName(model.Tier{}, "tier").SetKeys(true, "tier_id")
 	dbmap.AddTableWithName(model.BestStudent{}, "best_student").SetKeys(true, "best_student_id")
 	dbmap.AddTableWithName(model.BestTeacher{}, "best_teacher").SetKeys(true, "best_teacher_id")
 	dbmap.AddTableWithName(model.ExtraCurricularActivity{}, "ext_activity").SetKeys(true, "ext_activity_id")

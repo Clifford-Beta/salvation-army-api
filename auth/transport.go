@@ -28,11 +28,12 @@ func DecodeAuthRequest(_ context.Context, r *http.Request) (interface{}, error) 
 }
 
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	return json.NewEncoder(w).Encode(response)
 }
 
 type authRequest struct {
-	ClientID     string `json:"clientId"`
+	ClientID     int `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
 }
 

@@ -97,6 +97,11 @@ func (s SqlFileStore)RetrieveAll()StoreChannel  {
 			storeChannel <- result
 			close(storeChannel)
 			return
+		}else{
+			if len(infs) == 0 {
+				result.Err = model.NewLocAppError("SqlFileStore.RetrieveAll", "store.sql_file .retrieve_all.app_error", nil, "No records found")
+
+			}
 		}
 		result.Data = infs
 		storeChannel <- result

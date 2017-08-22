@@ -57,6 +57,11 @@ func (s SqlMessageStore)RetrieveAll()StoreChannel  {
 			storeChannel <- result
 			close(storeChannel)
 			return
+		}else{
+			if len(messages) == 0 {
+				result.Err = model.NewLocAppError("SqlMessageStore.RetrieveAll", "store.sql_message.retrieve_all.app_error", nil, "No records found")
+
+			}
 		}
 		result.Data = messages
 		storeChannel <- result

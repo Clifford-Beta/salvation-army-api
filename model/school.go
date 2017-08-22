@@ -21,6 +21,19 @@ type School struct {
 	Status	int	`db:"school_status" json:"status"`
 }
 
+type SchoolResult struct {
+	Id int `db:"id" json:"id"`
+	Name string `db:"name" json:"name"`
+	Email string `db:"email" json:"email"`
+	Phone string `db:"phone" json:"phone"`
+	PostalAddress string `db:"postal_address" json:"postal_address"`
+	Category string `db:"category" json:"category"`
+	Logo string `db:"logo" json:"logo"`
+	Location string `db:"location" json:"location"`
+	Description string `db:"description" json:"description"`
+	DateRegistered time.Time `db:"date_registered" json:"date_registered"`
+}
+
 
 func (o *School) ToJson() string {
 	b, err := json.Marshal(o)
