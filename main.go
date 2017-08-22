@@ -20,6 +20,7 @@ import (
 	staffsvc "salv_prj/staff"
 	infsvc "salv_prj/infrastructure"
 	actsvc "salv_prj/activity"
+	projectsvc "salv_prj/project"
 	"salv_prj/auth"
 	"salv_prj/store"
 	"github.com/go-kit/kit/log"
@@ -102,6 +103,11 @@ func main() {
 	var message msgsvc.MessageService
 	message = msgsvc.Messsageservice{}
 	message = msgsvc.LoggingMiddleware{*logger, message}
+
+//project service
+	var project projectsvc.ProjectService
+	project = projectsvc.Projectservice{}
+	project = projectsvc.LoggingMiddleware{*logger, project}
 
 	//infrastructure service
 	var infs infsvc.InfrastructureService
@@ -466,6 +472,48 @@ func main() {
 		getAllFileTypesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllFileTypesEndpoint)
 	}
 
+	//file handlers
+
+	 createFileHandler := httptransport.NewServer(
+		 createFileEndpoint,
+		 filesvc.DecodeCreateRequest,
+		 filesvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
+	 createFileTypeHandler := httptransport.NewServer(
+		 createFileTypeEndpoint,
+		 filesvc.DecodeCreateTypeRequest,
+		 filesvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
+	 getOneFileHandler := httptransport.NewServer(
+		 getOneFileEndpoint,
+		 filesvc.DecodeGetOneRequest,
+		 filesvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
+	 getOneFileTypeHandler := httptransport.NewServer(
+		 getOneFileTypeEndpoint,
+		 filesvc.DecodeGetOneRequest,
+		 filesvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
+	 getAllFilesHandler := httptransport.NewServer(
+		 getAllFilesEndpoint,
+		 filesvc.DecodeGetAllRequest,
+		 filesvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 getAllFileTypesHandler := httptransport.NewServer(
+		 getAllFileTypesEndpoint,
+		 filesvc.DecodeGetAllRequest,
+		 filesvc.EncodeResponse,
+		 jwtOptions...,
+	 )
 
 	//insfrastructure endpoints
 	var createInfEndpoint endpoint.Endpoint
@@ -503,6 +551,47 @@ func main() {
 		getAllFileTypesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllInfTypesEndpoint)
 	}
 
+	//infrastructure handlers
+	 createInfHandler  := httptransport.NewServer(
+		 createInfEndpoint,
+		 infsvc.DecodeCreateRequest,
+		 infsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
+	 createInfTypeHandler  := httptransport.NewServer(
+		 createInfTypeEndpoint,
+		 infsvc.DecodeCreateTypeRequest,
+		 infsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 getOneInfHandler  := httptransport.NewServer(
+		 getOneInfEndpoint,
+		 infsvc.DecodeGetOneRequest,
+		 infsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
+	 getOneInfTypeHandler  := httptransport.NewServer(
+		 getOneInfTypeEndpoint,
+		 infsvc.DecodeGetOneRequest,
+		 infsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
+	 getAllInfHandler  := httptransport.NewServer(
+		 getAllInfEndpoint,
+		 infsvc.DecodeGetAllRequest,
+		 infsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 getAllInfTypesHandler  := httptransport.NewServer(
+		 getAllInfTypesEndpoint,
+		 infsvc.DecodeGetAllRequest,
+		 infsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
 	//message endpoints
 	var createMessageEndpoint endpoint.Endpoint
 	{
@@ -519,6 +608,64 @@ func main() {
 		getAllMessagesEndpoint = msgsvc.MakeGetAllEndpoint(message)
 		getAllMessagesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllMessagesEndpoint)
 	}
+
+	//message handlers
+	 createMessageHandler := httptransport.NewServer(
+		 createMessageEndpoint,
+		 msgsvc.DecodeCreateRequest,
+		 msgsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 getOneMessageHandler := httptransport.NewServer(
+		 getOneMessageEndpoint,
+		 msgsvc.DecodeGetOneRequest,
+		 msgsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 getAllMessagesHandler := httptransport.NewServer(
+		 getAllMessagesEndpoint,
+		 msgsvc.DecodeGetAllRequest,
+		 msgsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+
+	//project endpoints
+	var createProjectEndpoint endpoint.Endpoint
+	{
+		createProjectEndpoint = projectsvc.MakeCreateEndpoint(project)
+		createProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(createProjectEndpoint)
+	}
+	var getOneProjectEndpoint endpoint.Endpoint
+	{
+		getOneProjectEndpoint = projectsvc.MakeGetOneEndpoint(project)
+		getOneProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getOneProjectEndpoint)
+	}
+	var getAllProjectEndpoint endpoint.Endpoint
+	{
+		getAllProjectEndpoint = projectsvc.MakeGetAllEndpoint(project)
+		getAllProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,&auth.CustomClaims{})(getAllProjectEndpoint)
+	}
+
+	//project handler
+
+	 createProjectHandler := httptransport.NewServer(
+		 createProjectEndpoint,
+		 projectsvc.DecodeCreateRequest,
+		 projectsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 getOneProjectHandler := httptransport.NewServer(
+		 getOneMessageEndpoint,
+		 projectsvc.DecodeGetOneRequest,
+		 projectsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 getAllProjectHandler := httptransport.NewServer(
+		 getAllProjectEndpoint,
+		 projectsvc.DecodeGetAllRequest,
+		 projectsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
 // staff endpoints
 	var addStaffEndpoint endpoint.Endpoint
 	{
@@ -577,6 +724,74 @@ func main() {
 		rankStudentPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256, &auth.CustomClaims{})(rankStudentPerformanceEndpoint)
 	}
 
+	//staff handlers
+
+	 addStaffHandler := httptransport.NewServer(
+		 addStaffEndpoint,
+		 staffsvc.DecodeAddStaffRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 retrieveStaffHandler := httptransport.NewServer(
+		 retrieveStaffEndpoint,
+		 staffsvc.DecodeRetrieveStaffRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 retrieveAllStaffHandler := httptransport.NewServer(
+		 retrieveAllStaffEndpoint,
+		 staffsvc.DecodeRetrieveAllStaffRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 addRoleHandler := httptransport.NewServer(
+		 addRoleEndpoint,
+		 staffsvc.DecodeAddStaffRoleRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 retrieveRoleHandler := httptransport.NewServer(
+		 retrieveRoleEndpoint,
+		 staffsvc.DecodeRetrieveStaffRoleRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 recordBestPerformingStaffHandler := httptransport.NewServer(
+		 recordBestPerformingStaffEndpoint,
+		 staffsvc.DecodeRecordBestPerformingStaffRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 recordBestPerformingStudentHandler := httptransport.NewServer(
+		 bestPerformingStudentEndpoint,
+		 staffsvc.DecodeRetrieveBestPerformingStudentRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 retrieveBestPerformingStaffHandler := httptransport.NewServer(
+		 retrieveBestPerformingStaffEndpoint,
+		 staffsvc.DecodeRetrieveBestPerformingStaffRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 retrieveBestPerformingStudentHandler := httptransport.NewServer(
+		 retrieveBestPerformingStudentEndpoint,
+		 staffsvc.DecodeRetrieveBestPerformingStudentRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 rankStaffPerformanceHandler := httptransport.NewServer(
+		 rankAllSchoolsEndpoint,
+		 staffsvc.DecodeRankStaffPerformanceRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
+	 rankStudentPerformanceHandler := httptransport.NewServer(
+		 rankStudentPerformanceEndpoint,
+		 staffsvc.DecodeRankStudentPerformanceRequest,
+		 staffsvc.EncodeResponse,
+		 jwtOptions...,
+	 )
 
 
 
@@ -784,14 +999,193 @@ func main() {
 			"/activity_performance/{id}",
 			getOnePerformanceHandler,
 		},
+		//file routes
+		Route{
+			"File ",
+			"POST",
+			"/file",
+			createFileHandler,
+		},
+		Route{
+			"File ",
+			"GET",
+			"/file/{id}",
+			getOneFileHandler,
+		},
+		Route{
+			"File",
+			"GET",
+			"/file",
+			getAllFilesHandler,
+		},
+		Route{
+			"File ",
+			"POST",
+			"/file_type",
+			createFileTypeHandler,
+		},
+		Route{
+			"File ",
+			"GET",
+			"/file_type",
+			getAllFileTypesHandler,
+		},
+		Route{
+			"File",
+			"GET",
+			"/file_type/{id}",
+			getOneFileTypeHandler,
+		},
+		//infrastructure routes
+		Route{
+			"Infrastructure",
+			"POST",
+			"/infrastructure",
+			createInfHandler,
+		},
+		Route{
+			"Infrastructure",
+			"GET",
+			"/infrastructure/{id}",
+			getOneInfHandler,
+		},
+		Route{
+			"Infrastructure",
+			"GET",
+			"/infrastructure",
+			getAllInfHandler,
+		},
+		Route{
+			"Infrastructure",
+			"POST",
+			"/infrastructure_type",
+			createInfTypeHandler,
+		},
+		Route{
+			"Infrastructure",
+			"GET",
+			"/infrastructure_type/{id}",
+			getOneInfTypeHandler,
+		},
+		Route{
+			"Infrastructure",
+			"GET",
+			"/infrastructure_type",
+			getAllInfTypesHandler,
+		},
+		//message routes
+		Route{
+			"Message",
+			"POST",
+			"/message",
+			createMessageHandler,
+		},
+		Route{
+			"Message",
+			"GET",
+			"/message/{id}",
+			getOneMessageHandler,
+		},
+		Route{
+			"Message",
+			"GET",
+			"/message",
+			getAllMessagesHandler,
+		},
+		//project routes
+		Route{
+			"Project",
+			"POST",
+			"/project",
+			createProjectHandler,
+		},
+		Route{
+			"Project",
+			"GET",
+			"/project/{id}",
+			getOneProjectHandler,
+		},
+		Route{
+			"Project",
+			"GET",
+			"/project",
+			getAllProjectHandler,
+		},
+		//staff routes
+		Route{
+			"Staff",
+			"POST",
+			"/staff",
+			addStaffHandler,
+		},
+		Route{
+			"Staff",
+			"GET",
+			"/staff/{id}",
+			retrieveStaffHandler,
+		},
+		Route{
+			"Staff",
+			"GET",
+			"/staff",
+			retrieveAllStaffHandler,
+		},
+		Route{
+			"Staff",
+			"POST",
+			"/staff_role",
+			addRoleHandler,
+		},
+		Route{
+			"Staff",
+			"GET",
+			"/staff_role",
+			retrieveRoleHandler,
+		},
+		Route{
+			"Best Teacher",
+			"POST",
+			"/best_teacher",
+			recordBestPerformingStaffHandler,
+		},
+		Route{
+			"Best Student",
+			"POST",
+			"/best_student",
+			recordBestPerformingStudentHandler,
+		},
+		Route{
+			"Best Teacher",
+			"GET",
+			"/best_teacher",
+			retrieveBestPerformingStaffHandler,
+		},
+		Route{
+			"Best Student",
+			"GET",
+			"/best_student",
+			retrieveBestPerformingStudentHandler,
+		},
+		Route{
+			"Best Teacher",
+			"GET",
+			"/rank_teacher",
+			rankStaffPerformanceHandler,
+		},
+		Route{
+			"Best Student",
+			"GET",
+			"/rank_student",
+			rankStudentPerformanceHandler,
+		},
 
 	}
 	r := APINewRouter(routes)
 	handler := cors.Default().Handler(r)
 	version1 := r.PathPrefix("/v1").Subrouter()
-	version2 := r.PathPrefix("/v2").Subrouter()
+	//version2 := r.PathPrefix("/v2").Subrouter()
 	AddRoutes(version1,routes)
-	AddRoutes(version2,routes)
+	//AddRoutes(version2,routes)
 	//r.Handle()
 	r.Handle("/metrics", stdprometheus.Handler())
 	logger.WithFields(logrus.Fields{"msg": "HTTP", "addr": ":8000"}).Info("Everything is ready, let's go !!!")

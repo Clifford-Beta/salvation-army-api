@@ -176,12 +176,12 @@ func DecodeRetrieveStaffRequest(_ context.Context, r *http.Request) (interface{}
 
 func DecodeRetrieveStaffRoleRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request staffRequest
-	vars := mux.Vars(r)
-	id,err := strconv.Atoi(vars["id"])
-	if  err != nil {
-		return request,err
-	}
-	request.Id = id
+	//vars := mux.Vars(r)
+	//id,err := strconv.Atoi(vars["id"])
+	//if  err != nil {
+	//	return request,err
+	//}
+	//request.Id = id
 	return request, nil
 }
 
