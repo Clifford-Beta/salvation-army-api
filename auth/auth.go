@@ -60,5 +60,9 @@ func (as Authservice) Auth(clientID int, clientSecret string) (string, error) {
 	//}
 }
 
+func MapClaimsFactory() jwt.Claims {
+	return jwt.MapClaims{}
+}
+
 // ErrAuth is returned when credentials are incorrect
 var ErrAuth = errors.New("Incorrect credentials")

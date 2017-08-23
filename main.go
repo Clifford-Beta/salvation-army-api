@@ -27,7 +27,6 @@ import (
 	staffsvc "salv_prj/staff"
 	"salv_prj/store"
 	usersvc "salv_prj/user"
-	"context"
 )
 
 var logger = logrus.New()
@@ -37,7 +36,7 @@ func main() {
 	//store.ConfigureApp("staging")
 	defer store.Database.Close()
 
-	ctx := context.Background()
+	//ctx := context.Background()
 	logit := log.NewLogfmtLogger(os.Stderr)
 	logger.Out = os.Stdout
 
@@ -134,34 +133,34 @@ func main() {
 	var userCreateEndpoint endpoint.Endpoint
 	{
 		userCreateEndpoint = usersvc.MakeCreateEndpoint(user)
-		userCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(userCreateEndpoint)
+		userCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory,)(userCreateEndpoint)
 	}
 	var getOneUserEndpoint endpoint.Endpoint
 	{
 		getOneUserEndpoint = usersvc.MakeGetOneEndpoint(user)
-		getOneUserEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneUserEndpoint)
+		getOneUserEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneUserEndpoint)
 	}
 
 	var loginUserEndpoint endpoint.Endpoint
 	{
 		loginUserEndpoint = usersvc.MakeLoginEndpoint(user)
-		loginUserEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(loginUserEndpoint)
+		loginUserEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(loginUserEndpoint)
 	}
 	var getAllUsersEndpoint endpoint.Endpoint
 	{
 		getAllUsersEndpoint = usersvc.MakeGetAllEndpoint(user)
-		getAllUsersEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllUsersEndpoint)
+		getAllUsersEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllUsersEndpoint)
 	}
 	// user handelers
 	userHandler := httptransport.NewServer(
-		ctx,
+
 		userCreateEndpoint,
 		usersvc.DecodeCreateRequest,
 		usersvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneUserHandler := httptransport.NewServer(
-		ctx,
+
 		getOneUserEndpoint,
 		usersvc.DecodeGetOneRequest,
 		usersvc.EncodeResponse,
@@ -169,14 +168,14 @@ func main() {
 	)
 
 	loginUserHandler := httptransport.NewServer(
-		ctx,
+
 		loginUserEndpoint,
 		usersvc.DecodeLoginRequest,
 		usersvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllUsersHandler := httptransport.NewServer(
-		ctx,
+
 		getAllUsersEndpoint,
 		usersvc.DecodeGetAllRequest,
 		usersvc.EncodeResponse,
@@ -188,73 +187,73 @@ func main() {
 	var categoryCreateEndpoint endpoint.Endpoint
 	{
 		categoryCreateEndpoint = catsvc.MakeCreateEndpoint(category)
-		categoryCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(categoryCreateEndpoint)
+		categoryCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(categoryCreateEndpoint)
 	}
 	var getOneCategoryEndpoint endpoint.Endpoint
 	{
 		getOneCategoryEndpoint = catsvc.MakeGetOneEndpoint(category)
-		getOneCategoryEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneCategoryEndpoint)
+		getOneCategoryEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneCategoryEndpoint)
 	}
 	var getAllCategoriesEndpoint endpoint.Endpoint
 	{
 		getAllCategoriesEndpoint = catsvc.MakeGetAllEndpoint(category)
-		getAllCategoriesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllCategoriesEndpoint)
+		getAllCategoriesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllCategoriesEndpoint)
 	}
 	var tierCreateEndpoint endpoint.Endpoint
 	{
 		tierCreateEndpoint = catsvc.MakeCreateTierEndpoint(category)
-		tierCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(tierCreateEndpoint)
+		tierCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(tierCreateEndpoint)
 	}
 	var getOneTierEndpoint endpoint.Endpoint
 	{
 		getOneTierEndpoint = catsvc.MakeGetOneTierEndpoint(category)
-		getOneTierEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneTierEndpoint)
+		getOneTierEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneTierEndpoint)
 	}
 	var getAllTiersEndpoint endpoint.Endpoint
 	{
 		getAllTiersEndpoint = catsvc.MakeGetAllTiersEndpoint(category)
-		getAllTiersEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllTiersEndpoint)
+		getAllTiersEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllTiersEndpoint)
 	}
 
 	//category handlers
 
 	createCategoryHandler := httptransport.NewServer(
-		ctx,
+
 		categoryCreateEndpoint,
 		catsvc.DecodeCreateRequest,
 		catsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	createTierHandler := httptransport.NewServer(
-		ctx,
+
 		tierCreateEndpoint,
 		catsvc.DecodeCreateTierRequest,
 		catsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneCategoryHandler := httptransport.NewServer(
-		ctx,
+
 		getOneCategoryEndpoint,
 		catsvc.DecodeGetOneRequest,
 		catsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneTierHandler := httptransport.NewServer(
-		ctx,
+
 		getOneTierEndpoint,
 		catsvc.DecodeGetOneRequest,
 		catsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllCategoriesHandler := httptransport.NewServer(
-		ctx,
+
 		getAllCategoriesEndpoint,
 		catsvc.DecodeGetAllRequest,
 		catsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllTiersHandler := httptransport.NewServer(
-		ctx,
+
 		getAllTiersEndpoint,
 		catsvc.DecodeGetAllRequest,
 		catsvc.EncodeResponse,
@@ -264,40 +263,40 @@ func main() {
 	var schoolCreateEndpoint endpoint.Endpoint
 	{
 		schoolCreateEndpoint = schoolsvc.MakeCreateEndpoint(school)
-		schoolCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(schoolCreateEndpoint)
+		schoolCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(schoolCreateEndpoint)
 	}
 	var getOneSchoolEndpoint endpoint.Endpoint
 	{
 		getOneSchoolEndpoint = schoolsvc.MakeGetOneEndpoint(school)
-		getOneSchoolEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneSchoolEndpoint)
+		getOneSchoolEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneSchoolEndpoint)
 	}
 	var getAllSchoolsEndpoint endpoint.Endpoint
 	{
 		getAllSchoolsEndpoint = schoolsvc.MakeGetAllEndpoint(school)
-		getAllSchoolsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllSchoolsEndpoint)
+		getAllSchoolsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllSchoolsEndpoint)
 	}
 
 	var getBestSchoolEndpoint endpoint.Endpoint
 	{
 		getBestSchoolEndpoint = schoolsvc.MakeRetrieveBestPerfomingSchoolEndpoint(school)
-		getBestSchoolEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getBestSchoolEndpoint)
+		getBestSchoolEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getBestSchoolEndpoint)
 	}
 
 	var recordSchoolPerformanceEndpoint endpoint.Endpoint
 	{
 		recordSchoolPerformanceEndpoint = schoolsvc.MakeRecordPerformanceEndpoint(school)
-		recordSchoolPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(recordSchoolPerformanceEndpoint)
+		recordSchoolPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(recordSchoolPerformanceEndpoint)
 	}
 	var rankAllSchoolsEndpoint endpoint.Endpoint
 	{
 		rankAllSchoolsEndpoint = schoolsvc.MakeRankAllSchoolsEndpoint(school)
-		rankAllSchoolsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(rankAllSchoolsEndpoint)
+		rankAllSchoolsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(rankAllSchoolsEndpoint)
 	}
 
 	//school handlers
 
 	schoolHandler := httptransport.NewServer(
-		ctx,
+
 		schoolCreateEndpoint,
 		schoolsvc.DecodeCreateRequest,
 		schoolsvc.EncodeResponse,
@@ -305,14 +304,14 @@ func main() {
 	)
 
 	recordPerformanceHandler := httptransport.NewServer(
-		ctx,
+
 		recordSchoolPerformanceEndpoint,
 		schoolsvc.DecodeRecordPerformanceRequest,
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneSchoolHandler := httptransport.NewServer(
-		ctx,
+
 		getOneSchoolEndpoint,
 		schoolsvc.DecodeGetOneRequest,
 		schoolsvc.EncodeResponse,
@@ -320,21 +319,21 @@ func main() {
 	)
 
 	getBestSchoolHandler := httptransport.NewServer(
-		ctx,
+
 		getBestSchoolEndpoint,
 		schoolsvc.DecodeGetBestSchoolRequest,
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllSchoolsHandler := httptransport.NewServer(
-		ctx,
+
 		getAllSchoolsEndpoint,
 		schoolsvc.DecodeGetAllRequest,
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	rankAllSchoolsHandler := httptransport.NewServer(
-		ctx,
+
 		rankAllSchoolsEndpoint,
 		schoolsvc.DecodeRankAllSchoolsRequest,
 		schoolsvc.EncodeResponse,
@@ -345,109 +344,109 @@ func main() {
 	var createActivityEndpoint endpoint.Endpoint
 	{
 		createActivityEndpoint = actsvc.MakeCreateActivityEndpoint(activity)
-		createActivityEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(createActivityEndpoint)
+		createActivityEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createActivityEndpoint)
 	}
 	var createLevelEndpoint endpoint.Endpoint
 	{
 		createLevelEndpoint = actsvc.MakeCreateLevelEndpoint(activity)
-		createLevelEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(createLevelEndpoint)
+		createLevelEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createLevelEndpoint)
 	}
 	var recordPerformanceEndpoint endpoint.Endpoint
 	{
 		recordPerformanceEndpoint = actsvc.MakeRecordPerformanceEndpoint(activity)
-		recordPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(recordPerformanceEndpoint)
+		recordPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(recordPerformanceEndpoint)
 	}
 	var getOneActivityEndpoint endpoint.Endpoint
 	{
 		getOneActivityEndpoint = actsvc.MakeGetOneActivityEndpoint(activity)
-		getOneActivityEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneActivityEndpoint)
+		getOneActivityEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneActivityEndpoint)
 	}
 
 	var getOneLevelEndpoint endpoint.Endpoint
 	{
 		getOneLevelEndpoint = actsvc.MakeGetOneLevelEndpoint(activity)
-		getOneLevelEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneLevelEndpoint)
+		getOneLevelEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneLevelEndpoint)
 	}
 	var getOnePerformanceEndpoint endpoint.Endpoint
 	{
 		getOnePerformanceEndpoint = actsvc.MakeGetOnePerformanceEndpoint(activity)
-		getOnePerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOnePerformanceEndpoint)
+		getOnePerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOnePerformanceEndpoint)
 	}
 	var getAllActivitiesEndpoint endpoint.Endpoint
 	{
 		getAllActivitiesEndpoint = actsvc.MakeGetAllActivitiesEndpoint(activity)
-		getAllActivitiesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllActivitiesEndpoint)
+		getAllActivitiesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllActivitiesEndpoint)
 	}
 	var getAllLevelsEndpoint endpoint.Endpoint
 	{
 		getAllLevelsEndpoint = actsvc.MakeGetAllLevelsEndpoint(activity)
-		getAllLevelsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllLevelsEndpoint)
+		getAllLevelsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllLevelsEndpoint)
 	}
 	var getAllPerformancesEndpoint endpoint.Endpoint
 	{
 		getAllPerformancesEndpoint = actsvc.MakeGetAllPerformancesEndpoint(activity)
-		getAllPerformancesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllPerformancesEndpoint)
+		getAllPerformancesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllPerformancesEndpoint)
 	}
 
 	//activity handlers
 	createActivityHandler := httptransport.NewServer(
-		ctx,
+
 		createActivityEndpoint,
 		actsvc.DecodeCreateActivityRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	createLevelHandler := httptransport.NewServer(
-		ctx,
+
 		createLevelEndpoint,
 		actsvc.DecodeCreateLevelRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	recordactivityPerformanceHandler := httptransport.NewServer(
-		ctx,
+
 		recordPerformanceEndpoint,
 		actsvc.DecodeRecordPerformanceRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneActivityHandler := httptransport.NewServer(
-		ctx,
+
 		getOneActivityEndpoint,
 		actsvc.DecodeGetOneRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneLevelHandler := httptransport.NewServer(
-		ctx,
+
 		getOneLevelEndpoint,
 		actsvc.DecodeGetOneRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOnePerformanceHandler := httptransport.NewServer(
-		ctx,
+
 		getOnePerformanceEndpoint,
 		actsvc.DecodeGetOneRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllActivitiesHandler := httptransport.NewServer(
-		ctx,
+
 		getAllActivitiesEndpoint,
 		actsvc.DecodeGetAllRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllLevelsHandler := httptransport.NewServer(
-		ctx,
+
 		getAllLevelsEndpoint,
 		actsvc.DecodeGetAllRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllPerformancesHandler := httptransport.NewServer(
-		ctx,
+
 		getAllPerformancesEndpoint,
 		actsvc.DecodeGetAllRequest,
 		actsvc.EncodeResponse,
@@ -458,42 +457,42 @@ func main() {
 	var createFileEndpoint endpoint.Endpoint
 	{
 		createFileEndpoint = filesvc.MakeCreateEndpoint(file)
-		createFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(createFileEndpoint)
+		createFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createFileEndpoint)
 	}
 
 	var createFileTypeEndpoint endpoint.Endpoint
 	{
 		createFileTypeEndpoint = filesvc.MakeCreateTypeEndpoint(file)
-		createFileTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(createFileTypeEndpoint)
+		createFileTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createFileTypeEndpoint)
 	}
 
 	var getOneFileEndpoint endpoint.Endpoint
 	{
 		getOneFileEndpoint = filesvc.MakeGetOneEndpoint(file)
-		getOneFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneFileEndpoint)
+		getOneFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneFileEndpoint)
 	}
 
 	var getOneFileTypeEndpoint endpoint.Endpoint
 	{
 		getOneFileTypeEndpoint = filesvc.MakeGetOneTypeEndpoint(file)
-		getOneFileTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneFileTypeEndpoint)
+		getOneFileTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneFileTypeEndpoint)
 	}
 
 	var getAllFilesEndpoint endpoint.Endpoint
 	{
 		getAllFilesEndpoint = filesvc.MakeGetAllEndpoint(file)
-		getAllFilesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllFilesEndpoint)
+		getAllFilesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllFilesEndpoint)
 	}
 	var getAllFileTypesEndpoint endpoint.Endpoint
 	{
 		getAllFileTypesEndpoint = filesvc.MakeGetAllTypesEndpoint(file)
-		getAllFileTypesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllFileTypesEndpoint)
+		getAllFileTypesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllFileTypesEndpoint)
 	}
 
 	//file handlers
 
 	createFileHandler := httptransport.NewServer(
-		ctx,
+
 		createFileEndpoint,
 		filesvc.DecodeCreateRequest,
 		filesvc.EncodeResponse,
@@ -501,7 +500,7 @@ func main() {
 	)
 
 	createFileTypeHandler := httptransport.NewServer(
-		ctx,
+
 		createFileTypeEndpoint,
 		filesvc.DecodeCreateTypeRequest,
 		filesvc.EncodeResponse,
@@ -509,7 +508,7 @@ func main() {
 	)
 
 	getOneFileHandler := httptransport.NewServer(
-		ctx,
+
 		getOneFileEndpoint,
 		filesvc.DecodeGetOneRequest,
 		filesvc.EncodeResponse,
@@ -517,7 +516,7 @@ func main() {
 	)
 
 	getOneFileTypeHandler := httptransport.NewServer(
-		ctx,
+
 		getOneFileTypeEndpoint,
 		filesvc.DecodeGetOneRequest,
 		filesvc.EncodeResponse,
@@ -525,14 +524,14 @@ func main() {
 	)
 
 	getAllFilesHandler := httptransport.NewServer(
-		ctx,
+
 		getAllFilesEndpoint,
 		filesvc.DecodeGetAllRequest,
 		filesvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllFileTypesHandler := httptransport.NewServer(
-		ctx,
+
 		getAllFileTypesEndpoint,
 		filesvc.DecodeGetAllRequest,
 		filesvc.EncodeResponse,
@@ -543,41 +542,41 @@ func main() {
 	var createInfEndpoint endpoint.Endpoint
 	{
 		createInfEndpoint = infsvc.MakeCreateEndpoint(infs)
-		createInfEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(createInfEndpoint)
+		createInfEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createInfEndpoint)
 	}
 
 	var createInfTypeEndpoint endpoint.Endpoint
 	{
 		createInfTypeEndpoint = infsvc.MakeCreateTypeEndpoint(infs)
-		createInfTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(createInfTypeEndpoint)
+		createInfTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createInfTypeEndpoint)
 	}
 
 	var getOneInfEndpoint endpoint.Endpoint
 	{
 		getOneFileEndpoint = infsvc.MakeGetOneEndpoint(infs)
-		getOneFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneInfEndpoint)
+		getOneFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneInfEndpoint)
 	}
 
 	var getOneInfTypeEndpoint endpoint.Endpoint
 	{
 		getOneFileTypeEndpoint = infsvc.MakeGetOneTypeEndpoint(infs)
-		getOneFileTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneInfTypeEndpoint)
+		getOneFileTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneInfTypeEndpoint)
 	}
 
 	var getAllInfEndpoint endpoint.Endpoint
 	{
 		getAllFilesEndpoint = infsvc.MakeGetAllEndpoint(infs)
-		getAllFilesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllInfEndpoint)
+		getAllFilesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllInfEndpoint)
 	}
 	var getAllInfTypesEndpoint endpoint.Endpoint
 	{
 		getAllFileTypesEndpoint = infsvc.MakeGetAllTypesEndpoint(infs)
-		getAllFileTypesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllInfTypesEndpoint)
+		getAllFileTypesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllInfTypesEndpoint)
 	}
 
 	//infrastructure handlers
 	createInfHandler := httptransport.NewServer(
-		ctx,
+
 		createInfEndpoint,
 		infsvc.DecodeCreateRequest,
 		infsvc.EncodeResponse,
@@ -585,14 +584,14 @@ func main() {
 	)
 
 	createInfTypeHandler := httptransport.NewServer(
-		ctx,
+
 		createInfTypeEndpoint,
 		infsvc.DecodeCreateTypeRequest,
 		infsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneInfHandler := httptransport.NewServer(
-		ctx,
+
 		getOneInfEndpoint,
 		infsvc.DecodeGetOneRequest,
 		infsvc.EncodeResponse,
@@ -600,7 +599,7 @@ func main() {
 	)
 
 	getOneInfTypeHandler := httptransport.NewServer(
-		ctx,
+
 		getOneInfTypeEndpoint,
 		infsvc.DecodeGetOneRequest,
 		infsvc.EncodeResponse,
@@ -608,14 +607,14 @@ func main() {
 	)
 
 	getAllInfHandler := httptransport.NewServer(
-		ctx,
+
 		getAllInfEndpoint,
 		infsvc.DecodeGetAllRequest,
 		infsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllInfTypesHandler := httptransport.NewServer(
-		ctx,
+
 		getAllInfTypesEndpoint,
 		infsvc.DecodeGetAllRequest,
 		infsvc.EncodeResponse,
@@ -626,36 +625,36 @@ func main() {
 	var createMessageEndpoint endpoint.Endpoint
 	{
 		createMessageEndpoint = msgsvc.MakeCreateEndpoint(message)
-		createMessageEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(createMessageEndpoint)
+		createMessageEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createMessageEndpoint)
 	}
 	var getOneMessageEndpoint endpoint.Endpoint
 	{
 		getOneMessageEndpoint = msgsvc.MakeGetOneEndpoint(message)
-		getOneMessageEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneMessageEndpoint)
+		getOneMessageEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneMessageEndpoint)
 	}
 	var getAllMessagesEndpoint endpoint.Endpoint
 	{
 		getAllMessagesEndpoint = msgsvc.MakeGetAllEndpoint(message)
-		getAllMessagesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllMessagesEndpoint)
+		getAllMessagesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllMessagesEndpoint)
 	}
 
 	//message handlers
 	createMessageHandler := httptransport.NewServer(
-		ctx,
+
 		createMessageEndpoint,
 		msgsvc.DecodeCreateRequest,
 		msgsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneMessageHandler := httptransport.NewServer(
-		ctx,
+
 		getOneMessageEndpoint,
 		msgsvc.DecodeGetOneRequest,
 		msgsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllMessagesHandler := httptransport.NewServer(
-		ctx,
+
 		getAllMessagesEndpoint,
 		msgsvc.DecodeGetAllRequest,
 		msgsvc.EncodeResponse,
@@ -666,37 +665,37 @@ func main() {
 	var createProjectEndpoint endpoint.Endpoint
 	{
 		createProjectEndpoint = projectsvc.MakeCreateEndpoint(project)
-		createProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(createProjectEndpoint)
+		createProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createProjectEndpoint)
 	}
 	var getOneProjectEndpoint endpoint.Endpoint
 	{
 		getOneProjectEndpoint = projectsvc.MakeGetOneEndpoint(project)
-		getOneProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getOneProjectEndpoint)
+		getOneProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneProjectEndpoint)
 	}
 	var getAllProjectEndpoint endpoint.Endpoint
 	{
 		getAllProjectEndpoint = projectsvc.MakeGetAllEndpoint(project)
-		getAllProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(getAllProjectEndpoint)
+		getAllProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllProjectEndpoint)
 	}
 
 	//project handler
 
 	createProjectHandler := httptransport.NewServer(
-		ctx,
+
 		createProjectEndpoint,
 		projectsvc.DecodeCreateRequest,
 		projectsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getOneProjectHandler := httptransport.NewServer(
-		ctx,
+
 		getOneMessageEndpoint,
 		projectsvc.DecodeGetOneRequest,
 		projectsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	getAllProjectHandler := httptransport.NewServer(
-		ctx,
+
 		getAllProjectEndpoint,
 		projectsvc.DecodeGetAllRequest,
 		projectsvc.EncodeResponse,
@@ -706,134 +705,134 @@ func main() {
 	var addStaffEndpoint endpoint.Endpoint
 	{
 		addStaffEndpoint = staffsvc.MakeAddStaffEndpoint(staff)
-		addStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(addStaffEndpoint)
+		addStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(addStaffEndpoint)
 	}
 	var retrieveStaffEndpoint endpoint.Endpoint
 	{
 		retrieveStaffEndpoint = staffsvc.MakeRetrieveStaffEndpoint(staff)
-		retrieveStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(retrieveStaffEndpoint)
+		retrieveStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(retrieveStaffEndpoint)
 	}
 	var retrieveAllStaffEndpoint endpoint.Endpoint
 	{
 		retrieveAllStaffEndpoint = staffsvc.MakeRetrieveAllStaffEndpoint(staff)
-		retrieveAllStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(retrieveAllStaffEndpoint)
+		retrieveAllStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(retrieveAllStaffEndpoint)
 	}
 	var addRoleEndpoint endpoint.Endpoint
 	{
 		addRoleEndpoint = staffsvc.MakeAddStaffRoleEndpoint(staff)
-		addRoleEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(addRoleEndpoint)
+		addRoleEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(addRoleEndpoint)
 	}
 	var retrieveRoleEndpoint endpoint.Endpoint
 	{
 		retrieveRoleEndpoint = staffsvc.MakeRetrieveStaffRoleEndpoint(staff)
-		retrieveRoleEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(retrieveRoleEndpoint)
+		retrieveRoleEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(retrieveRoleEndpoint)
 	}
 	var recordBestPerformingStaffEndpoint endpoint.Endpoint
 	{
 		recordBestPerformingStaffEndpoint = staffsvc.MakeRecordBestPerformingStaffEndpoint(staff)
-		recordBestPerformingStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(recordBestPerformingStaffEndpoint)
+		recordBestPerformingStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(recordBestPerformingStaffEndpoint)
 	}
 
 	var bestPerformingStudentEndpoint endpoint.Endpoint
 	{
 		bestPerformingStudentEndpoint = staffsvc.MakeRecordBestPerformingStudentEndpoint(staff)
-		bestPerformingStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(bestPerformingStudentEndpoint)
+		bestPerformingStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(bestPerformingStudentEndpoint)
 	}
 	var retrieveBestPerformingStaffEndpoint endpoint.Endpoint
 	{
 		retrieveBestPerformingStaffEndpoint = staffsvc.MakeRetrieveBestPerformingStaffEndpoint(staff)
-		retrieveBestPerformingStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(retrieveBestPerformingStaffEndpoint)
+		retrieveBestPerformingStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(retrieveBestPerformingStaffEndpoint)
 	}
 	var retrieveBestPerformingStudentEndpoint endpoint.Endpoint
 	{
 		retrieveBestPerformingStudentEndpoint = staffsvc.MakeRetrieveBestPerformingStudentEndpoint(staff)
-		retrieveBestPerformingStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(retrieveBestPerformingStudentEndpoint)
+		retrieveBestPerformingStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(retrieveBestPerformingStudentEndpoint)
 	}
 	var rankStaffPerformanceEndpoint endpoint.Endpoint
 	{
 		rankStaffPerformanceEndpoint = staffsvc.MakeRankStaffPerformanceEndpoint(staff)
-		rankStaffPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(rankStaffPerformanceEndpoint)
+		rankStaffPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(rankStaffPerformanceEndpoint)
 	}
 	var rankStudentPerformanceEndpoint endpoint.Endpoint
 	{
 		rankStudentPerformanceEndpoint = staffsvc.MakeRankStudentPerformanceEndpoint(staff)
-		rankStudentPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256)(rankStudentPerformanceEndpoint)
+		rankStudentPerformanceEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(rankStudentPerformanceEndpoint)
 	}
 
 	//staff handlers
 
 	addStaffHandler := httptransport.NewServer(
-		ctx,
+
 		addStaffEndpoint,
 		staffsvc.DecodeAddStaffRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	retrieveStaffHandler := httptransport.NewServer(
-		ctx,
+
 		retrieveStaffEndpoint,
 		staffsvc.DecodeRetrieveStaffRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	retrieveAllStaffHandler := httptransport.NewServer(
-		ctx,
+
 		retrieveAllStaffEndpoint,
 		staffsvc.DecodeRetrieveAllStaffRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	addRoleHandler := httptransport.NewServer(
-		ctx,
+
 		addRoleEndpoint,
 		staffsvc.DecodeAddStaffRoleRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	retrieveRoleHandler := httptransport.NewServer(
-		ctx,
+
 		retrieveRoleEndpoint,
 		staffsvc.DecodeRetrieveStaffRoleRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	recordBestPerformingStaffHandler := httptransport.NewServer(
-		ctx,
+
 		recordBestPerformingStaffEndpoint,
 		staffsvc.DecodeRecordBestPerformingStaffRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	recordBestPerformingStudentHandler := httptransport.NewServer(
-		ctx,
+
 		bestPerformingStudentEndpoint,
 		staffsvc.DecodeRetrieveBestPerformingStudentRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	retrieveBestPerformingStaffHandler := httptransport.NewServer(
-		ctx,
+
 		retrieveBestPerformingStaffEndpoint,
 		staffsvc.DecodeRetrieveBestPerformingStaffRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	retrieveBestPerformingStudentHandler := httptransport.NewServer(
-		ctx,
+
 		retrieveBestPerformingStudentEndpoint,
 		staffsvc.DecodeRetrieveBestPerformingStudentRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	rankStaffPerformanceHandler := httptransport.NewServer(
-		ctx,
+
 		rankAllSchoolsEndpoint,
 		staffsvc.DecodeRankStaffPerformanceRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
 	rankStudentPerformanceHandler := httptransport.NewServer(
-		ctx,
+
 		rankStudentPerformanceEndpoint,
 		staffsvc.DecodeRankStudentPerformanceRequest,
 		staffsvc.EncodeResponse,
@@ -870,7 +869,7 @@ func main() {
 	}
 
 	authHandler := httptransport.NewServer(
-		ctx,
+
 		auth.MakeAuthEndpoint(authy),
 		auth.DecodeAuthRequest,
 		auth.EncodeResponse,
