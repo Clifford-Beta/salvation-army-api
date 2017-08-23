@@ -33,7 +33,7 @@ func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface
 }
 
 type authRequest struct {
-	ClientID     int `json:"clientId"`
+	ClientID     int    `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
 }
 

@@ -1,11 +1,10 @@
 package message
 
-
 import (
 	"fmt"
-	"time"
 	"github.com/go-kit/kit/metrics"
 	"salv_prj/model"
+	"time"
 )
 
 type InstrumentingMiddleware struct {
@@ -36,8 +35,6 @@ func (mw InstrumentingMiddleware) GetOne(id int) (output model.Message, err erro
 	output, err = mw.Next.GetOne(id)
 	return
 }
-
-
 
 func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.Message, err error) {
 	defer func(begin time.Time) {

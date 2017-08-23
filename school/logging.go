@@ -1,10 +1,10 @@
 package school
 
 import (
-"time"
-//"github.com/go-kit/kit/log"
-"salv_prj/model"
+	"time"
+	//"github.com/go-kit/kit/log"
 	log "github.com/sirupsen/logrus"
+	"salv_prj/model"
 )
 
 type LoggingMiddleware struct {
@@ -15,10 +15,10 @@ type LoggingMiddleware struct {
 func (mw LoggingMiddleware) Create(school model.School) (output *model.School, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": school,
+			"input":  school,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info( "service = ","school ","method = ", "create")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "create")
 	}(time.Now())
 	output, err = mw.Next.Create(school)
 	return
@@ -27,59 +27,58 @@ func (mw LoggingMiddleware) Create(school model.School) (output *model.School, e
 func (mw LoggingMiddleware) GetOne(id int) (output model.School, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": id ,
+			"input":  id,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","school ","method = ", "getone",)
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "getone")
 	}(time.Now())
 	output, err = mw.Next.GetOne(id)
 	return
 }
 
-
 func (mw LoggingMiddleware) GetAll() (output map[string][]*model.SchoolResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","school ","method = ", "getall")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "getall")
 	}(time.Now())
 	output, err = mw.Next.GetAll()
 	return
 }
 
-func (mw LoggingMiddleware) RecordPerformance(performance *model.SchoolPerformance)( output *model.SchoolPerformance, err error)  {
+func (mw LoggingMiddleware) RecordPerformance(performance *model.SchoolPerformance) (output *model.SchoolPerformance, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"params":map[string]interface{}{"performance":performance},
+			"params": map[string]interface{}{"performance": performance},
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","school ","method = ", "recordperformance")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "recordperformance")
 	}(time.Now())
 	output, err = mw.Next.RecordPerformance(performance)
 	return
 }
 
-func (mw LoggingMiddleware) GetBestSchool(from,to int)(output model.SchoolPerformanceResult,err error)  {
+func (mw LoggingMiddleware) GetBestSchool(from, to int) (output model.SchoolPerformanceResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"params":map[string]interface{}{"from":from,"to":to},
+			"params": map[string]interface{}{"from": from, "to": to},
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","school ","method = ","getbestschool")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "getbestschool")
 	}(time.Now())
-	output, err = mw.Next.GetBestSchool(from,to)
+	output, err = mw.Next.GetBestSchool(from, to)
 	return
 }
 
-func (mw LoggingMiddleware) RankAllSchools(from,to int)(output map[string][]*model.SchoolPerformanceResult,err error)  {
+func (mw LoggingMiddleware) RankAllSchools(from, to int) (output map[string][]*model.SchoolPerformanceResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"params":map[string]interface{}{"from":from,"to":to},
+			"params": map[string]interface{}{"from": from, "to": to},
 			"output": output,
-			"err":err,
-			"took": time.Since(begin)}).Info("service = ","school ","method = ","rankallschools")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "rankallschools")
 	}(time.Now())
-	output, err = mw.Next.RankAllSchools(from,to)
+	output, err = mw.Next.RankAllSchools(from, to)
 	return
 }

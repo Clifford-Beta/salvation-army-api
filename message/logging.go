@@ -1,10 +1,9 @@
 package message
 
 import (
-	"time"
-	"salv_prj/model"
 	log "github.com/sirupsen/logrus"
-
+	"salv_prj/model"
+	"time"
 )
 
 type LoggingMiddleware struct {
@@ -15,10 +14,10 @@ type LoggingMiddleware struct {
 func (mw LoggingMiddleware) Create(message model.Message) (output *model.Message, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": message,
+			"input":  message,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","message ","method = ", "create")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "message ", "method = ", "create")
 
 	}(time.Now())
 	output, err = mw.Next.Create(message)
@@ -28,25 +27,23 @@ func (mw LoggingMiddleware) Create(message model.Message) (output *model.Message
 func (mw LoggingMiddleware) GetOne(id int) (output model.Message, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": id,
+			"input":  id,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","message ","method = ", "getone")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "message ", "method = ", "getone")
 
 	}(time.Now())
 	output, err = mw.Next.GetOne(id)
 	return
 }
 
-
-
 func (mw LoggingMiddleware) GetAll() (output map[string][]*model.Message, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": "",
+			"input":  "",
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","message ","method = ", "getall")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "message ", "method = ", "getall")
 
 	}(time.Now())
 	output, err = mw.Next.GetAll()

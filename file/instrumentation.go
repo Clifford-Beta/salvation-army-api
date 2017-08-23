@@ -1,11 +1,10 @@
 package file
 
-
 import (
 	"fmt"
-	"time"
 	"github.com/go-kit/kit/metrics"
 	"salv_prj/model"
+	"time"
 )
 
 type InstrumentingMiddleware struct {
@@ -37,7 +36,7 @@ func (mw InstrumentingMiddleware) CreateType(file model.FileType) (output *model
 	return
 }
 
-func (mw InstrumentingMiddleware) GetOne( id int) (output model.File, err error) {
+func (mw InstrumentingMiddleware) GetOne(id int) (output model.File, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_one", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
@@ -48,7 +47,7 @@ func (mw InstrumentingMiddleware) GetOne( id int) (output model.File, err error)
 	return
 }
 
-func (mw InstrumentingMiddleware) GetOneType( id int) (output model.FileType, err error) {
+func (mw InstrumentingMiddleware) GetOneType(id int) (output model.FileType, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_one", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
@@ -58,8 +57,6 @@ func (mw InstrumentingMiddleware) GetOneType( id int) (output model.FileType, er
 	output, err = mw.Next.GetOneType(id)
 	return
 }
-
-
 
 func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.File, err error) {
 	defer func(begin time.Time) {

@@ -5,13 +5,13 @@ import (
 	"crypto/rand"
 	"encoding/base32"
 	"encoding/json"
+	"github.com/pborman/uuid"
 	"io"
 	"io/ioutil"
 	"net/mail"
 	"regexp"
 	"strings"
 	"time"
-	"github.com/pborman/uuid"
 )
 
 const (
@@ -40,7 +40,6 @@ type AppError struct {
 func (er *AppError) Error() string {
 	return er.Where + ": " + er.Message + ", " + er.DetailedError
 }
-
 
 func (er *AppError) ToJson() string {
 	b, err := json.Marshal(er)
@@ -252,8 +251,6 @@ var reservedName = []string{
 	"oauth",
 }
 
-
-
 var validAlphaNumUnderscore = regexp.MustCompile(`^[a-z0-9]+([a-z\-\_0-9]+|(__)?)[a-z0-9]+$`)
 var validAlphaNum = regexp.MustCompile(`^[a-z0-9]+([a-z\-0-9]+|(__)?)[a-z0-9]+$`)
 
@@ -271,7 +268,6 @@ func IsValidAlphaNum(s string, allowUnderscores bool) bool {
 
 	return true
 }
-
 
 func ToJson(o interface{}) string {
 	b, err := json.Marshal(o)

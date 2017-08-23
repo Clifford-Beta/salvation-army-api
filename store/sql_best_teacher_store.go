@@ -29,7 +29,6 @@ func (s SqlBestTeacherStore) Save(best *model.BestTeacher) StoreChannel {
 	return storeChannel
 }
 
-
 func (s SqlBestTeacherStore) Delete(best *model.BestTeacher) StoreChannel {
 	storeChannel := make(StoreChannel)
 	go func() {
@@ -49,7 +48,7 @@ func (s SqlBestTeacherStore) Delete(best *model.BestTeacher) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlBestTeacherStore) Get(from,to int) StoreChannel {
+func (s SqlBestTeacherStore) Get(from, to int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
@@ -79,12 +78,11 @@ func (s SqlBestTeacherStore) Get(from,to int) StoreChannel {
 	return storeChannel
 }
 
-
-func (s SqlBestTeacherStore)GetMany() StoreChannel  {
+func (s SqlBestTeacherStore) GetMany() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var bests [] *model.BestTeacherResult
+		var bests []*model.BestTeacherResult
 		_, err := s.GetMaster().Select(&bests, `select best_teacher_id as id, school.school_name as school, best_teacher_name as name, best_teacher_class as
 			 class, best_teacher_year as year, best_teacher_technique as technique, best_teacher_photo as photo,
 			 best_teacher_mark as mark,category.category_name as category, best_teacher.timestamp as time_stamp
@@ -96,15 +94,15 @@ func (s SqlBestTeacherStore)GetMany() StoreChannel  {
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlBestTeacherStore.GetMany", "store.sql_best_teacher .getmany.app_error", nil, err.Error())
 
-		}else {
+		} else {
 			if len(bests) == 0 {
 				result.Err = model.NewLocAppError("SqlBestTeacherStore.GetMany", "store.sql_best_teacher.getmany.app_error", nil, "No records found")
 
 			}
 		}
-				result.Data = bests
+		result.Data = bests
 
-		storeChannel<-result
+		storeChannel <- result
 		close(storeChannel)
 	}()
 	return storeChannel

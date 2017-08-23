@@ -3,12 +3,12 @@ package staff
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"salv_prj/model"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/gorilla/mux"
+	"net/http"
+	"salv_prj/model"
 	"strconv"
-	"fmt"
 )
 
 func MakeAddStaffEndpoint(svc StaffService) endpoint.Endpoint {
@@ -89,7 +89,7 @@ func MakeRecordBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint
 func MakeRetrieveBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
-		v, err := svc.RetrieveBestPerformingStaff(req.From,req.To)
+		v, err := svc.RetrieveBestPerformingStaff(req.From, req.To)
 		if err != nil {
 			return v, err
 		}
@@ -100,7 +100,7 @@ func MakeRetrieveBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint
 func MakeRetrieveBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
-		v, err := svc.RetrieveBestPerformingStudent(req.From,req.To)
+		v, err := svc.RetrieveBestPerformingStudent(req.From, req.To)
 		if err != nil {
 			return v, err
 		}
@@ -111,7 +111,7 @@ func MakeRetrieveBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoi
 func MakeRankStaffPerformanceEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
-		v, err := svc.RankStaffPerformance(req.From,req.To)
+		v, err := svc.RankStaffPerformance(req.From, req.To)
 		if err != nil {
 			return v, err
 		}
@@ -122,7 +122,7 @@ func MakeRankStaffPerformanceEndpoint(svc StaffService) endpoint.Endpoint {
 func MakeRankStudentPerformanceEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
-		v, err := svc.RankStudentPerformance(req.From,req.To)
+		v, err := svc.RankStudentPerformance(req.From, req.To)
 		if err != nil {
 			return v, err
 		}
@@ -162,13 +162,12 @@ func DecodeRecordBestPerformingStudentRequest(_ context.Context, r *http.Request
 	return request, nil
 }
 
-
 func DecodeRetrieveStaffRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request staffRequest
 	vars := mux.Vars(r)
-	id,err := strconv.Atoi(vars["id"])
-	if  err != nil {
-		return request,err
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return request, err
 	}
 	request.Id = id
 	return request, nil
@@ -244,15 +243,15 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	})
 }
 
-
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	return json.NewEncoder(w).Encode(response)
 }
+
 type staffRequest struct {
-	Id int `json:"id"`
+	Id   int `json:"id"`
 	From int `json:"from"`
-	To int `json:"to"`
+	To   int `json:"to"`
 }
 
 //type userResponse struct {

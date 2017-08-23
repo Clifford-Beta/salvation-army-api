@@ -6,7 +6,7 @@ type SqlProjectStore struct {
 	*SqlStore
 }
 
-func (s SqlProjectStore)Create(project *model.Project) StoreChannel {
+func (s SqlProjectStore) Create(project *model.Project) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
@@ -25,14 +25,12 @@ func (s SqlProjectStore)Create(project *model.Project) StoreChannel {
 	return storeChannel
 }
 
-
-
-func (s SqlProjectStore)Retrieve(id int) StoreChannel {
+func (s SqlProjectStore) Retrieve(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var project model.Project
-		err := s.master.SelectOne(&project,"select * from project where project_id=?",id)
+		err := s.master.SelectOne(&project, "select * from project where project_id=?", id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlProjectStore.GetType", "store.sql_project_type.get.app_error", nil, err.Error())
 			storeChannel <- result
@@ -47,12 +45,12 @@ func (s SqlProjectStore)Retrieve(id int) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlProjectStore)RetrieveAll()StoreChannel  {
+func (s SqlProjectStore) RetrieveAll() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var project []model.ProjectResult
-		_,err := s.master.Select(&project,
+		_, err := s.master.Select(&project,
 			`
 			select project.project_id as id, school.school_name as school, project.project_name as name,
 			project.project_start as start, project.project_duration as duration,
@@ -78,4 +76,3 @@ func (s SqlProjectStore)RetrieveAll()StoreChannel  {
 	}()
 	return storeChannel
 }
-

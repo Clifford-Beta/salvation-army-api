@@ -2,21 +2,20 @@ package store
 
 import (
 	//"testing"
+	"fmt"
 	"salv_prj/model"
 	"testing"
 	"time"
-	"fmt"
 )
 
 var pass string = "BT1290%R65snh8"
 var user = model.User{
 	//Id:1,
-	Name:"Willyss Beta",
-	Email:"betawillys@gmail.com",
-	Password:"12345",
-	Status:1,
-	DateAdd:time.Now(),
-
+	Name:     "Willyss Beta",
+	Email:    "betawillys@gmail.com",
+	Password: "12345",
+	Status:   1,
+	DateAdd:  time.Now(),
 }
 
 func TestSqlUserStore_Save(t *testing.T) {
@@ -48,7 +47,7 @@ func TestSqlUserStore_GetManyt(t *testing.T) {
 	if me.Err != nil {
 		t.Fatal("Getting  insurer user failed with", me.Err)
 	}
-	for _,v := range me.Data.([] *model.User) {
+	for _, v := range me.Data.([]*model.User) {
 		fmt.Println(*v)
 
 	}

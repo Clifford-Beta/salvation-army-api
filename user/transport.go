@@ -3,12 +3,12 @@ package user
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"salv_prj/model"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/gorilla/mux"
+	"net/http"
+	"salv_prj/model"
 	"strconv"
-	"fmt"
 )
 
 func MakeCreateEndpoint(svc UserService) endpoint.Endpoint {
@@ -36,7 +36,7 @@ func MakeGetOneEndpoint(svc UserService) endpoint.Endpoint {
 func MakeLoginEndpoint(svc UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(loginRequest)
-		v, err := svc.Login(req.Email,req.Password)
+		v, err := svc.Login(req.Email, req.Password)
 		if err != nil {
 			return v, err
 		}
@@ -66,9 +66,9 @@ func DecodeCreateRequest(_ context.Context, r *http.Request) (interface{}, error
 func DecodeGetOneRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request userRequest
 	vars := mux.Vars(r)
-	id,err := strconv.Atoi(vars["id"])
-	if  err != nil {
-		return request,err
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return request, err
 	}
 	request.Id = id
 	return request, nil
@@ -101,17 +101,17 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	})
 }
 
-
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	return json.NewEncoder(w).Encode(response)
 }
+
 type userRequest struct {
 	Id int `json:"id"`
 }
 
 type loginRequest struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 

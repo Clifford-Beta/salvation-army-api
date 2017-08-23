@@ -2,8 +2,8 @@ package auth
 
 import (
 	"fmt"
-	"time"
 	"github.com/go-kit/kit/metrics"
+	"time"
 )
 
 type InstrumentingAuthMiddleware struct {

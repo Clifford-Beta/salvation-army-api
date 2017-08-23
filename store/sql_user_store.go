@@ -1,10 +1,10 @@
 package store
 
 import (
-	"salv_prj/model"
-	"net/http"
-	"strconv"
 	"log"
+	"net/http"
+	"salv_prj/model"
+	"strconv"
 )
 
 type SqlUserStore struct {
@@ -207,14 +207,14 @@ func (s SqlUserStore) GetByEmailAndPassword(email, password string) StoreChannel
 		var user model.User
 		err := s.master.SelectOne(&user, "SELECT * from user WHERE email= :email", map[string]interface{}{"email": email})
 		//err := s.master.SelectOne(&user, "select * from user where email = :email and password = 12345",map[string]interface{}{"email": email,"password": password})
-		log.Println("This is the password provided",password, email)
+		log.Println("This is the password provided", password, email)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlUserStore.GetByEmailAndPassword", "store.sql_user.get.app_error", nil, "user ="+email+", "+err.Error())
 			storeChannel <- result
 			close(storeChannel)
 			return
 		}
-		log.Println("This is the user password",user.Password, "And this is the provided password",model.HashPassword(password))
+		log.Println("This is the user password", user.Password, "And this is the provided password", model.HashPassword(password))
 		if !model.ComparePassword(user.Password, password) {
 			result.Err = model.NewLocAppError("SqlUserStore.GetEmailAndPassword", "store.sql_user.get.app_error", nil,
 				"user ="+email+":, The password provided does not match your current password")
@@ -233,18 +233,17 @@ func (s SqlUserStore) GetByEmailAndPassword(email, password string) StoreChannel
 	return storeChannel
 }
 
-
-func (s SqlUserStore)GetMany() StoreChannel  {
+func (s SqlUserStore) GetMany() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var users [] *model.User
+		var users []*model.User
 		_, err := s.GetMaster().Select(&users, "SELECT * FROM user WHERE status=1")
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlUsertore.GetMany", "store.sql_insurer_user.getmany.app_error", nil, err.Error())
 
-		}else {
-			for _,user := range users {
+		} else {
+			for _, user := range users {
 				user.Sanitize()
 			}
 			if len(users) == 0 {
@@ -253,12 +252,11 @@ func (s SqlUserStore)GetMany() StoreChannel  {
 			}
 			result.Data = users
 		}
-		storeChannel<-result
+		storeChannel <- result
 		close(storeChannel)
 	}()
 	return storeChannel
 }
-
 
 //func (s SqlUserStore)GetManyByInsurer(id int) StoreChannel  {
 //	storeChannel := make(StoreChannel, 1)

@@ -3,12 +3,12 @@ package project
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"salv_prj/model"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/gorilla/mux"
+	"net/http"
+	"salv_prj/model"
 	"strconv"
-	"fmt"
 )
 
 func MakeCreateEndpoint(svc ProjectService) endpoint.Endpoint {
@@ -22,7 +22,6 @@ func MakeCreateEndpoint(svc ProjectService) endpoint.Endpoint {
 	}
 }
 
-
 func MakeGetOneEndpoint(svc ProjectService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(msgRequest)
@@ -34,9 +33,6 @@ func MakeGetOneEndpoint(svc ProjectService) endpoint.Endpoint {
 	}
 }
 
-
-
-
 func MakeGetAllEndpoint(svc ProjectService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		v, err := svc.GetAll()
@@ -46,8 +42,6 @@ func MakeGetAllEndpoint(svc ProjectService) endpoint.Endpoint {
 		return v, nil
 	}
 }
-
-
 
 func DecodeCreateRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request model.File
@@ -68,14 +62,13 @@ func DecodeCreateTypeRequest(_ context.Context, r *http.Request) (interface{}, e
 func DecodeGetOneRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request msgRequest
 	vars := mux.Vars(r)
-	id,err := strconv.Atoi(vars["id"])
-	if  err != nil {
-		return request,err
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return request, err
 	}
 	request.Id = id
 	return request, nil
 }
-
 
 func DecodeGetAllRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request msgRequest
@@ -96,16 +89,14 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	})
 }
 
-
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	return json.NewEncoder(w).Encode(response)
 }
+
 type msgRequest struct {
 	Id int `json:"id"`
 }
-
-
 
 //type userResponse struct {
 //	V   interface{} `json:"v"`

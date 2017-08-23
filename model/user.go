@@ -1,11 +1,12 @@
 package model
 
 import (
-	"time"
-	"golang.org/x/crypto/bcrypt"
 	"encoding/json"
+	"golang.org/x/crypto/bcrypt"
 	"io"
+	"time"
 )
+
 //	"time"
 //	"encoding/json"
 //	"io"
@@ -17,16 +18,13 @@ import (
 //	"golang.org/x/crypto/bcrypt"
 //)
 
-
-
 type User struct {
-	Id int `db:"user_id" json:"id"`
-	Name string `db:"username" json:"name"`
-	Email string `db:"email" json:"email"`
-	DateAdd time.Time `db:"create_time" json:"date_add"`
-	Password string `db:"password" json:"password"`
-	Status	int	`db:"status" json:"status"`
-
+	Id       int       `db:"user_id" json:"id"`
+	Name     string    `db:"username" json:"name"`
+	Email    string    `db:"email" json:"email"`
+	DateAdd  time.Time `db:"create_time" json:"date_add"`
+	Password string    `db:"password" json:"password"`
+	Status   int       `db:"status" json:"status"`
 }
 
 //func (u *User) IsValid() *AppError {
@@ -75,6 +73,7 @@ func HashPassword(password string) string {
 
 	return string(hash)
 }
+
 //
 //// ComparePassword compares the hash
 func ComparePassword(hash string, password string) bool {
@@ -114,6 +113,7 @@ func UserFromJson(data io.Reader) *User {
 		return nil
 	}
 }
+
 //
 //var validUsernameChars = regexp.MustCompile(`^[a-z0-9\.\-_]+$`)
 //

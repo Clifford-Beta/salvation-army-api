@@ -1,10 +1,10 @@
 package school
 
 import (
-"fmt"
-"time"
-"github.com/go-kit/kit/metrics"
-"salv_prj/model"
+	"fmt"
+	"github.com/go-kit/kit/metrics"
+	"salv_prj/model"
+	"time"
 )
 
 type InstrumentingMiddleware struct {
@@ -25,7 +25,7 @@ func (mw InstrumentingMiddleware) Create(school model.School) (output *model.Sch
 	return
 }
 
-func (mw InstrumentingMiddleware) RecordPerformance(performance *model.SchoolPerformance)(output *model.SchoolPerformance, err error) {
+func (mw InstrumentingMiddleware) RecordPerformance(performance *model.SchoolPerformance) (output *model.SchoolPerformance, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "RecordPerformance", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
@@ -35,14 +35,14 @@ func (mw InstrumentingMiddleware) RecordPerformance(performance *model.SchoolPer
 	output, err = mw.Next.RecordPerformance(performance)
 	return
 }
-func (mw InstrumentingMiddleware) GetBestSchool(from,to int)(output model.SchoolPerformanceResult, err error) {
+func (mw InstrumentingMiddleware) GetBestSchool(from, to int) (output model.SchoolPerformanceResult, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "GetBestSchool", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
 		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	output, err = mw.Next.GetBestSchool(from,to)
+	output, err = mw.Next.GetBestSchool(from, to)
 	return
 }
 
@@ -78,13 +78,13 @@ func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.SchoolRes
 	return
 }
 
-func (mw InstrumentingMiddleware) RankAllSchools(from,to int)( output map[string][]*model.SchoolPerformanceResult, err error) {
+func (mw InstrumentingMiddleware) RankAllSchools(from, to int) (output map[string][]*model.SchoolPerformanceResult, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "RankAllSchools", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
 		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	output, err = mw.Next.RankAllSchools(from,to)
+	output, err = mw.Next.RankAllSchools(from, to)
 	return
 }

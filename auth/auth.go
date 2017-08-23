@@ -2,11 +2,11 @@ package auth
 
 import (
 	"errors"
-	"time"
-	"salv_prj/store"
 	jwt "github.com/dgrijalva/jwt-go"
-	"salv_prj/model"
 	"log"
+	"salv_prj/model"
+	"salv_prj/store"
+	"time"
 )
 
 // AuthService provides authentication service
@@ -33,7 +33,6 @@ func generateToken(signingKey []byte, clientID string) (string, error) {
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Second * expiration).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
-
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -46,19 +45,20 @@ func (as Authservice) Auth(clientID int, clientSecret string) (string, error) {
 	if client.Err != nil {
 		return "", ErrAuth
 	}
-	log.Println("this is the user",client.Data)
-		signed, err := generateToken(as.Key, client.Data.(model.User).Name)
-		if err != nil {
-			return "", errors.New(err.Error())
-		}
-		return signed, nil
-		//if as.Clients[clientID] == clientSecret {
-		//	signed, err := generateToken(as.Key, client.Data.(model.User))
-		//	if err != nil {
-		//		return "", errors.New(err.Error())
-		//	}
-		//	return signed, nil
-		//}
+	log.Println("this is the user", client.Data)
+	signed, err := generateToken(as.Key, client.Data.(model.User).Name)
+	if err != nil {
+		return "", errors.New(err.Error())
+	}
+	return signed, nil
+	//if as.Clients[clientID] == clientSecret {
+	//	signed, err := generateToken(as.Key, client.Data.(model.User))
+	//	if err != nil {
+	//		return "", errors.New(err.Error())
+	//	}
+	//	return signed, nil
+	//}
 }
+
 // ErrAuth is returned when credentials are incorrect
 var ErrAuth = errors.New("Incorrect credentials")

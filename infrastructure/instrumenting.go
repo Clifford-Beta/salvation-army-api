@@ -1,11 +1,10 @@
 package infrastructure
 
-
 import (
 	"fmt"
-	"time"
 	"github.com/go-kit/kit/metrics"
 	"salv_prj/model"
+	"time"
 )
 
 type InstrumentingMiddleware struct {
@@ -58,8 +57,6 @@ func (mw InstrumentingMiddleware) GetOneType(id int) (output model.Infrastructur
 	output, err = mw.Next.GetOneType(id)
 	return
 }
-
-
 
 func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.Infrastructure, err error) {
 	defer func(begin time.Time) {

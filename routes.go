@@ -12,5 +12,3 @@ type Route struct {
 }
 
 type Routes []Route
-
-

@@ -17,7 +17,7 @@ func AddRoutes(router *mux.Router, routes Routes) {
 	for _, route := range routes {
 
 		router.
-		Methods(route.Method).
+			Methods(route.Method).
 			Path(route.Pattern).
 			Handler(route.Handler).
 			Name(route.Name)

@@ -1,24 +1,22 @@
 package store
 
 import (
-
-	"github.com/spf13/viper"
 	l4g "github.com/alecthomas/log4go"
+	"github.com/spf13/viper"
 )
 
-var(
-	DB_USER = "root"
-	DB_PASSWORD = ""
-	DB_URL = "localhost:3306"
-	DB_DATASTORE = "salvation_army_db"
-	DB_DRIVER = "mysql"
-	DB_POOL = 10
-	DB_MAX_IDLE = 3
-	CACHE_USER = ""
+var (
+	DB_USER        = "root"
+	DB_PASSWORD    = ""
+	DB_URL         = "localhost:3306"
+	DB_DATASTORE   = "salvation_army_db"
+	DB_DRIVER      = "mysql"
+	DB_POOL        = 10
+	DB_MAX_IDLE    = 3
+	CACHE_USER     = ""
 	CACHE_PASSWORD = ""
-	CACHE_URL = "localhost:6379"
-	CACHE_DB = 0
-
+	CACHE_URL      = "localhost:6379"
+	CACHE_DB       = 0
 )
 
 func ConfigureApp(env string) bool {
@@ -31,7 +29,7 @@ func ConfigureApp(env string) bool {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		l4g.Critical("No configuration file loaded - using defaults",err.Error())
+		l4g.Critical("No configuration file loaded - using defaults", err.Error())
 		return false
 	}
 	if env == "staging" {
@@ -50,8 +48,7 @@ func ConfigureApp(env string) bool {
 		CACHE_DB = viper.GetInt("Cache.staging.Database")
 
 		//configure server
-	}else if env == "production" {
-
+	} else if env == "production" {
 
 		//load DB configs
 		DB_USER = viper.GetString("Databases.production.User")

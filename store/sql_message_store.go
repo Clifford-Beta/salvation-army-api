@@ -6,7 +6,7 @@ type SqlMessageStore struct {
 	*SqlStore
 }
 
-func (s SqlMessageStore)CreateMessage(message *model.Message) StoreChannel {
+func (s SqlMessageStore) CreateMessage(message *model.Message) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
@@ -26,12 +26,12 @@ func (s SqlMessageStore)CreateMessage(message *model.Message) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlMessageStore)RetrieveMessage(id int) StoreChannel {
+func (s SqlMessageStore) RetrieveMessage(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var message model.Message
-		err := s.master.SelectOne(&message,"select * from message where message_id=?",id)
+		err := s.master.SelectOne(&message, "select * from message where message_id=?", id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlMessageStore.Get", "store.sql_message.get.app_error", nil, err.Error())
 			storeChannel <- result
@@ -46,18 +46,18 @@ func (s SqlMessageStore)RetrieveMessage(id int) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlMessageStore)RetrieveAll()StoreChannel  {
+func (s SqlMessageStore) RetrieveAll() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var messages []model.Message
-		_,err := s.master.Select(&messages,"select * from message where message_status=?",1)
+		_, err := s.master.Select(&messages, "select * from message where message_status=?", 1)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlMessageStore.GetAll", "store.sql_message.get.app_error", nil, err.Error())
 			storeChannel <- result
 			close(storeChannel)
 			return
-		}else{
+		} else {
 			if len(messages) == 0 {
 				result.Err = model.NewLocAppError("SqlMessageStore.RetrieveAll", "store.sql_message.retrieve_all.app_error", nil, "No records found")
 

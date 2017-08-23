@@ -6,7 +6,7 @@ type SqlFileStore struct {
 	*SqlStore
 }
 
-func (s SqlFileStore)Create(inf *model.File) StoreChannel {
+func (s SqlFileStore) Create(inf *model.File) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
@@ -26,7 +26,7 @@ func (s SqlFileStore)Create(inf *model.File) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlFileStore)CreateFileType(inf *model.FileType) StoreChannel {
+func (s SqlFileStore) CreateFileType(inf *model.FileType) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
@@ -46,12 +46,12 @@ func (s SqlFileStore)CreateFileType(inf *model.FileType) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlFileStore)RetrieveOne(id int) StoreChannel {
+func (s SqlFileStore) RetrieveOne(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var inf model.File
-		err := s.master.SelectOne(&inf,"select * from file where file_id=?",id)
+		err := s.master.SelectOne(&inf, "select * from file where file_id=?", id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlFileStore.Get", "store.sql_file.get.app_error", nil, err.Error())
 			storeChannel <- result
@@ -66,12 +66,12 @@ func (s SqlFileStore)RetrieveOne(id int) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlFileStore)RetrieveOneType(id int) StoreChannel {
+func (s SqlFileStore) RetrieveOneType(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var inf model.FileType
-		err := s.master.SelectOne(&inf,"select * from file_type where file_type_id=?",id)
+		err := s.master.SelectOne(&inf, "select * from file_type where file_type_id=?", id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlFileStore.GetType", "store.sql_file_type.get.app_error", nil, err.Error())
 			storeChannel <- result
@@ -86,18 +86,18 @@ func (s SqlFileStore)RetrieveOneType(id int) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlFileStore)RetrieveAll()StoreChannel  {
+func (s SqlFileStore) RetrieveAll() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var infs []model.File
-		_,err := s.master.Select(&infs,"select * from file where file_status=?",1)
+		_, err := s.master.Select(&infs, "select * from file where file_status=?", 1)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlFileStore.GetAll", "store.sql_file.get.app_error", nil, err.Error())
 			storeChannel <- result
 			close(storeChannel)
 			return
-		}else{
+		} else {
 			if len(infs) == 0 {
 				result.Err = model.NewLocAppError("SqlFileStore.RetrieveAll", "store.sql_file .retrieve_all.app_error", nil, "No records found")
 
@@ -111,12 +111,12 @@ func (s SqlFileStore)RetrieveAll()StoreChannel  {
 	return storeChannel
 }
 
-func (s SqlFileStore)RetrieveAllTypes()StoreChannel  {
+func (s SqlFileStore) RetrieveAllTypes() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var infs []model.FileType
-		_,err := s.master.Select(&infs,"select * from file_type where file_type_status=?",1)
+		_, err := s.master.Select(&infs, "select * from file_type where file_type_status=?", 1)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlFileStore.GetAllTypes", "store.sql_file_type.get.app_error", nil, err.Error())
 			storeChannel <- result

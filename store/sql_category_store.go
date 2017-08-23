@@ -15,7 +15,7 @@ func (s SqlCategoryStore) Save(category *model.Category) StoreChannel {
 		result := StoreResult{}
 		if err := s.GetMaster().Insert(category); err != nil {
 
-				result.Err = model.NewLocAppError("SqlCategoryStore.Save", "store.sql_category.save.app_error", nil, "category="+category.Name+", "+err.Error())
+			result.Err = model.NewLocAppError("SqlCategoryStore.Save", "store.sql_category.save.app_error", nil, "category="+category.Name+", "+err.Error())
 
 		} else {
 			//user.Sanitize()
@@ -28,7 +28,6 @@ func (s SqlCategoryStore) Save(category *model.Category) StoreChannel {
 
 	return storeChannel
 }
-
 
 func (s SqlCategoryStore) Delete(category *model.Category) StoreChannel {
 	storeChannel := make(StoreChannel)
@@ -48,7 +47,6 @@ func (s SqlCategoryStore) Delete(category *model.Category) StoreChannel {
 
 	return storeChannel
 }
-
 
 func (s SqlCategoryStore) Get(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
@@ -74,31 +72,29 @@ func (s SqlCategoryStore) Get(id int) StoreChannel {
 	return storeChannel
 }
 
-
-func (s SqlCategoryStore)GetMany() StoreChannel  {
+func (s SqlCategoryStore) GetMany() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var categories [] *model.Category
+		var categories []*model.Category
 		_, err := s.GetMaster().Select(&categories, "SELECT * FROM category WHERE category_status=1")
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlCategorytore.GetMany", "store.sql_category.getmany.app_error", nil, err.Error())
 
-		}else {
+		} else {
 			if len(categories) == 0 {
 				result.Err = model.NewLocAppError("SqlCategorytore.GetMany", "store.sql_category.getmany.app_error", nil, "No records found")
 
-			}else{
+			} else {
 				result.Data = categories
 			}
 
 		}
-		storeChannel<-result
+		storeChannel <- result
 		close(storeChannel)
 	}()
 	return storeChannel
 }
-
 
 func (s SqlCategoryStore) CreateTier(category *model.Tier) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
@@ -106,7 +102,7 @@ func (s SqlCategoryStore) CreateTier(category *model.Tier) StoreChannel {
 		result := StoreResult{}
 		if err := s.GetMaster().Insert(category); err != nil {
 
-				result.Err = model.NewLocAppError("SqlCategoryStore.CreateTier", "store.sql_category.create_tier.app_error", nil, "category="+category.Name+", "+err.Error())
+			result.Err = model.NewLocAppError("SqlCategoryStore.CreateTier", "store.sql_category.create_tier.app_error", nil, "category="+category.Name+", "+err.Error())
 
 		} else {
 			//user.Sanitize()
@@ -119,7 +115,6 @@ func (s SqlCategoryStore) CreateTier(category *model.Tier) StoreChannel {
 
 	return storeChannel
 }
-
 
 func (s SqlCategoryStore) DeleteTier(category *model.Tier) StoreChannel {
 	storeChannel := make(StoreChannel)
@@ -139,7 +134,6 @@ func (s SqlCategoryStore) DeleteTier(category *model.Tier) StoreChannel {
 
 	return storeChannel
 }
-
 
 func (s SqlCategoryStore) GetTier(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
@@ -165,25 +159,24 @@ func (s SqlCategoryStore) GetTier(id int) StoreChannel {
 	return storeChannel
 }
 
-
-func (s SqlCategoryStore)GetManyTiers() StoreChannel  {
+func (s SqlCategoryStore) GetManyTiers() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var categories [] *model.Tier
+		var categories []*model.Tier
 		_, err := s.GetMaster().Select(&categories, "SELECT * FROM tier WHERE tier_status=1")
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlCategorytore.GetManyTier", "store.sql_category.get_many_tiers.app_error", nil, err.Error())
 
-		}else {
+		} else {
 			if len(categories) == 0 {
 				result.Err = model.NewLocAppError("SqlCategorytore.GetMany", "store.sql_category.getmany.app_error", nil, "No records found")
 
 			}
-				result.Data = categories
+			result.Data = categories
 
 		}
-		storeChannel<-result
+		storeChannel <- result
 		close(storeChannel)
 	}()
 	return storeChannel
