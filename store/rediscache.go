@@ -3,7 +3,7 @@ package store
 import (
 	l4g "github.com/alecthomas/log4go"
 	"github.com/go-redis/redis"
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"time"
 )
 

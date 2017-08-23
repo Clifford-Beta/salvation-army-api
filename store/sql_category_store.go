@@ -1,7 +1,7 @@
 package store
 
 import (
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"strconv"
 )
 

@@ -6,7 +6,7 @@ import (
 	"github.com/go-gorp/gorp"
 	_ "github.com/go-sql-driver/mysql"
 	"os"
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"strings"
 	"time"
 )

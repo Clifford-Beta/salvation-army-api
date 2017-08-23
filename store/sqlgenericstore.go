@@ -3,7 +3,7 @@ package store
 import (
 	"fmt"
 	"reflect"
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"time"
 )
 

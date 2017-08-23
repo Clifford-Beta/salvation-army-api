@@ -3,7 +3,7 @@ package infrastructure
 import (
 	"fmt"
 	"github.com/go-kit/kit/metrics"
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"time"
 )
 

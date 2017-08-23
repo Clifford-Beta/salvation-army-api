@@ -7,7 +7,7 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"github.com/gorilla/mux"
 	"net/http"
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"strconv"
 )
 

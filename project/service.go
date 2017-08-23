@@ -1,8 +1,8 @@
 package project
 
 import (
-	"salv_prj/model"
-	"salv_prj/store"
+	"salvation-army-api/model"
+	"salvation-army-api/store"
 	"time"
 )
 

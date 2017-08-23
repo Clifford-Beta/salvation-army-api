@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/go-gorp/gorp"
-	"salv_prj/model"
+	"salvation-army-api/model"
 )
 
 var Database = InitConnection()

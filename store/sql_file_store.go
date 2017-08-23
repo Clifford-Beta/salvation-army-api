@@ -1,6 +1,6 @@
 package store
 
-import "salv_prj/model"
+import "salvation-army-api/model"
 
 type SqlFileStore struct {
 	*SqlStore

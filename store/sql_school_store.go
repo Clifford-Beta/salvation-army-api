@@ -2,7 +2,7 @@ package store
 
 import (
 	"net/http"
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"strconv"
 )
 

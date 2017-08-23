@@ -2,7 +2,7 @@ package category
 
 import (
 	log "github.com/sirupsen/logrus"
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"time"
 )
 

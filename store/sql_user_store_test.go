@@ -3,7 +3,7 @@ package store
 import (
 	//"testing"
 	"fmt"
-	"salv_prj/model"
+	"salvation-army-api/model"
 	"testing"
 	"time"
 )
