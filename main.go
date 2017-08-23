@@ -58,7 +58,7 @@ func main() {
 	jwtOptions := []httptransport.ServerOption{
 		httptransport.ServerErrorEncoder(auth.AuthErrorEncoder),
 		httptransport.ServerErrorLogger(logit),
-		httptransport.ServerBefore(jwt.ToHTTPContext()),
+		httptransport.ServerBefore(jwt.HTTPToContext()),
 	}
 
 	//jwt
