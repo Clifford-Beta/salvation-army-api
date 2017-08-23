@@ -36,7 +36,9 @@ func (Userservice) GetOne(id int) (model.User, error) {
 	if me.Err != nil {
 		return model.User{}, me.Err
 	}
-	return me.Data.(model.User), nil
+	us := me.Data.(model.User)
+	us.Sanitize()
+	return us, nil
 }
 
 func (Userservice) Login(email, password string) (model.User, error) {
