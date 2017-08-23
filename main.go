@@ -1228,8 +1228,8 @@ func main() {
 	//AddRoutes(version2,routes)
 	//r.Handle()
 	r.Handle("/metrics", stdprometheus.Handler())
-	logger.WithFields(logrus.Fields{"msg": "HTTP", "addr": ":80"}).Info("Everything is ready, let's go !!!")
-	logger.WithFields(logrus.Fields{"err": http.ListenAndServe(":80", corsHandler(handler))}).Fatal("Oops! the server crashed")
+	logger.WithFields(logrus.Fields{"msg": "HTTP", "addr": ":8000"}).Info("Everything is ready, let's go !!!")
+	logger.WithFields(logrus.Fields{"err": http.ListenAndServe(":8000", corsHandler(handler))}).Fatal("Oops! the server crashed")
 }
 
 //
