@@ -9,6 +9,7 @@ import (
 	"salvation-army-api/model"
 	"strings"
 	"time"
+	"fmt"
 )
 
 const (
@@ -55,7 +56,7 @@ func InitConnection() *SqlStore {
 
 	ConfigureApp(os.Getenv("GO_ENV"))
 	//ConfigureApp("staging")
-	Cache = InitCache(CACHE_URL, CACHE_PASSWORD, CACHE_DB)
+	//Cache = InitCache(CACHE_URL, CACHE_PASSWORD, CACHE_DB)
 
 	//fmt.Println("This is the env var as it is set",os.Getenv("GO_ENV"))
 	/*env := os.Getenv("GO_ENV")
@@ -75,6 +76,7 @@ func InitConnection() *SqlStore {
 	}*/
 	URL := "@tcp(" + DB_URL + ")/" + DB_DATASTORE + "?parseTime=true"
 	//fmt.Println(user,password,url,redis_url)
+	fmt.Println("am connecting to ",DB_URL)
 	sqlStore.master = setupConnection("master", DB_DRIVER,
 		DB_USER+":"+DB_PASSWORD+URL, DB_MAX_IDLE,
 		DB_POOL, true)
