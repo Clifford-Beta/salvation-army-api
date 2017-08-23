@@ -1229,8 +1229,8 @@ func main() {
 	//r.Handle()
 	r.Handle("/metrics", stdprometheus.Handler())
 	logger.WithFields(logrus.Fields{"msg": "HTTP", "addr": ":8000"}).Info("Everything is ready, let's go !!!")
-	logger.WithFields(logrus.Fields{"msg": "Serving on port", "addr":os.Getenv("POST")}).Info("This is the port am serving from ")
-	logger.WithFields(logrus.Fields{"err": http.ListenAndServe(":8000", corsHandler(handler))}).Fatal("Oops! the server crashed")
+	logger.WithFields(logrus.Fields{"msg": "Serving on port", "addr":os.Getenv("PORT")}).Info("This is the port am serving from ")
+	logger.WithFields(logrus.Fields{"err": http.ListenAndServe(":"+os.Getenv("PORT"), corsHandler(handler))}).Fatal("Oops! the server crashed")
 }
 
 //
