@@ -6,10 +6,10 @@ import (
 )
 
 var (
-	DB_USER        = "root"
-	DB_PASSWORD    = ""
-	DB_URL         = "localhost:3306"
-	DB_DATASTORE   = "salvation_army_db"
+	DB_USER        = "c25ccz1z5g278kqu"
+	DB_PASSWORD    = "ixjg7e9rw4c3tmda"
+	DB_URL         = "p2d0untihotgr5f6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306"
+	DB_DATASTORE   = "ev7x2lf58ardm8lg"
 	DB_DRIVER      = "mysql"
 	DB_POOL        = 10
 	DB_MAX_IDLE    = 3
@@ -18,6 +18,16 @@ var (
 	CACHE_URL      = "localhost:6379"
 	CACHE_DB       = 0
 )
+//
+//"local": {
+//"ConnectionUrl":"p2d0untihotgr5f6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306",
+//"User":"c25ccz1z5g278kqu",
+//"Password":"ixjg7e9rw4c3tmda",
+//"Database":"ev7x2lf58ardm8lg",
+//"Driver":"mysql",
+//"ConnectionPool":10,
+//"MaxIdleConnections":3
+//},
 
 func ConfigureApp(env string) bool {
 
