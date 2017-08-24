@@ -141,11 +141,7 @@ func main() {
 		getOneUserEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneUserEndpoint)
 	}
 
-	var loginUserEndpoint endpoint.Endpoint
-	{
-		loginUserEndpoint = usersvc.MakeLoginEndpoint(user)
-		loginUserEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(loginUserEndpoint)
-	}
+
 	var getAllUsersEndpoint endpoint.Endpoint
 	{
 		getAllUsersEndpoint = usersvc.MakeGetAllEndpoint(user)
@@ -167,13 +163,13 @@ func main() {
 		jwtOptions...,
 	)
 
-	loginUserHandler := httptransport.NewServer(
-
-		loginUserEndpoint,
-		usersvc.DecodeLoginRequest,
-		usersvc.EncodeResponse,
-		jwtOptions...,
-	)
+	//loginUserHandler := httptransport.NewServer(
+	//
+	//	loginUserEndpoint,
+	//	usersvc.DecodeLoginRequest,
+	//	usersvc.EncodeResponse,
+	//	jwtOptions...,
+	//)
 	getAllUsersHandler := httptransport.NewServer(
 
 		getAllUsersEndpoint,
@@ -873,6 +869,13 @@ func main() {
 		auth.MakeAuthEndpoint(authy),
 		auth.DecodeAuthRequest,
 		auth.EncodeResponse,
+		options...,
+	)
+
+	loginUserHandler := httptransport.NewServer(
+		usersvc.MakeLoginEndpoint(user),
+		usersvc.DecodeLoginRequest,
+		usersvc.EncodeResponse,
 		options...,
 	)
 

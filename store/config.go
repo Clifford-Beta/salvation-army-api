@@ -76,6 +76,24 @@ func ConfigureApp(env string) bool {
 
 		//configure server
 
+	} else if env == "local" {
+
+	//load DB configs
+	DB_USER = viper.GetString("Databases.local.User")
+	DB_PASSWORD = viper.GetString("Databases.local.Password")
+	DB_URL = viper.GetString("Databases.local.ConnectionUrl")
+	DB_DATASTORE = viper.GetString("Databases.local.Database")
+	DB_DRIVER = viper.GetString("Databases.local.Driver")
+	DB_POOL = viper.GetInt("Databases.local.ConnectionPool")
+	DB_MAX_IDLE = viper.GetInt("Databases.local.MaxIdleConnections")
+	//load cache configs
+	CACHE_USER = viper.GetString("Cache.local.User")
+	CACHE_PASSWORD = viper.GetString("Cache.local.Password")
+	CACHE_URL = viper.GetString("Cache.local.ConnectionUrl")
+	CACHE_DB = viper.GetInt("Cache.local.Database")
+
+	//configure server
+
 	}
 
 	l4g.Info("Am done configuring your app, time to roll!!")
