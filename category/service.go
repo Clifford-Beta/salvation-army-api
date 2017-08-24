@@ -10,8 +10,8 @@ type CategoryService interface {
 	CreateTier(category model.Tier) (*model.Tier, error)
 	GetOne(id int) (model.Category, error)
 	GetOneTier(id int) (model.Tier, error)
-	GetAll() ([]*model.Category, error)
-	GetAllTiers() ([]*model.Tier, error)
+	GetAll() (map[string][]*model.Category, error)
+	GetAllTiers() (map[string][]*model.Tier, error)
 }
 type Categoryservice struct{}
 
@@ -52,22 +52,22 @@ func (Categoryservice) GetOneTier(id int) (model.Tier, error) {
 
 }
 
-func (Categoryservice) GetAll() ([]*model.Category, error) {
+func (Categoryservice) GetAll() (map[string][]*model.Category, error) {
 	catStore := store.SqlCategoryStore{store.Database}
 	sch := <-catStore.GetMany()
 	if sch.Err != nil {
-		return []*model.Category{}, sch.Err
+		return map[string][]*model.Category{}, sch.Err
 	}
-	return sch.Data.([]*model.Category), nil
+	return map[string][]*model.Category{"data":sch.Data.([]*model.Category)}, nil
 
 }
 
-func (Categoryservice) GetAllTiers() ([]*model.Tier, error) {
+func (Categoryservice) GetAllTiers() (map[string][]*model.Tier, error) {
 	catStore := store.SqlCategoryStore{store.Database}
 	sch := <-catStore.GetManyTiers()
 	if sch.Err != nil {
-		return []*model.Tier{}, sch.Err
+		return map[string][]*model.Tier{"data":nil}, sch.Err
 	}
-	return sch.Data.([]*model.Tier), nil
+	return map[string][]*model.Tier{"data":sch.Data.([]*model.Tier)}, nil
 
 }

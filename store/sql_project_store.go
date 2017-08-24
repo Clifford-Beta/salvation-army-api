@@ -29,10 +29,16 @@ func (s SqlProjectStore) Retrieve(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var project model.Project
-		err := s.master.SelectOne(&project, "select * from project where project_id=?", id)
+		var project model.ProjectResult
+		err := s.master.SelectOne(&project, `
+			select project.project_id as id, school.school_name as school, project.project_name as name,
+			project.project_start as start, project.project_duration as duration,
+			project.project_progress as progress, project.timestamp as time_stamp
+			from project
+			inner join school on school.school_id = project.school
+			where project_status=1 and project_id=?`, id)
 		if err != nil {
-			result.Err = model.NewLocAppError("SqlProjectStore.GetType", "store.sql_project_type.get.app_error", nil, err.Error())
+			result.Err = model.NewLocAppError("SqlProjectStore.Retrieve", "store.sql_project_type.get.app_error", nil, err.Error())
 			storeChannel <- result
 			close(storeChannel)
 			return

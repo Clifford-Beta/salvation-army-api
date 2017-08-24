@@ -10,7 +10,7 @@ import (
 type ProjectService interface {
 	Create(project model.Project) (*model.Project, error)
 	GetOne(int) (model.ProjectResult, error)
-	GetAll() (map[string][]*model.ProjectResult, error)
+	GetAll() (map[string][]model.ProjectResult, error)
 }
 
 type Projectservice struct{}
@@ -36,11 +36,11 @@ func (Projectservice) GetOne(id int) (model.ProjectResult, error) {
 	return me.Data.(model.ProjectResult), nil
 }
 
-func (Projectservice) GetAll() (map[string][]*model.ProjectResult, error) {
+func (Projectservice) GetAll() (map[string][]model.ProjectResult, error) {
 	projStore := store.SqlProjectStore{store.Database}
 	me := <-projStore.RetrieveAll()
 	if me.Err != nil {
-		return map[string][]*model.ProjectResult{"data": []*model.ProjectResult{}}, me.Err
+		return map[string][]model.ProjectResult{"data": []model.ProjectResult{}}, me.Err
 	}
-	return map[string][]*model.ProjectResult{"data": me.Data.([]*model.ProjectResult)}, nil
+	return map[string][]model.ProjectResult{"data": me.Data.([]model.ProjectResult)}, nil
 }

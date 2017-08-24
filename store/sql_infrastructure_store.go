@@ -50,8 +50,15 @@ func (s SqlInfrastructureStore) RetrieveOne(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var inf model.Infrastructure
-		err := s.master.SelectOne(&inf, "select * from infrastructure where infrastructure_id=?", id)
+		var inf model.InfrastructureResult
+		err := s.master.SelectOne(&inf, `select infrastructure.infrastructure_id as id, school.school_name as school,
+												infrastructure_name as name, i_type.i_type_name as type,
+												infrastructure_quantity as quantity, infrastructure_description as description,
+												infrastructure.date_created as date_created
+												from infrastructure
+												inner join school on infrastructure.school_id = school.school_id
+												inner join i_type on infrastructure.infrastructure_type = i_type.i_type_id
+												where infrastructure.infrastructure_id = ? and infrastructure_status=1`, id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlInfrastructureStore.Get", "store.sql_inf.get.app_error", nil, err.Error())
 			storeChannel <- result
@@ -90,8 +97,15 @@ func (s SqlInfrastructureStore) RetrieveAll() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var infs []model.Infrastructure
-		_, err := s.master.Select(&infs, "select * from infrastructure where infrastructure_status=?", 1)
+		var infs []model.InfrastructureResult
+		_, err := s.master.Select(&infs, `select infrastructure.infrastructure_id as id, school.school_name as school,
+			infrastructure_name as name, i_type.i_type_name as type,
+			infrastructure_quantity as quantity, infrastructure_description as description,
+				infrastructure.date_created as date_created
+			from infrastructure
+			inner join school on infrastructure.school_id = school.school_id
+			inner join i_type on infrastructure.infrastructure_type = i_type.i_type_id
+			where infrastructure_status=?`, 1)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlInfrastructureStore.GetAll", "store.sql_inf.get.app_error", nil, err.Error())
 			storeChannel <- result

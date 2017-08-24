@@ -101,8 +101,14 @@ func (s SqlExtraCurricularStore) GetAllRecordedActivities() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var acts []*model.ExtraCurricularActivity
-		_, err := s.GetMaster().Select(&acts, "select * from ext_activity where ext_activity_status=?", 1)
+		var acts []*model.ExtraCurricularActivityResult
+		_, err := s.GetMaster().Select(&acts, `select ext_curricular_id as id, ext_curricular_name as name,ext_curricular_desc as description,
+													ext_activity_performance, date, ext_level_name as level, ext_level_desc as level_description , school.school_name
+													FROM ext_activity
+													inner join ext_curricular on ext_activity.activity = ext_curricular.ext_curricular_id
+													inner join ext_level on ext_level.ext_level_id = ext_activity.level
+													inner join school on ext_activity.school=school.school_id
+													where ext_activity_status = ?`, 1)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlExtraCurricularActivityStore.GetAll", "store.sql_extracurricular.get.app_error", nil, err.Error())
 			storeChannel <- result

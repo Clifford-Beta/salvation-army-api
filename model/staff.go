@@ -38,7 +38,6 @@ type StaffResult struct {
 	Photo       string    `json:"photo" db:"photo"`
 	School      string    `json:"school" db:"school"`
 	Title       string    `json:"title" db:"title"`
-	Password    string    `json:"password" db:"password"`
 	DateCreated time.Time `json:"date_created" db:"date_created"`
 	TimeStamp   time.Time `json:"time_stamp" db:"timestamp"`
 	Status      int       `json:"status" db:"status"`
@@ -84,4 +83,11 @@ func StaffRoleFromJson(data io.Reader) *StaffRole {
 	} else {
 		return nil
 	}
+}
+
+
+func (o *Staff) Sanitize() *Staff {
+	//set password to null
+	o.Password = ""
+	return o
 }

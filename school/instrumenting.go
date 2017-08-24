@@ -78,7 +78,7 @@ func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.SchoolRes
 	return
 }
 
-func (mw InstrumentingMiddleware) RankAllSchools(from, to int) (output map[string][]*model.SchoolPerformanceResult, err error) {
+func (mw InstrumentingMiddleware) RankAllSchools(from, to int) (output map[string][]model.SchoolPerformanceResult, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "RankAllSchools", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)

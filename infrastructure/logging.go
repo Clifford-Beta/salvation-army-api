@@ -36,7 +36,7 @@ func (mw LoggingMiddleware) CreateType(inf model.InfrastructureType) (output *mo
 	return
 }
 
-func (mw LoggingMiddleware) GetOne(id int) (output model.Infrastructure, err error) {
+func (mw LoggingMiddleware) GetOne(id int) (output model.InfrastructureResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  id,
@@ -62,7 +62,7 @@ func (mw LoggingMiddleware) GetOneType(id int) (output model.InfrastructureType,
 	return
 }
 
-func (mw LoggingMiddleware) GetAll() (output map[string][]*model.Infrastructure, err error) {
+func (mw LoggingMiddleware) GetAll() (output map[string][]model.InfrastructureResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  "",
@@ -75,7 +75,7 @@ func (mw LoggingMiddleware) GetAll() (output map[string][]*model.Infrastructure,
 	return
 }
 
-func (mw LoggingMiddleware) GetAllTypes() (output map[string][]*model.InfrastructureType, err error) {
+func (mw LoggingMiddleware) GetAllTypes() (output map[string][]model.InfrastructureType, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  "",

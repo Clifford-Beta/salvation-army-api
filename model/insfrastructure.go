@@ -18,6 +18,16 @@ type Infrastructure struct {
 	Status      int       `db:"infrastructure_status" json:"status"`
 }
 
+type InfrastructureResult struct {
+	Id          int       `db:"id" json:"id"`
+	School      string       `db:"school" json:"school"`
+	Name        string    `db:"name" json:"name"`
+	Type        string       `db:"type" json:"type"`
+	Quantity    int       `db:"quantity" json:"quantity"`
+	Description string    `db:"description" json:"description"`
+	DateCreated time.Time `db:"date_created" json:"date_created"`
+}
+
 type InfrastructureType struct {
 	Id          int       `db:"i_type_id" json:"id"`
 	Name        string    `db:"i_type_name" json:"name"`

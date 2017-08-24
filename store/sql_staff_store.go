@@ -55,7 +55,7 @@ func (s SqlStaffStore) RetrieveStaffMember(id int) StoreChannel {
 		err := s.master.SelectOne(&staff,
 			"select staff.staff_id as id,staff.staff_name as name,staff.staff_phone as phone,"+
 				"staff.staff_email as email,staff.staff_photo as photo,staff.staff_title as title,"+
-				"staff.staff_status as status,staff.password as password, staff_role.staff_role_name as role"+
+				"staff.staff_status as status, staff_role.staff_role_name as role"+
 				",staff.date_created as date_created, staff.timestamp as timestamp,school.school_name as school "+
 				"from `staff` "+
 				"left join school on staff.school_id=school.school_id "+
@@ -105,7 +105,7 @@ func (s SqlStaffStore) RetrieveAllStaffMembers() StoreChannel {
 		_, err := s.master.Select(&staff,
 			"select staff.staff_id as id,staff.staff_name as name,staff.staff_phone as phone,"+
 				"staff.staff_email as email,staff.staff_photo as photo,staff.staff_title as title,"+
-				"staff.staff_status as status,staff.password as password, staff_role.staff_role_name as role"+
+				"staff.staff_status as status, staff_role.staff_role_name as role"+
 				",staff.date_created as date_created, staff.timestamp as timestamp,school.school_name as school "+
 				"from `staff` "+
 				"left join school on staff.school_id=school.school_id "+

@@ -105,7 +105,7 @@ func (mw LoggingMiddleware) GetAllLevels() (output map[string][]*model.ExtraCurr
 	return
 }
 
-func (mw LoggingMiddleware) GetAllPerformances() (output map[string][]*model.ExtraCurricularActivity, err error) {
+func (mw LoggingMiddleware) GetAllPerformances() (output map[string][]*model.ExtraCurricularActivityResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"output": output,

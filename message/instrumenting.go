@@ -36,7 +36,7 @@ func (mw InstrumentingMiddleware) GetOne(id int) (output model.Message, err erro
 	return
 }
 
-func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.Message, err error) {
+func (mw InstrumentingMiddleware) GetAll() (output map[string][]model.Message, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getall", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)

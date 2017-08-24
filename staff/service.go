@@ -9,7 +9,7 @@ import (
 type StaffService interface {
 	AddStaff(staff model.Staff) (*model.Staff, error)
 	RetrieveStaff(id int) (model.StaffResult, error)
-	RetrieveAllStaff() (map[string][]*model.StaffResult, error)
+	RetrieveAllStaff() (map[string][]model.StaffResult, error)
 	AddStaffRole(role model.StaffRole) (*model.StaffRole, error)
 	RetrieveStaffRole(id int) (model.StaffRole, error)
 	RetrieveAllRoles() (map[string][]*model.StaffRole, error)
@@ -26,6 +26,7 @@ type Staffservice struct{}
 func (Staffservice) AddStaff(staff model.Staff) (*model.Staff, error) {
 	staffStore := store.SqlStaffStore{store.Database}
 	staff.Status = 1
+	staff.TimeStamp = time.Now()
 	res := <-staffStore.CreateStaffMember(&staff)
 	if res.Err != nil {
 		return &model.Staff{}, res.Err
@@ -39,16 +40,18 @@ func (Staffservice) RetrieveStaff(id int) (model.StaffResult, error) {
 	if res.Err != nil {
 		return model.StaffResult{}, res.Err
 	}
+
 	return res.Data.(model.StaffResult), nil
 }
 
-func (Staffservice) RetrieveAllStaff() (map[string][]*model.StaffResult, error) {
+func (Staffservice) RetrieveAllStaff() (map[string][]model.StaffResult, error) {
 	staffStore := store.SqlStaffStore{store.Database}
 	res := <-staffStore.RetrieveAllStaffMembers()
 	if res.Err != nil {
-		return map[string][]*model.StaffResult{"data": []*model.StaffResult{}}, res.Err
+		return map[string][]model.StaffResult{"data": []model.StaffResult{}}, res.Err
 	}
-	return map[string][]*model.StaffResult{"data": res.Data.([]*model.StaffResult)}, nil
+	//staffMembers :=
+	return map[string][]model.StaffResult{"data": res.Data.([]model.StaffResult)}, nil
 }
 
 func (Staffservice) AddStaffRole(role model.StaffRole) (*model.StaffRole, error) {
@@ -58,6 +61,7 @@ func (Staffservice) AddStaffRole(role model.StaffRole) (*model.StaffRole, error)
 	if res.Err != nil {
 		return &model.StaffRole{}, res.Err
 	}
+
 	return res.Data.(*model.StaffRole), nil
 }
 

@@ -63,7 +63,7 @@ func (mw LoggingMiddleware) RetrieveStaffRole(id int) (output model.StaffRole, e
 	return
 }
 
-func (mw LoggingMiddleware) RetrieveAllStaff() (output map[string][]*model.StaffResult, err error) {
+func (mw LoggingMiddleware) RetrieveAllStaff() (output map[string][]model.StaffResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  "",

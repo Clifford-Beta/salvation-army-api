@@ -71,7 +71,7 @@ func (mw LoggingMiddleware) GetBestSchool(from, to int) (output model.SchoolPerf
 	return
 }
 
-func (mw LoggingMiddleware) RankAllSchools(from, to int) (output map[string][]*model.SchoolPerformanceResult, err error) {
+func (mw LoggingMiddleware) RankAllSchools(from, to int) (output map[string][]model.SchoolPerformanceResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"params": map[string]interface{}{"from": from, "to": to},

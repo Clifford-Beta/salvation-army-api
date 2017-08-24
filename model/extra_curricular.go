@@ -33,6 +33,17 @@ type ExtraCurricularActivity struct {
 	Status      int       `db:"ext_activity_status" json:"status"`
 }
 
+type ExtraCurricularActivityResult struct {
+	Id          int       `db:"id" json:"id"`
+	Name      string       `db:"name" json:"name"`
+	School      string       `db:"school_name" json:"school_name"`
+	Description string       `db:"description" json:"description"`
+	Level       string       `db:"level" json:"level"`
+	Narrative    string       `db:"level_description" json:"narrative"`
+	Performance string    `db:"ext_activity_performance" json:"performance"`
+	Date        time.Time `db:"date" json:"date"`
+}
+
 func (o *ExtraCurricular) ToJson() string {
 	b, err := json.Marshal(o)
 	if err != nil {

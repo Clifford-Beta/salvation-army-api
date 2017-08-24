@@ -10,10 +10,10 @@ import (
 type InfrastructureService interface {
 	Create(message model.Infrastructure) (*model.Infrastructure, error)
 	CreateType(message model.InfrastructureType) (*model.InfrastructureType, error)
-	GetOne(int) (model.Infrastructure, error)
+	GetOne(int) (model.InfrastructureResult, error)
 	GetOneType(int) (model.InfrastructureType, error)
-	GetAll() (map[string][]*model.Infrastructure, error)
-	GetAllTypes() (map[string][]*model.InfrastructureType, error)
+	GetAll() (map[string][]model.InfrastructureResult, error)
+	GetAllTypes() (map[string][]model.InfrastructureType, error)
 }
 
 type Infrastructureservice struct{}
@@ -39,13 +39,13 @@ func (Infrastructureservice) CreateType(inf model.InfrastructureType) (*model.In
 	return me.Data.(*model.InfrastructureType), nil
 }
 
-func (Infrastructureservice) GetOne(id int) (model.Infrastructure, error) {
+func (Infrastructureservice) GetOne(id int) (model.InfrastructureResult, error) {
 	iStore := store.SqlInfrastructureStore{store.Database}
 	me := <-iStore.RetrieveOne(id)
 	if me.Err != nil {
-		return model.Infrastructure{}, me.Err
+		return model.InfrastructureResult{}, me.Err
 	}
-	return me.Data.(model.Infrastructure), nil
+	return me.Data.(model.InfrastructureResult), nil
 }
 func (Infrastructureservice) GetOneType(id int) (model.InfrastructureType, error) {
 	iStore := store.SqlInfrastructureStore{store.Database}
@@ -56,22 +56,22 @@ func (Infrastructureservice) GetOneType(id int) (model.InfrastructureType, error
 	return me.Data.(model.InfrastructureType), nil
 }
 
-func (Infrastructureservice) GetAll() (map[string][]*model.Infrastructure, error) {
+func (Infrastructureservice) GetAll() (map[string][]model.InfrastructureResult, error) {
 	iStore := store.SqlInfrastructureStore{store.Database}
 	me := <-iStore.RetrieveAll()
 	if me.Err != nil {
-		return map[string][]*model.Infrastructure{"data": []*model.Infrastructure{}}, me.Err
+		return map[string][]model.InfrastructureResult{"data": []model.InfrastructureResult{}}, me.Err
 	}
-	return map[string][]*model.Infrastructure{"data": me.Data.([]*model.Infrastructure)}, nil
+	return map[string][]model.InfrastructureResult{"data": me.Data.([]model.InfrastructureResult)}, nil
 }
 
-func (Infrastructureservice) GetAllTypes() (map[string][]*model.InfrastructureType, error) {
+func (Infrastructureservice) GetAllTypes() (map[string][]model.InfrastructureType, error) {
 	iStore := store.SqlInfrastructureStore{store.Database}
 	me := <-iStore.RetrieveAllTypes()
 	if me.Err != nil {
-		return map[string][]*model.InfrastructureType{"data": []*model.InfrastructureType{}}, me.Err
+		return map[string][]model.InfrastructureType{"data": []model.InfrastructureType{}}, me.Err
 	}
-	return map[string][]*model.InfrastructureType{"data": me.Data.([]*model.InfrastructureType)}, nil
+	return map[string][]model.InfrastructureType{"data": me.Data.([]model.InfrastructureType)}, nil
 }
 
 //func (Userservice) Update(a,b int) (int, error) {

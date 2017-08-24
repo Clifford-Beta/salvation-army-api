@@ -12,7 +12,7 @@ type SchoolService interface {
 	GetAll() (map[string][]*model.SchoolResult, error)
 	RecordPerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
 	GetBestSchool(from, to int) (model.SchoolPerformanceResult, error)
-	RankAllSchools(from, to int) (map[string][]*model.SchoolPerformanceResult, error)
+	RankAllSchools(from, to int) (map[string][]model.SchoolPerformanceResult, error)
 }
 
 type Schoolservice struct{}
@@ -78,7 +78,7 @@ func (Schoolservice) GetBestSchool(from, to int) (model.SchoolPerformanceResult,
 	return bestSchool.Data.(model.SchoolPerformanceResult), nil
 }
 
-func (Schoolservice) RankAllSchools(from, to int) (map[string][]*model.SchoolPerformanceResult, error) {
+func (Schoolservice) RankAllSchools(from, to int) (map[string][]model.SchoolPerformanceResult, error) {
 	schoolStore := store.SqlSchoolStore{store.Database}
 	filters := map[string]interface{}{}
 	if from != 0 {
@@ -93,7 +93,7 @@ func (Schoolservice) RankAllSchools(from, to int) (map[string][]*model.SchoolPer
 	}
 	bestSchool := <-schoolStore.RankAllSchools()
 	if bestSchool.Err != nil {
-		return map[string][]*model.SchoolPerformanceResult{"data": []*model.SchoolPerformanceResult{}}, bestSchool.Err
+		return map[string][]model.SchoolPerformanceResult{"data": []model.SchoolPerformanceResult{}}, bestSchool.Err
 	}
-	return map[string][]*model.SchoolPerformanceResult{"data": bestSchool.Data.([]*model.SchoolPerformanceResult)}, nil
+	return map[string][]model.SchoolPerformanceResult{"data": bestSchool.Data.([]model.SchoolPerformanceResult)}, nil
 }

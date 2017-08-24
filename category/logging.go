@@ -59,7 +59,7 @@ func (mw LoggingMiddleware) GetOneTier(id int) (output model.Tier, err error) {
 	return
 }
 
-func (mw LoggingMiddleware) GetAll() (output []*model.Category, err error) {
+func (mw LoggingMiddleware) GetAll() (output map[string][]*model.Category, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"output": output,
@@ -70,7 +70,7 @@ func (mw LoggingMiddleware) GetAll() (output []*model.Category, err error) {
 	return
 }
 
-func (mw LoggingMiddleware) GetAllTiers() (output []*model.Tier, err error) {
+func (mw LoggingMiddleware) GetAllTiers() (output map[string][]*model.Tier, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"output": output,

@@ -62,7 +62,7 @@ func (mw LoggingMiddleware) GetOneType(id int) (output model.FileType, err error
 	return
 }
 
-func (mw LoggingMiddleware) GetAll() (output map[string][]*model.File, err error) {
+func (mw LoggingMiddleware) GetAll() (output map[string][]model.File, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  "",
@@ -75,7 +75,7 @@ func (mw LoggingMiddleware) GetAll() (output map[string][]*model.File, err error
 	return
 }
 
-func (mw LoggingMiddleware) GetAllTypes() (output map[string][]*model.FileType, err error) {
+func (mw LoggingMiddleware) GetAllTypes() (output map[string][]model.FileType, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  "",

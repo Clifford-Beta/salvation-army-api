@@ -57,7 +57,7 @@ func (mw InstrumentingMiddleware) GetOneTier(id int) (output model.Tier, err err
 	return
 }
 
-func (mw InstrumentingMiddleware) GetAll() (output []*model.Category, err error) {
+func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.Category, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_all", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
@@ -67,7 +67,7 @@ func (mw InstrumentingMiddleware) GetAll() (output []*model.Category, err error)
 	output, err = mw.Next.GetAll()
 	return
 }
-func (mw InstrumentingMiddleware) GetAllTiers() (output []*model.Tier, err error) {
+func (mw InstrumentingMiddleware) GetAllTiers() (output map[string][]*model.Tier, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_all_tiers", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)

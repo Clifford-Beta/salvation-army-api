@@ -55,8 +55,8 @@ func MakeAddStaffRoleEndpoint(svc StaffService) endpoint.Endpoint {
 
 func MakeRetrieveStaffRoleEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(staffRequest)
-		v, err := svc.RetrieveStaffRole(req.Id)
+		//req := request.(staffRequest)
+		v, err := svc.RetrieveAllRoles()
 		if err != nil {
 			return v, err
 		}
@@ -186,9 +186,9 @@ func DecodeRetrieveStaffRoleRequest(_ context.Context, r *http.Request) (interfa
 
 func DecodeRetrieveAllStaffRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request staffRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return nil, err
-	}
+	//if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+	//	return nil, err
+	//}
 	return request, nil
 }
 
@@ -226,9 +226,9 @@ func DecodeRankStudentPerformanceRequest(_ context.Context, r *http.Request) (in
 
 func DecodeRetrieveAllRolesStaffRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request staffRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return nil, err
-	}
+	//if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+	//	return nil, err
+	//}
 	return request, nil
 }
 

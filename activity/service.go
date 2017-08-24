@@ -15,7 +15,7 @@ type ActivityService interface {
 	GetOnePerformance(id int) (model.ExtraCurricularActivity, error)
 	GetAllActivities() (map[string][]*model.ExtraCurricular, error)
 	GetAllLevels() (map[string][]*model.ExtraCurricularLevel, error)
-	GetAllPerformances() (map[string][]*model.ExtraCurricularActivity, error)
+	GetAllPerformances() (map[string][]*model.ExtraCurricularActivityResult, error)
 }
 type Activityservice struct{}
 
@@ -102,11 +102,11 @@ func (Activityservice) GetAllLevels() (map[string][]*model.ExtraCurricularLevel,
 
 }
 
-func (Activityservice) GetAllPerformances() (map[string][]*model.ExtraCurricularActivity, error) {
+func (Activityservice) GetAllPerformances() (map[string][]*model.ExtraCurricularActivityResult, error) {
 	actStore := store.SqlExtraCurricularStore{store.Database}
 	sch := <-actStore.GetAllRecordedActivities()
 	if sch.Err != nil {
-		return map[string][]*model.ExtraCurricularActivity{"data": []*model.ExtraCurricularActivity{}}, sch.Err
+		return map[string][]*model.ExtraCurricularActivityResult{"data": []*model.ExtraCurricularActivityResult{}}, sch.Err
 	}
-	return map[string][]*model.ExtraCurricularActivity{"data": sch.Data.([]*model.ExtraCurricularActivity)}, nil
+	return map[string][]*model.ExtraCurricularActivityResult{"data": sch.Data.([]*model.ExtraCurricularActivityResult)}, nil
 }

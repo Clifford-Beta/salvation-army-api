@@ -549,25 +549,25 @@ func main() {
 
 	var getOneInfEndpoint endpoint.Endpoint
 	{
-		getOneFileEndpoint = infsvc.MakeGetOneEndpoint(infs)
-		getOneFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneInfEndpoint)
+		getOneInfEndpoint = infsvc.MakeGetOneEndpoint(infs)
+		getOneInfEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneInfEndpoint)
 	}
 
 	var getOneInfTypeEndpoint endpoint.Endpoint
 	{
-		getOneFileTypeEndpoint = infsvc.MakeGetOneTypeEndpoint(infs)
-		getOneFileTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneInfTypeEndpoint)
+		getOneInfTypeEndpoint = infsvc.MakeGetOneTypeEndpoint(infs)
+		getOneInfTypeEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getOneInfTypeEndpoint)
 	}
 
 	var getAllInfEndpoint endpoint.Endpoint
 	{
-		getAllFilesEndpoint = infsvc.MakeGetAllEndpoint(infs)
-		getAllFilesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllInfEndpoint)
+		getAllInfEndpoint = infsvc.MakeGetAllEndpoint(infs)
+		getAllInfEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllInfEndpoint)
 	}
 	var getAllInfTypesEndpoint endpoint.Endpoint
 	{
-		getAllFileTypesEndpoint = infsvc.MakeGetAllTypesEndpoint(infs)
-		getAllFileTypesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllInfTypesEndpoint)
+		getAllInfTypesEndpoint = infsvc.MakeGetAllTypesEndpoint(infs)
+		getAllInfTypesEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getAllInfTypesEndpoint)
 	}
 
 	//infrastructure handlers
@@ -587,7 +587,6 @@ func main() {
 		jwtOptions...,
 	)
 	getOneInfHandler := httptransport.NewServer(
-
 		getOneInfEndpoint,
 		infsvc.DecodeGetOneRequest,
 		infsvc.EncodeResponse,
@@ -685,7 +684,7 @@ func main() {
 	)
 	getOneProjectHandler := httptransport.NewServer(
 
-		getOneMessageEndpoint,
+		getOneProjectEndpoint,
 		projectsvc.DecodeGetOneRequest,
 		projectsvc.EncodeResponse,
 		jwtOptions...,
@@ -822,7 +821,7 @@ func main() {
 	)
 	rankStaffPerformanceHandler := httptransport.NewServer(
 
-		rankAllSchoolsEndpoint,
+		rankStaffPerformanceEndpoint,
 		staffsvc.DecodeRankStaffPerformanceRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
@@ -971,8 +970,8 @@ func main() {
 		},
 		Route{
 			"Schools ",
-			"POST",
-			"/schools",
+			"GET",
+			"/school",
 			getAllSchoolsHandler,
 		},
 		Route{
