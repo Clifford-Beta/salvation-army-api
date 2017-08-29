@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 type Category struct {
@@ -20,6 +21,20 @@ type Tier struct {
 	Description string    `db:"tier_description" json:"description"`
 	TimeStamp   time.Time `db:"timestamp" json:"time_stamp"`
 	Status      int       `db:"tier_status" json:"status"`
+}
+
+func (o Category) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+	)
+}
+
+func (o Tier) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+	)
 }
 
 func (o *Category) ToJson() string {

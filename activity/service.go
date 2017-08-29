@@ -23,6 +23,9 @@ func (Activityservice) Create(act model.ExtraCurricular) (*model.ExtraCurricular
 	actStore := store.SqlExtraCurricularStore{store.Database}
 	act.Status = 1
 	act.TimeStamp = time.Now()
+	if err := act.Validate(); err != nil {
+		return &model.ExtraCurricular{},err
+	}
 	res := <-actStore.CreateNewActivity(&act)
 	if res.Err != nil {
 		return &model.ExtraCurricular{}, res.Err
@@ -34,6 +37,9 @@ func (Activityservice) CreateLevel(act model.ExtraCurricularLevel) (*model.Extra
 	actStore := store.SqlExtraCurricularStore{store.Database}
 	act.Status = 1
 	act.TimeStamp = time.Now()
+	if err := act.Validate(); err != nil {
+		return &model.ExtraCurricularLevel{},err
+	}
 	res := <-actStore.RecordLevel(&act)
 	if res.Err != nil {
 		return &model.ExtraCurricularLevel{}, res.Err
@@ -45,6 +51,9 @@ func (Activityservice) RecordPerformance(act model.ExtraCurricularActivity) (*mo
 	actStore := store.SqlExtraCurricularStore{store.Database}
 	act.Status = 1
 	act.TimeStamp = time.Now()
+	if err := act.Validate(); err != nil {
+		return &model.ExtraCurricularActivity{},err
+	}
 	res := <-actStore.RecordActivity(&act)
 	if res.Err != nil {
 		return &model.ExtraCurricularActivity{}, res.Err

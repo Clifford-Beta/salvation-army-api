@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 type ExtraCurricular struct {
@@ -42,6 +43,29 @@ type ExtraCurricularActivityResult struct {
 	Narrative    string       `db:"level_description" json:"narrative"`
 	Performance string    `db:"ext_activity_performance" json:"performance"`
 	Date        time.Time `db:"date" json:"date"`
+}
+
+func (o ExtraCurricular) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+	)
+}
+
+func (o ExtraCurricularLevel) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+	)
+}
+
+func (o ExtraCurricularActivity) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.School, validation.Required, validation.Min(1)),
+		validation.Field(&o.Level, validation.Required, validation.Min(1)),
+		validation.Field(&o.Activity, validation.Required, validation.Min(1)),
+		validation.Field(&o.Performance, validation.Required, validation.Length(3, 200)),
+	)
 }
 
 func (o *ExtraCurricular) ToJson() string {

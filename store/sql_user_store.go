@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"salvation-army-api/model"
 	"strconv"
+	"fmt"
 )
 
 type SqlUserStore struct {
@@ -42,44 +43,38 @@ func (s SqlUserStore) Save(user *model.User) StoreChannel {
 	return storeChannel
 }
 
-//func (s SqlUserStore) Update(user *model.User) StoreChannel {
-//	storeChannel := make(StoreChannel, 1)
-//	go func() {
-//		result := StoreResult{}
-//		if result.Err = user.IsValid(); result.Err != nil {
-//			storeChannel <- result
-//			close(storeChannel)
-//			return
-//		}
-//		oldUserResult, err := s.GetMaster().Get(model.User{}, user.Id)
-//		if err != nil || oldUserResult == nil {
-//			result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.finding.app_error", nil, "user_id="+strconv.Itoa(user.Id))
-//			//} else if oldInsurerResult == nil {
-//			//	result.Err = model.NewLocAppError("SqlInsurerStore.Update", "store.sql_insurer.update.find.app_error", nil, "insurer_id="+strconv.Itoa(insurer.Id))
-//		} else {
-//			oldUser := oldUserResult.(*model.User)
-//			user.DateAdd = oldUser.DateAdd
-//			user.Password = model.HashPassword(user.Password)
-//			if count, err := s.GetMaster().Update(user); err != nil {
-//				if IsUniqueConstraintError(err.Error(), []string{"Email", "users_email_key", "idx_user_email_unique"}) {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.email_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				} else if IsUniqueConstraintError(err.Error(), []string{"Phone", "users_phone_key", "idx_users_phone_unique"}) {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.phone_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				} else {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.updating.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				}
-//			} else if count != 1 {
-//				result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.app_error", nil, fmt.Sprintf("user_id=%v, count=%v", user.Id, count))
-//			} else {
-//				result.Data = [2]*model.User{user, oldUser}
-//			}
-//		}
-//
-//		storeChannel <- result
-//		close(storeChannel)
-//	}()
-//	return storeChannel
-//}
+func (s SqlUserStore) Update(user *model.User) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		//oldUserResult, err := s.GetMaster().Get(model.User{}, user.Id)
+		if oldUserResult, err := s.GetMaster().Get(model.User{}, user.Id); err != nil {
+			result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.finding.app_error", nil, "user_id="+strconv.Itoa(user.Id))
+
+		} else {
+			oldUser := oldUserResult.(*model.User)
+			user.DateAdd = oldUser.DateAdd
+			user.Password = model.HashPassword(user.Password)
+			if count, err := s.GetMaster().Update(user); err != nil {
+				if IsUniqueConstraintError(err.Error(), []string{"Email", "users_email_key", "idx_user_email_unique"}) {
+					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.email_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
+				} else if IsUniqueConstraintError(err.Error(), []string{"Phone", "users_phone_key", "idx_users_phone_unique"}) {
+					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.phone_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
+				} else {
+					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.updating.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
+				}
+			} else if count != 1 {
+				result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.app_error", nil, fmt.Sprintf("user_id=%v, count=%v", user.Id, count))
+			} else {
+				result.Data = [2]*model.User{user, oldUser}
+			}
+		}
+
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
 
 func (s SqlUserStore) Delete(user *model.User) StoreChannel {
 	storeChannel := make(StoreChannel)

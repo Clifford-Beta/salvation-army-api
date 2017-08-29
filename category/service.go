@@ -18,6 +18,9 @@ type Categoryservice struct{}
 func (Categoryservice) Create(category model.Category) (*model.Category, error) {
 	catStore := store.SqlCategoryStore{store.Database}
 	category.Status = 1
+	if err := category.Validate(); err != nil {
+		return &model.Category{},err
+	}
 	res := <-catStore.Save(&category)
 	if res.Err != nil {
 		return &model.Category{}, res.Err
@@ -26,6 +29,9 @@ func (Categoryservice) Create(category model.Category) (*model.Category, error) 
 }
 func (Categoryservice) CreateTier(category model.Tier) (*model.Tier, error) {
 	catStore := store.SqlCategoryStore{store.Database}
+	if err := category.Validate(); err != nil {
+		return &model.Tier{},err
+	}
 	res := <-catStore.CreateTier(&category)
 	if res.Err != nil {
 		return &model.Tier{}, res.Err

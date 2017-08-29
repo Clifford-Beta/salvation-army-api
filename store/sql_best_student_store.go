@@ -29,6 +29,8 @@ func (s SqlBestStudentStore) Save(best *model.BestStudent) StoreChannel {
 	return storeChannel
 }
 
+
+
 func (s SqlBestStudentStore) Delete(best *model.BestStudent) StoreChannel {
 	storeChannel := make(StoreChannel)
 	go func() {

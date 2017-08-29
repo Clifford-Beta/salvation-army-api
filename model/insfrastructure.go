@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 type Infrastructure struct {
@@ -35,6 +36,23 @@ type InfrastructureType struct {
 	TimeStamp   time.Time `db:"timestamp" json:"time_stamp"`
 	Status      int       `db:"i_type_status" json:"status"`
 }
+
+func (o InfrastructureType) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+	)
+}
+
+func (o Infrastructure) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+		validation.Field(&o.Type, validation.Required, validation.Min(3)),
+		validation.Field(&o.School, validation.Required, validation.Min(3)),
+	)
+}
+
 
 func (o *Infrastructure) ToJson() string {
 	b, err := json.Marshal(o)

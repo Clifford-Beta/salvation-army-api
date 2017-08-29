@@ -22,6 +22,9 @@ func (Infrastructureservice) Create(inf model.Infrastructure) (*model.Infrastruc
 	iStore := store.SqlInfrastructureStore{store.Database}
 	inf.Status = 1
 	inf.DateCreated = time.Now()
+	if err:= inf.Validate(); err != nil {
+		return &model.Infrastructure{},err
+	}
 	me := <-iStore.Create(&inf)
 	if me.Err != nil {
 		return &model.Infrastructure{}, me.Err
@@ -32,6 +35,9 @@ func (Infrastructureservice) Create(inf model.Infrastructure) (*model.Infrastruc
 func (Infrastructureservice) CreateType(inf model.InfrastructureType) (*model.InfrastructureType, error) {
 	iStore := store.SqlInfrastructureStore{store.Database}
 	inf.Status = 1
+	if err := inf.Validate(); err != nil {
+		return &model.InfrastructureType{},err
+	}
 	me := <-iStore.CreateIType(&inf)
 	if me.Err != nil {
 		return &model.InfrastructureType{}, me.Err

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 type Project struct {
@@ -28,6 +30,17 @@ type ProjectResult struct {
 	Progress    int       `db:"progress" json:"progress"`
 	TimeStamp   time.Time `db:"time_stamp" json:"time_stamp"`
 }
+
+
+func (s Project) Validate() error {
+	return validation.ValidateStruct(&s,
+		validation.Field(&s.Name, validation.Required, validation.Length(3, 50), is.Alphanumeric),
+		validation.Field(&s.Description, validation.Required, validation.Length(3, 200)),
+		validation.Field(&s.School, validation.Required),
+		validation.Field(&s.Start, validation.Required),
+	)
+}
+
 
 func (o *Project) ToJson() string {
 	b, err := json.Marshal(o)

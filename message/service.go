@@ -20,6 +20,9 @@ func (Messsageservice) Create(message model.Message) (*model.Message, error) {
 	msgStore := store.SqlMessageStore{store.Database}
 	message.Status = 1
 	message.DateSent = time.Now()
+	if err := message.Validate(); err != nil {
+		return &model.Message{},err
+	}
 	me := <-msgStore.CreateMessage(&message)
 	if me.Err != nil {
 		return &model.Message{}, me.Err

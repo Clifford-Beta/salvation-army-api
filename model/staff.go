@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 type StaffRole struct {
@@ -41,6 +43,23 @@ type StaffResult struct {
 	DateCreated time.Time `json:"date_created" db:"date_created"`
 	TimeStamp   time.Time `json:"time_stamp" db:"timestamp"`
 	Status      int       `json:"status" db:"status"`
+}
+
+func (s Staff) Validate() error {
+	return validation.ValidateStruct(&s,
+		validation.Field(&s.Name, validation.Required, validation.Length(3, 50), is.Alphanumeric),
+		validation.Field(&s.Email, validation.Required, is.Email),
+		validation.Field(&s.Phone, validation.Required, validation.Length(9, 15), is.Digit),
+		validation.Field(&s.Role, validation.Required, validation.Min(1)),
+		validation.Field(&s.School, validation.Required, validation.Min(1)),
+	)
+}
+
+func (s StaffRole) Validate() error {
+	return validation.ValidateStruct(&s,
+		validation.Field(&s.Name, validation.Required, validation.Length(3, 50), is.Alphanumeric),
+		validation.Field(&s.Description, validation.Required, validation.Length(5,150)),
+	)
 }
 
 func (o *Staff) ToJson() string {

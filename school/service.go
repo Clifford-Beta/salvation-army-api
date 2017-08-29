@@ -21,6 +21,9 @@ func (Schoolservice) Create(school model.School) (*model.School, error) {
 	schoolStore := store.SqlSchoolStore{store.Database}
 	school.Status = 1
 	school.DateRegistered = time.Now()
+	if err := school.Validate(); err != nil {
+		return &model.School{},err
+	}
 	sch := <-schoolStore.Save(&school)
 	if sch.Err != nil {
 		return &model.School{}, sch.Err

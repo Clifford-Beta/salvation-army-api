@@ -5,18 +5,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
-//	"time"
-//	"encoding/json"
-//	"io"
-//	//"unicode"
-//	"strings"
-//	"fmt"
-//	"regexp"
-//	"net/http"
-//	"golang.org/x/crypto/bcrypt"
-//)
+
+var (
+	USER_NAME_MIN_LENGTH = 3
+	USER_NAME_MAX_LENGTH = 50
+)
+
 
 type User struct {
 	Id       int       `db:"user_id" json:"id"`
@@ -27,30 +25,17 @@ type User struct {
 	Status   int       `db:"status" json:"status"`
 }
 
-//func (u *User) IsValid() *AppError {
-//	if !IsValidUsername(u.Name) {
-//		return NewAppError("Insurer.IsValid", "model.user.is_valid.name.app_error", nil, "name="+u.Name, http.StatusBadRequest)
-//	}
-//	if !IsValidPhone(u.Phone) {
-//		return NewAppError("Insurer.IsValid", "model.user.is_valid.phone.app_error", nil, "name="+u.Name, http.StatusBadRequest)
-//	}
-//	if !IsValidEmail(u.Email) {
-//		return NewAppError("Insurer.IsValid", "model.user.is_valid.email.app_error", nil, "name="+u.Name, http.StatusBadRequest)
-//	}
-//	if !IsValidStatus(u.Status) {
-//		return NewAppError("Insurer.IsValid", "model.user.is_valid.status.app_error", nil, "name="+u.Name, http.StatusBadRequest)
-//	}
-//
-//	if !IsValidPassword(u.Password) {
-//		return NewAppError("Insurer.IsValid", "model.insurer.is_valid.adress.app_error", nil, "name="+u.Name, http.StatusBadRequest)
-//	}
-//
-//	return nil
-//}
-//
-//func (u *User) Presave() {
-//	u.Password = HashPassword(u.Password)
-//}
+
+func (a User) Validate() error {
+	return validation.ValidateStruct(&a,
+		validation.Field(&a.Name, validation.Required, validation.Length(3, 50), is.Alphanumeric),
+		validation.Field(&a.Email, validation.Required, is.Email),
+	)
+}
+
+func (u *User) Presave() {
+	u.Password = HashPassword(u.Password)
+}
 //
 //
 //func IsValidInsurer(id int) bool{
@@ -172,43 +157,41 @@ func UserFromJson(data io.Reader) *User {
 //	return s
 //}
 //
-//func (u *User)Sanitize() {
-//	u.Password = ""
-//}
 //
-//
-//func (o *User) ToJson() string {
-//	//set password to null
-//	o.Password = ""
-//	b, err := json.Marshal(o)
-//	if err != nil {
-//		return ""
-//	} else {
-//		return string(b)
-//	}
-//}
-//
-//func UserFromJson(data io.Reader) *User {
-//	decoder := json.NewDecoder(data)
-//	var o User
-//	err := decoder.Decode(&o)
-//	if err == nil {
-//		return &o
-//	} else {
-//		return nil
-//	}
-//}
-//
-//
-//
-//type UserReport struct {
-//	Id int
-//	Name string
-//	Email string
-//	Phone string
-//	Role int
-//	Insurer string
-//	InsurerId int
-//	DateAdd time.Time
-//	Status	int
-//}
+////
+////
+////func (o *User) ToJson() string {
+////	//set password to null
+////	o.Password = ""
+////	b, err := json.Marshal(o)
+////	if err != nil {
+////		return ""
+////	} else {
+////		return string(b)
+////	}
+////}
+////
+////func UserFromJson(data io.Reader) *User {
+////	decoder := json.NewDecoder(data)
+////	var o User
+////	err := decoder.Decode(&o)
+////	if err == nil {
+////		return &o
+////	} else {
+////		return nil
+////	}
+////}
+////
+////
+////
+////type UserReport struct {
+////	Id int
+////	Name string
+////	Email string
+////	Phone string
+////	Role int
+////	Insurer string
+////	InsurerId int
+////	DateAdd time.Time
+////	Status	int
+////}

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 type School struct {
@@ -23,6 +25,7 @@ type School struct {
 
 type SchoolResult struct {
 	Id             int       `db:"id" json:"id"`
+	Rank           int       `db:"rank" json:"rank"`
 	Name           string    `db:"name" json:"name"`
 	Email          string    `db:"email" json:"email"`
 	Phone          string    `db:"phone" json:"phone"`
@@ -41,6 +44,18 @@ func (o *School) ToJson() string {
 	} else {
 		return string(b)
 	}
+}
+
+func (o School) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(3, 50), is.Alphanumeric),
+		validation.Field(&o.Email, validation.Required, is.Email),
+		validation.Field(&o.Phone, validation.Required, validation.Length(9, 15), is.Digit),
+		validation.Field(&o.Location,  is.Alphanumeric),
+		validation.Field(&o.PostalAddress, validation.Required,  is.Alphanumeric),
+		validation.Field(&o.Category, validation.Required,  validation.Min(1)),
+		validation.Field(&o.Description, validation.Required,  validation.Length(5,200)),
+	)
 }
 
 func SchoolFromJson(data io.Reader) *School {

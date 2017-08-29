@@ -22,6 +22,9 @@ func (Fileservice) Create(file model.File) (*model.File, error) {
 	fileStore := store.SqlFileStore{store.Database}
 	file.Status = 1
 	file.DateCreated = time.Now()
+	if err := file.Validate(); err != nil {
+		return &model.File{},err
+	}
 	me := <-fileStore.Create(&file)
 	if me.Err != nil {
 		return &model.File{}, me.Err
@@ -32,6 +35,9 @@ func (Fileservice) Create(file model.File) (*model.File, error) {
 func (Fileservice) CreateType(file model.FileType) (*model.FileType, error) {
 	fileStore := store.SqlFileStore{store.Database}
 	file.Status = 1
+	if err := file.Validate(); err != nil {
+		return &model.FileType{},err
+	}
 	me := <-fileStore.CreateFileType(&file)
 	if me.Err != nil {
 		return &model.FileType{}, me.Err

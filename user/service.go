@@ -20,8 +20,12 @@ type Userservice struct{}
 func (Userservice) Create(user model.User) (*model.User, error) {
 	userStore := store.SqlUserStore{store.Database}
 	user.Status = 1
-	user.Password = model.HashPassword(user.Password)
+	//user.Password = model.HashPassword(user.Password)
+	user.Presave()
 	user.DateAdd = time.Now()
+	if err := user.Validate(); err != nil {
+		return &model.User{}, err
+	}
 	me := <-userStore.Save(&user)
 	if me.Err != nil {
 		return &model.User{}, me.Err

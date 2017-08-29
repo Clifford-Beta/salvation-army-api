@@ -20,6 +20,9 @@ func (Projectservice) Create(project model.Project) (*model.Project, error) {
 	project.Status = 1
 	project.Start = time.Now()
 	project.TimeStamp = time.Now()
+	if err := project.Validate(); err != nil {
+		return &model.Project{},err
+	}
 	me := <-projStore.Create(&project)
 	if me.Err != nil {
 		return &model.Project{}, me.Err

@@ -27,6 +27,9 @@ func (Staffservice) AddStaff(staff model.Staff) (*model.Staff, error) {
 	staffStore := store.SqlStaffStore{store.Database}
 	staff.Status = 1
 	staff.TimeStamp = time.Now()
+	if err:= staff.Validate(); err != nil {
+		return &model.Staff{},err
+	}
 	res := <-staffStore.CreateStaffMember(&staff)
 	if res.Err != nil {
 		return &model.Staff{}, res.Err
@@ -57,6 +60,9 @@ func (Staffservice) RetrieveAllStaff() (map[string][]model.StaffResult, error) {
 func (Staffservice) AddStaffRole(role model.StaffRole) (*model.StaffRole, error) {
 	staffStore := store.SqlStaffStore{store.Database}
 	role.Status = 1
+	if err := role.Validate(); err != nil {
+		return &model.StaffRole{},err
+	}
 	res := <-staffStore.CreateStaffMemberRole(&role)
 	if res.Err != nil {
 		return &model.StaffRole{}, res.Err

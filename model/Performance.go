@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
+	//"github.com/go-ozzo/ozzo-validation/is"
 )
 
 type SchoolPerformance struct {
@@ -96,6 +98,16 @@ func (o *SchoolPerformance) ToJson() string {
 		return string(b)
 	}
 }
+
+func (o SchoolPerformance) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.School, validation.Required, validation.Min(1)),
+		validation.Field(&o.Category, validation.Required, validation.Min(1)),
+		validation.Field(&o.Mark, validation.Required),
+		validation.Field(&o.Year, validation.Required, validation.Min(2000)),
+	)
+}
+
 
 func SchoolPerformaceFromJson(data io.Reader) *SchoolPerformance {
 	decoder := json.NewDecoder(data)

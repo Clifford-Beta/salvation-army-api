@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"time"
+	"github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 type Message struct {
@@ -35,6 +37,31 @@ type File struct {
 	Status      int       `db:"file_status" json:"status"`
 	DateCreated time.Time `db:"date_created" json:"date_created"`
 	TimeStamp   time.Time `db:"timestamp" json:"time_stamp"`
+}
+
+func (o Message) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.From, validation.Required, validation.Length(2, 50), is.Alphanumeric),
+		validation.Field(&o.To, validation.Required, validation.Length(3, 50), is.Alphanumeric),
+		validation.Field(&o.Title, validation.Required),
+		validation.Field(&o.Content, validation.Required),
+	)
+}
+
+func (o File) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 75)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+		validation.Field(&o.Type, validation.Required, validation.Min(1)),
+	)
+}
+
+func (o FileType) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 75)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+		validation.Field(&o.Store, validation.Required, validation.Length(2, 30)),
+	)
 }
 
 func (o *Message) ToJson() string {
