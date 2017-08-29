@@ -13,9 +13,9 @@ var (
 	DB_DRIVER      = "mysql"
 	DB_POOL        = 10
 	DB_MAX_IDLE    = 3
-	CACHE_USER     = ""
-	CACHE_PASSWORD = ""
-	CACHE_URL      = "localhost:6379"
+	CACHE_USER     = "redistogo"
+	CACHE_PASSWORD = "a91baadf53ef530bccfeaa71ebab2aaf"
+	CACHE_URL      = "angelfish.redistogo.com:11928"
 	CACHE_DB       = 0
 )
 //
