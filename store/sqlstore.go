@@ -56,7 +56,7 @@ func InitConnection() *SqlStore {
 
 	ConfigureApp(os.Getenv("GO_ENV"))
 	//ConfigureApp("staging")
-	//Cache = InitCache(CACHE_URL, CACHE_PASSWORD, CACHE_DB)
+	Cache = InitCache(CACHE_URL, CACHE_PASSWORD, CACHE_DB)
 
 	//fmt.Println("This is the env var as it is set",os.Getenv("GO_ENV"))
 	/*env := os.Getenv("GO_ENV")
