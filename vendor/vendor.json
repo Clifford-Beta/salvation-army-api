@@ -87,6 +87,18 @@
 			"revisionTime": "2016-11-15T14:25:13Z"
 		},
 		{
+			"checksumSHA1": "DaBUQsIAiEat/UCnpAqAxP9NU8A=",
+			"path": "github.com/go-ozzo/ozzo-validation",
+			"revision": "2a0d4bd2d6644eb9c5a0d9f41b9519d520e28d89",
+			"revisionTime": "2017-07-11T19:02:05Z"
+		},
+		{
+			"checksumSHA1": "1CU+iJ5hIF81ldpzC9JPVviiEl0=",
+			"path": "github.com/go-ozzo/ozzo-validation/is",
+			"revision": "2a0d4bd2d6644eb9c5a0d9f41b9519d520e28d89",
+			"revisionTime": "2017-07-11T19:02:05Z"
+		},
+		{
 			"checksumSHA1": "66B+v3xxthEXA42qE2V9vJ07FV0=",
 			"path": "github.com/go-redis/redis",
 			"revision": "da63fe7def48e378caf9539abf64b9b1e37bc01e",
