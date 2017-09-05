@@ -25,6 +25,17 @@ func (mw InstrumentingMiddleware) Create(inf model.Infrastructure) (output *mode
 	return
 }
 
+func (mw InstrumentingMiddleware) Update(inf model.Infrastructure) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "update", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Update(inf)
+	return
+}
+
 func (mw InstrumentingMiddleware) CreateType(inf model.InfrastructureType) (output *model.InfrastructureType, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "create_type", "error", fmt.Sprint(err != nil)}

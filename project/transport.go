@@ -22,6 +22,17 @@ func MakeCreateEndpoint(svc ProjectService) endpoint.Endpoint {
 	}
 }
 
+func MakeUpdateEndpoint(svc ProjectService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.Project)
+		v, err := svc.Update(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeGetOneEndpoint(svc ProjectService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(msgRequest)

@@ -22,6 +22,18 @@ func MakeCreateActivityEndpoint(svc ActivityService) endpoint.Endpoint {
 	}
 }
 
+
+func MakeUpdateActivityEndpoint(svc ActivityService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.ExtraCurricular)
+		v, err := svc.Update(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeCreateLevelEndpoint(svc ActivityService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.ExtraCurricularLevel)

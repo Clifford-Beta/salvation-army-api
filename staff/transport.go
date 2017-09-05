@@ -130,6 +130,28 @@ func MakeRetrieveBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint
 	}
 }
 
+func MakeRetrieveTeacherEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(staffRequest)
+		v, err := svc.GetTeacher(req.Id)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeRetrieveStudentEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(staffRequest)
+		v, err := svc.GetStudent(req.Id)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeRetrieveBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)

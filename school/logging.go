@@ -24,6 +24,18 @@ func (mw LoggingMiddleware) Create(school model.School) (output *model.School, e
 	return
 }
 
+func (mw LoggingMiddleware) Update(school model.School) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  school,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "update")
+	}(time.Now())
+	output, err = mw.Next.Update(school)
+	return
+}
+
 func (mw LoggingMiddleware) GetOne(id int) (output model.School, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{

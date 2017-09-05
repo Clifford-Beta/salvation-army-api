@@ -23,6 +23,21 @@ func (mw LoggingMiddleware) Create(inf model.Infrastructure) (output *model.Infr
 	output, err = mw.Next.Create(inf)
 	return
 }
+
+func (mw LoggingMiddleware) Update(inf model.Infrastructure) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  inf,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "update")
+
+	}(time.Now())
+	output, err = mw.Next.Update(inf)
+	return
+}
+
+
 func (mw LoggingMiddleware) CreateType(inf model.InfrastructureType) (output *model.InfrastructureType, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{

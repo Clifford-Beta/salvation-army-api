@@ -23,6 +23,19 @@ func (mw LoggingMiddleware) Create(file model.File) (output *model.File, err err
 	output, err = mw.Next.Create(file)
 	return
 }
+
+func (mw LoggingMiddleware) Update(file model.File) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  file,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "file ", "method = ", "update")
+
+	}(time.Now())
+	output, err = mw.Next.Update(file)
+	return
+}
 func (mw LoggingMiddleware) CreateType(file model.FileType) (output *model.FileType, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{

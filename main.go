@@ -135,6 +135,12 @@ func main() {
 		userCreateEndpoint = usersvc.MakeCreateEndpoint(user)
 		userCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory,)(userCreateEndpoint)
 	}
+
+	var userUpdateEndpoint endpoint.Endpoint
+	{
+		userUpdateEndpoint = usersvc.MakeUpdateteEndpoint(user)
+		userUpdateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory,)(userUpdateEndpoint)
+	}
 	var getOneUserEndpoint endpoint.Endpoint
 	{
 		getOneUserEndpoint = usersvc.MakeGetOneEndpoint(user)
@@ -151,6 +157,13 @@ func main() {
 	userHandler := httptransport.NewServer(
 
 		userCreateEndpoint,
+		usersvc.DecodeCreateRequest,
+		usersvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateUserHandler := httptransport.NewServer(
+		userUpdateEndpoint,
 		usersvc.DecodeCreateRequest,
 		usersvc.EncodeResponse,
 		jwtOptions...,
@@ -261,6 +274,12 @@ func main() {
 		schoolCreateEndpoint = schoolsvc.MakeCreateEndpoint(school)
 		schoolCreateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(schoolCreateEndpoint)
 	}
+
+	var schoolUpdateEndpoint endpoint.Endpoint
+	{
+		schoolUpdateEndpoint = schoolsvc.MakeUpdateEndpoint(school)
+		schoolUpdateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(schoolUpdateEndpoint)
+	}
 	var getOneSchoolEndpoint endpoint.Endpoint
 	{
 		getOneSchoolEndpoint = schoolsvc.MakeGetOneEndpoint(school)
@@ -294,6 +313,13 @@ func main() {
 	schoolHandler := httptransport.NewServer(
 
 		schoolCreateEndpoint,
+		schoolsvc.DecodeCreateRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateSchoolHandler := httptransport.NewServer(
+		schoolUpdateEndpoint,
 		schoolsvc.DecodeCreateRequest,
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
@@ -342,6 +368,12 @@ func main() {
 		createActivityEndpoint = actsvc.MakeCreateActivityEndpoint(activity)
 		createActivityEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createActivityEndpoint)
 	}
+
+	var updateActivityEndpoint endpoint.Endpoint
+	{
+		updateActivityEndpoint = actsvc.MakeUpdateActivityEndpoint(activity)
+		updateActivityEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateActivityEndpoint)
+	}
 	var createLevelEndpoint endpoint.Endpoint
 	{
 		createLevelEndpoint = actsvc.MakeCreateLevelEndpoint(activity)
@@ -388,6 +420,13 @@ func main() {
 	createActivityHandler := httptransport.NewServer(
 
 		createActivityEndpoint,
+		actsvc.DecodeCreateActivityRequest,
+		actsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateActivityHandler := httptransport.NewServer(
+		updateActivityEndpoint,
 		actsvc.DecodeCreateActivityRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
@@ -456,6 +495,12 @@ func main() {
 		createFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createFileEndpoint)
 	}
 
+	var updateFileEndpoint endpoint.Endpoint
+	{
+		updateFileEndpoint = filesvc.MakeUpdateEndpoint(file)
+		updateFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateFileEndpoint)
+	}
+
 	var createFileTypeEndpoint endpoint.Endpoint
 	{
 		createFileTypeEndpoint = filesvc.MakeCreateTypeEndpoint(file)
@@ -490,6 +535,14 @@ func main() {
 	createFileHandler := httptransport.NewServer(
 
 		createFileEndpoint,
+		filesvc.DecodeCreateRequest,
+		filesvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateFileHandler := httptransport.NewServer(
+
+		updateFileEndpoint,
 		filesvc.DecodeCreateRequest,
 		filesvc.EncodeResponse,
 		jwtOptions...,
@@ -541,6 +594,12 @@ func main() {
 		createInfEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createInfEndpoint)
 	}
 
+	var updateInfEndpoint endpoint.Endpoint
+	{
+		updateInfEndpoint = infsvc.MakeUpdateEndpoint(infs)
+		updateInfEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateInfEndpoint)
+	}
+
 	var createInfTypeEndpoint endpoint.Endpoint
 	{
 		createInfTypeEndpoint = infsvc.MakeCreateTypeEndpoint(infs)
@@ -574,6 +633,14 @@ func main() {
 	createInfHandler := httptransport.NewServer(
 
 		createInfEndpoint,
+		infsvc.DecodeCreateRequest,
+		infsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateInfHandler := httptransport.NewServer(
+
+		updateInfEndpoint,
 		infsvc.DecodeCreateRequest,
 		infsvc.EncodeResponse,
 		jwtOptions...,
@@ -622,6 +689,12 @@ func main() {
 		createMessageEndpoint = msgsvc.MakeCreateEndpoint(message)
 		createMessageEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createMessageEndpoint)
 	}
+
+	var updateMessageEndpoint endpoint.Endpoint
+	{
+		updateMessageEndpoint = msgsvc.MakeUpdateEndpoint(message)
+		updateMessageEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateMessageEndpoint)
+	}
 	var getOneMessageEndpoint endpoint.Endpoint
 	{
 		getOneMessageEndpoint = msgsvc.MakeGetOneEndpoint(message)
@@ -637,6 +710,14 @@ func main() {
 	createMessageHandler := httptransport.NewServer(
 
 		createMessageEndpoint,
+		msgsvc.DecodeCreateRequest,
+		msgsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateMessageHandler := httptransport.NewServer(
+
+		updateMessageEndpoint,
 		msgsvc.DecodeCreateRequest,
 		msgsvc.EncodeResponse,
 		jwtOptions...,
@@ -662,6 +743,12 @@ func main() {
 		createProjectEndpoint = projectsvc.MakeCreateEndpoint(project)
 		createProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(createProjectEndpoint)
 	}
+
+	var updateProjectEndpoint endpoint.Endpoint
+	{
+		updateProjectEndpoint = projectsvc.MakeUpdateEndpoint(project)
+		updateProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateProjectEndpoint)
+	}
 	var getOneProjectEndpoint endpoint.Endpoint
 	{
 		getOneProjectEndpoint = projectsvc.MakeGetOneEndpoint(project)
@@ -678,6 +765,14 @@ func main() {
 	createProjectHandler := httptransport.NewServer(
 
 		createProjectEndpoint,
+		projectsvc.DecodeCreateRequest,
+		projectsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateProjectHandler := httptransport.NewServer(
+
+		updateProjectEndpoint,
 		projectsvc.DecodeCreateRequest,
 		projectsvc.EncodeResponse,
 		jwtOptions...,
@@ -701,6 +796,12 @@ func main() {
 	{
 		addStaffEndpoint = staffsvc.MakeAddStaffEndpoint(staff)
 		addStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(addStaffEndpoint)
+	}
+
+	var updateStaffEndpoint endpoint.Endpoint
+	{
+		updateStaffEndpoint = staffsvc.MakeUpdateStaffEndpoint(staff)
+		updateStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateStaffEndpoint)
 	}
 	var retrieveStaffEndpoint endpoint.Endpoint
 	{
@@ -728,10 +829,33 @@ func main() {
 		recordBestPerformingStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(recordBestPerformingStaffEndpoint)
 	}
 
+	var updateBestPerformingStaffEndpoint endpoint.Endpoint
+	{
+		updateBestPerformingStaffEndpoint = staffsvc.MakeUpdateBestPerformingStaffEndpoint(staff)
+		updateBestPerformingStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateBestPerformingStaffEndpoint)
+	}
+
 	var bestPerformingStudentEndpoint endpoint.Endpoint
 	{
 		bestPerformingStudentEndpoint = staffsvc.MakeRecordBestPerformingStudentEndpoint(staff)
 		bestPerformingStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(bestPerformingStudentEndpoint)
+	}
+
+	var updatebestPerformingStudentEndpoint endpoint.Endpoint
+	{
+		updatebestPerformingStudentEndpoint = staffsvc.MakeUpdateBestPerformingStudentEndpoint(staff)
+		updatebestPerformingStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updatebestPerformingStudentEndpoint)
+	}
+	var retrieveTeacherEndpoint endpoint.Endpoint
+	{
+		retrieveTeacherEndpoint = staffsvc.MakeRetrieveTeacherEndpoint(staff)
+		retrieveTeacherEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(retrieveTeacherEndpoint)
+	}
+
+	var retrieveStudentEndpoint endpoint.Endpoint
+	{
+		retrieveStudentEndpoint = staffsvc.MakeRetrieveStudentEndpoint(staff)
+		retrieveStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(retrieveStudentEndpoint)
 	}
 	var retrieveBestPerformingStaffEndpoint endpoint.Endpoint
 	{
@@ -759,6 +883,14 @@ func main() {
 	addStaffHandler := httptransport.NewServer(
 
 		addStaffEndpoint,
+		staffsvc.DecodeAddStaffRequest,
+		staffsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateStaffHandler := httptransport.NewServer(
+
+		updateStaffEndpoint,
 		staffsvc.DecodeAddStaffRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
@@ -798,9 +930,24 @@ func main() {
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
+
+	updateBestPerformingStaffHandler := httptransport.NewServer(
+
+		updateBestPerformingStaffEndpoint,
+		staffsvc.DecodeRecordBestPerformingStaffRequest,
+		staffsvc.EncodeResponse,
+		jwtOptions...,
+	)
 	recordBestPerformingStudentHandler := httptransport.NewServer(
 
 		bestPerformingStudentEndpoint,
+		staffsvc.DecodeRecordBestPerformingStudentRequest,
+		staffsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	updateBestPerformingStudentHandler := httptransport.NewServer(
+
+		updatebestPerformingStudentEndpoint,
 		staffsvc.DecodeRecordBestPerformingStudentRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
@@ -809,6 +956,22 @@ func main() {
 
 		retrieveBestPerformingStaffEndpoint,
 		staffsvc.DecodeRetrieveBestPerformingStaffRequest,
+		staffsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	retrieveTeacherStaffHandler := httptransport.NewServer(
+
+		retrieveTeacherEndpoint,
+		staffsvc.DecodeRetrieveStaffRequest,
+		staffsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	retrieveStudentHandler := httptransport.NewServer(
+
+		retrieveStudentEndpoint,
+		staffsvc.DecodeRetrieveStaffRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
@@ -891,6 +1054,12 @@ func main() {
 			userHandler,
 		},
 		Route{
+			"User",
+			"PATCH",
+			"/user",
+			updateUserHandler,
+		},
+		Route{
 			"User ",
 			"GET",
 			"/user/{id}",
@@ -951,6 +1120,12 @@ func main() {
 			schoolHandler,
 		},
 		Route{
+			"School",
+			"PATCH",
+			"/school",
+			updateSchoolHandler,
+		},
+		Route{
 			"School Performance",
 			"POST",
 			"/school_performance",
@@ -993,6 +1168,13 @@ func main() {
 			"POST",
 			"/activity",
 			createActivityHandler,
+		},
+
+		Route{
+			"Activity",
+			"PATCH",
+			"/activity",
+			updateActivityHandler,
 		},
 		Route{
 			"Activity",
@@ -1051,6 +1233,12 @@ func main() {
 		},
 		Route{
 			"File ",
+			"PATCH",
+			"/file",
+			updateFileHandler,
+		},
+		Route{
+			"File ",
 			"GET",
 			"/file/{id}",
 			getOneFileHandler,
@@ -1085,6 +1273,12 @@ func main() {
 			"POST",
 			"/infrastructure",
 			createInfHandler,
+		},
+		Route{
+			"Infrastructure",
+			"PATCH",
+			"/infrastructure",
+			updateInfHandler,
 		},
 		Route{
 			"Infrastructure",
@@ -1123,6 +1317,13 @@ func main() {
 			"/message",
 			createMessageHandler,
 		},
+
+		Route{
+			"Message",
+			"PATCH",
+			"/message",
+			updateMessageHandler,
+		},
 		Route{
 			"Message",
 			"GET",
@@ -1144,6 +1345,12 @@ func main() {
 		},
 		Route{
 			"Project",
+			"PATCH",
+			"/project",
+			updateProjectHandler,
+		},
+		Route{
+			"Project",
 			"GET",
 			"/project/{id}",
 			getOneProjectHandler,
@@ -1160,6 +1367,12 @@ func main() {
 			"POST",
 			"/staff",
 			addStaffHandler,
+		},
+		Route{
+			"Staff",
+			"PATCH",
+			"/staff",
+			updateStaffHandler,
 		},
 		Route{
 			"Staff",
@@ -1192,10 +1405,36 @@ func main() {
 			recordBestPerformingStaffHandler,
 		},
 		Route{
+			"Best Teacher",
+			"PATCH",
+			"/teacher",
+			updateBestPerformingStaffHandler,
+		},
+		Route{
+			"Best Teacher",
+			"GET",
+			"/teacher/{id}",
+			retrieveTeacherStaffHandler,
+		},
+
+		Route{
 			"Best Student",
 			"POST",
 			"/student",
 			recordBestPerformingStudentHandler,
+		},
+		Route{
+			"Best Student",
+			"PATCH",
+			"/student",
+			updateBestPerformingStudentHandler,
+		},
+
+		Route{
+			"Best Student",
+			"GET",
+			"/student/{id}",
+			retrieveStudentHandler,
 		},
 		Route{
 			"Best Teacher",

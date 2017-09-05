@@ -22,6 +22,17 @@ func MakeCreateEndpoint(svc FileService) endpoint.Endpoint {
 	}
 }
 
+func MakeUpdateEndpoint(svc FileService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.File)
+		v, err := svc.Update(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeCreateTypeEndpoint(svc FileService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.FileType)

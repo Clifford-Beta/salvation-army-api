@@ -21,6 +21,17 @@ func MakeCreateEndpoint(svc SchoolService) endpoint.Endpoint {
 	}
 }
 
+func MakeUpdateEndpoint(svc SchoolService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.School)
+		v, err := svc.Update(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeRecordPerformanceEndpoint(svc SchoolService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.SchoolPerformance)
