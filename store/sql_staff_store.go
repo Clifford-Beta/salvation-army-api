@@ -2,6 +2,7 @@ package store
 
 import (
 	"salvation-army-api/model"
+	"strconv"
 )
 
 type SqlStaffStore struct {
@@ -51,16 +52,11 @@ func (s SqlStaffStore) RetrieveStaffMember(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var staff model.StaffResult
+		var staff model.Staff
 		err := s.master.SelectOne(&staff,
-			"select staff.staff_id as id,staff.staff_name as name,staff.staff_phone as phone,"+
-				"staff.staff_email as email,staff.staff_photo as photo,staff.staff_title as title,"+
-				"staff.staff_status as status, staff_role.staff_role_name as role"+
-				",staff.date_created as date_created, staff.timestamp as timestamp,school.school_name as school "+
-				"from `staff` "+
-				"left join school on staff.school_id=school.school_id "+
-				"left join staff_role on staff.staff_role=staff_role.staff_role_id "+
-				"where staff.staff_id=?", id)
+			"select * from staff "+
+				"where staff_status=1 and staff_id=?", id)
+		//oldUserResult, err := s.GetMaster().Get(model.Staff{}, id)
 
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlStaffStore.Get", "store.sql_category.get.app_error", nil, err.Error())
@@ -75,6 +71,57 @@ func (s SqlStaffStore) RetrieveStaffMember(id int) StoreChannel {
 	}()
 	return storeChannel
 }
+func (s SqlStaffStore) Update(staff *model.Staff) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		if sqlResult, err := s.GetMaster().Exec(
+			`UPDATE
+				staff
+			SET
+				staff_name = :Name,
+				staff_phone = :Phone,
+				staff_email = :Email,
+				staff_role = :Role,
+				staff_photo = :Photo,
+				staff_title = :Title,
+				school_id = :School,
+			WHERE
+				staff_id = :Id
+			`,
+			map[string]interface{}{
+				"Id":             staff.Id,
+				"Phone":      staff.Phone,
+				"Email": 	staff.Email,
+				"Role":         staff.Role,
+				"Photo":         staff.Photo,
+				"Title":         staff.Title,
+				"School":         staff.School,
+			}); err != nil {
+			result.Err = model.NewLocAppError("SqlStaffStore.UpdateOptimistically",
+				"store.sql_staff.update.app_error", nil, "id="+strconv.Itoa(staff.Id)+", "+err.Error())
+		} else {
+			rows, err := sqlResult.RowsAffected()
+
+			if err != nil {
+				result.Err = model.NewLocAppError("SqlStaffStore.UpdateStatus",
+					"store.sql_staff.update.app_error", nil, "id="+strconv.Itoa(staff.Id)+", "+err.Error())
+			} else {
+				if rows == 1 {
+					result.Data = true
+				} else {
+					result.Data = false
+				}
+			}
+		}
+
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
+
+
 func (s SqlStaffStore) RetrieveStaffMemberRole(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {

@@ -85,7 +85,7 @@ func InitConnection() *SqlStore {
 }
 
 func setupConnection(con_type string, driver string, dataSource string, maxIdle int, maxOpen int, trace bool) *gorp.DbMap {
-
+	l4g.Debug("driver",driver)
 	db, err := dbsql.Open(driver, dataSource)
 	if err != nil {
 		l4g.Critical("store.sql.open_conn.critical", err)

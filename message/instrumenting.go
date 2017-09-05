@@ -36,13 +36,13 @@ func (mw InstrumentingMiddleware) GetOne(id int) (output model.Message, err erro
 	return
 }
 
-func (mw InstrumentingMiddleware) GetAll() (output map[string][]model.Message, err error) {
+func (mw InstrumentingMiddleware) GetAll(user int) (output map[string][]model.MessageResult, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getall", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
 		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	output, err = mw.Next.GetAll()
+	output, err = mw.Next.GetAll(user)
 	return
 }

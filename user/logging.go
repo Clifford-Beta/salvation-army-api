@@ -24,6 +24,19 @@ func (mw LoggingMiddleware) Create(user model.User) (output *model.User, err err
 	return
 }
 
+func (mw LoggingMiddleware) Update(user model.User) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  user,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "user ", "method = ", "update")
+
+	}(time.Now())
+	output, err = mw.Next.Update(user)
+	return
+}
+
 func (mw LoggingMiddleware) GetOne(id int) (output model.User, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{

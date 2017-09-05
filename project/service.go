@@ -9,8 +9,9 @@ import (
 // StringService provides operations on strings.
 type ProjectService interface {
 	Create(project model.Project) (*model.Project, error)
-	GetOne(int) (model.ProjectResult, error)
+	GetOne(int) (model.Project, error)
 	GetAll() (map[string][]model.ProjectResult, error)
+	Update(project model.Project)(bool,error)
 }
 
 type Projectservice struct{}
@@ -30,13 +31,22 @@ func (Projectservice) Create(project model.Project) (*model.Project, error) {
 	return me.Data.(*model.Project), nil
 }
 
-func (Projectservice) GetOne(id int) (model.ProjectResult, error) {
+func (Projectservice) Update(project model.Project) (bool, error) {
+	projStore := store.SqlProjectStore{store.Database}
+	me := <-projStore.Update(&project)
+	if me.Err != nil {
+		return me.Data.(bool), me.Err
+	}
+	return me.Data.(bool), nil
+}
+
+func (Projectservice) GetOne(id int) (model.Project, error) {
 	projStore := store.SqlProjectStore{store.Database}
 	me := <-projStore.Retrieve(id)
 	if me.Err != nil {
-		return model.ProjectResult{}, me.Err
+		return model.Project{}, me.Err
 	}
-	return me.Data.(model.ProjectResult), nil
+	return me.Data.(model.Project), nil
 }
 
 func (Projectservice) GetAll() (map[string][]model.ProjectResult, error) {

@@ -105,44 +105,57 @@ func (s SqlSchoolStore) RetrieveBestPerfomingSchool(filter map[string]interface{
 
 
 
-//func (s SqlUserStore) Update(user *model.User) StoreChannel {
-//	storeChannel := make(StoreChannel, 1)
-//	go func() {
-//		result := StoreResult{}
-//		if result.Err = user.IsValid(); result.Err != nil {
-//			storeChannel <- result
-//			close(storeChannel)
-//			return
-//		}
-//		oldUserResult, err := s.GetMaster().Get(model.User{}, user.Id)
-//		if err != nil || oldUserResult == nil {
-//			result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.finding.app_error", nil, "user_id="+strconv.Itoa(user.Id))
-//			//} else if oldInsurerResult == nil {
-//			//	result.Err = model.NewLocAppError("SqlInsurerStore.Update", "store.sql_insurer.update.find.app_error", nil, "insurer_id="+strconv.Itoa(insurer.Id))
-//		} else {
-//			oldUser := oldUserResult.(*model.User)
-//			user.DateAdd = oldUser.DateAdd
-//			user.Password = model.HashPassword(user.Password)
-//			if count, err := s.GetMaster().Update(user); err != nil {
-//				if IsUniqueConstraintError(err.Error(), []string{"Email", "users_email_key", "idx_user_email_unique"}) {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.email_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				} else if IsUniqueConstraintError(err.Error(), []string{"Phone", "users_phone_key", "idx_users_phone_unique"}) {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.phone_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				} else {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.updating.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				}
-//			} else if count != 1 {
-//				result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.app_error", nil, fmt.Sprintf("user_id=%v, count=%v", user.Id, count))
-//			} else {
-//				result.Data = [2]*model.User{user, oldUser}
-//			}
-//		}
-//
-//		storeChannel <- result
-//		close(storeChannel)
-//	}()
-//	return storeChannel
-//}
+func (s SqlSchoolStore) Update(school *model.School) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		if sqlResult, err := s.GetMaster().Exec(
+			`UPDATE
+				school
+			SET
+				school_name = :Name,
+				school_email = :Email,
+				school_phone = :Phone,
+				school_postal_address = :PostalAddress,
+				school_category = :Category,
+				school_logo = :Logo,
+				school_location = :Location,
+				school_description = :Description,
+			WHERE
+				school_id = :Id`,
+			map[string]interface{}{
+				"Id":             school.Id,
+				"Name":      school.Name,
+				"Email": school.Email,
+				"Phone":         school.Phone,
+				"PostalAddress":           school.PostalAddress,
+				"Category":       school.Category,
+				"Logo":       school.Logo,
+				"Location":       school.Location,
+				"Description":       school.Description,
+			}); err != nil {
+			result.Err = model.NewLocAppError("SqlSchoolStore.UpdateOptimistically",
+				"store.sql_job.update.app_error", nil, "id="+strconv.Itoa(school.Id)+", "+err.Error())
+		} else {
+			rows, err := sqlResult.RowsAffected()
+
+			if err != nil {
+				result.Err = model.NewLocAppError("SqlSchoolStore.UpdateOptimistically",
+					"store.sql_job.update.app_error", nil, "id="+strconv.Itoa(school.Id)+", "+err.Error())
+			} else {
+				if rows == 1 {
+					result.Data = true
+				} else {
+					result.Data = false
+				}
+			}
+		}
+
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
 
 
 
@@ -169,18 +182,14 @@ func (s SqlSchoolStore) Get(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		//pl := model.NewUserList()
 		var school model.School
 		err := s.master.SelectOne(&school, "select * from school where school_id=?", id)
-		if err != nil {
+		if err != nil  {
 			result.Err = model.NewLocAppError("SqlSchoolStore.Get", "store.sql_school.get.app_error", nil, "school="+school.Name+", "+err.Error())
 			storeChannel <- result
 			close(storeChannel)
 			return
 		}
-
-		//pl.AddUser(&user)
-		//user.Sanitize()
 		result.Data = school
 
 		storeChannel <- result

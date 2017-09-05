@@ -36,7 +36,7 @@ func (mw InstrumentingMiddleware) CreateType(inf model.InfrastructureType) (outp
 	return
 }
 
-func (mw InstrumentingMiddleware) GetOne(id int) (output model.InfrastructureResult, err error) {
+func (mw InstrumentingMiddleware) GetOne(id int) (output model.Infrastructure, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_one", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)

@@ -8,14 +8,19 @@ import (
 
 type StaffService interface {
 	AddStaff(staff model.Staff) (*model.Staff, error)
-	RetrieveStaff(id int) (model.StaffResult, error)
+	UpdateStaff(staff model.Staff) (bool, error)
+	RetrieveStaff(id int) (model.Staff, error)
 	RetrieveAllStaff() (map[string][]model.StaffResult, error)
 	AddStaffRole(role model.StaffRole) (*model.StaffRole, error)
 	RetrieveStaffRole(id int) (model.StaffRole, error)
 	RetrieveAllRoles() (map[string][]*model.StaffRole, error)
 	RecordBestPerformingStaff(teacher model.BestTeacher) (*model.BestTeacher, error)
+	UpdateBestPerformingStaff(teacher model.BestTeacher) (bool, error)
 	RecordBestPerformingStudent(student model.BestStudent) (*model.BestStudent, error)
+	UpdateBestPerformingStudent(student model.BestStudent) (bool, error)
 	RetrieveBestPerformingStaff(from, to int) (model.BestTeacherResult, error)
+	GetTeacher(id int) (model.BestTeacher, error)
+	GetStudent(id int) (model.BestStudent, error)
 	RetrieveBestPerformingStudent(from, to int) (model.BestStudentResult, error)
 	RankStaffPerformance(from, to int) (map[string][]*model.BestTeacherResult, error)
 	RankStudentPerformance(from, to int) (map[string][]*model.BestStudentResult, error)
@@ -37,14 +42,61 @@ func (Staffservice) AddStaff(staff model.Staff) (*model.Staff, error) {
 	return res.Data.(*model.Staff), nil
 }
 
-func (Staffservice) RetrieveStaff(id int) (model.StaffResult, error) {
+func (Staffservice) RetrieveStaff(id int) (model.Staff, error) {
 	staffStore := store.SqlStaffStore{store.Database}
 	res := <-staffStore.RetrieveStaffMember(id)
 	if res.Err != nil {
-		return model.StaffResult{}, res.Err
+		return model.Staff{}, res.Err
 	}
 
-	return res.Data.(model.StaffResult), nil
+	return res.Data.(model.Staff), nil
+}
+
+func (Staffservice) GetTeacher(id int) (model.BestTeacher, error) {
+	staffStore := store.SqlBestTeacherStore{store.Database}
+	res := <-staffStore.Get(id)
+	if res.Err != nil {
+		return model.BestTeacher{}, res.Err
+	}
+
+	return res.Data.(model.BestTeacher), nil
+}
+
+func (Staffservice) UpdateStaff(user model.Staff) (bool, error) {
+	userStore := store.SqlStaffStore{store.Database}
+	me := <-userStore.Update(&user)
+	if me.Err != nil {
+		return me.Data.(bool), me.Err
+	}
+	return me.Data.(bool), nil
+}
+
+func (Staffservice) UpdateBestPerformingStaff(user model.BestTeacher) (bool, error) {
+	userStore := store.SqlBestTeacherStore{store.Database}
+	me := <-userStore.Update(&user)
+	if me.Err != nil {
+		return me.Data.(bool), me.Err
+	}
+	return me.Data.(bool), nil
+}
+
+func (Staffservice) UpdateBestPerformingStudent(user model.BestStudent) (bool, error) {
+	userStore := store.SqlBestStudentStore{store.Database}
+	me := <-userStore.Update(&user)
+	if me.Err != nil {
+		return me.Data.(bool), me.Err
+	}
+	return me.Data.(bool), nil
+}
+
+func (Staffservice) GetStudent(id int) (model.BestStudent, error) {
+	staffStore := store.SqlBestStudentStore{store.Database}
+	res := <-staffStore.Get(id)
+	if res.Err != nil {
+		return model.BestStudent{}, res.Err
+	}
+
+	return res.Data.(model.BestStudent), nil
 }
 
 func (Staffservice) RetrieveAllStaff() (map[string][]model.StaffResult, error) {
@@ -113,7 +165,7 @@ func (Staffservice) RecordBestPerformingStudent(teacher model.BestStudent) (*mod
 
 func (Staffservice) RetrieveBestPerformingStaff(from, to int) (model.BestTeacherResult, error) {
 	staffStore := store.SqlBestTeacherStore{store.Database}
-	res := <-staffStore.Get(from, to)
+	res := <-staffStore.GetBest(from, to)
 	if res.Err != nil {
 		return model.BestTeacherResult{}, res.Err
 	}
@@ -122,7 +174,7 @@ func (Staffservice) RetrieveBestPerformingStaff(from, to int) (model.BestTeacher
 
 func (Staffservice) RetrieveBestPerformingStudent(from, to int) (model.BestStudentResult, error) {
 	staffStore := store.SqlBestStudentStore{store.Database}
-	res := <-staffStore.Get(from, to)
+	res := <-staffStore.GetBest(from, to)
 	if res.Err != nil {
 		return model.BestStudentResult{}, res.Err
 	}

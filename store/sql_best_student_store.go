@@ -29,7 +29,26 @@ func (s SqlBestStudentStore) Save(best *model.BestStudent) StoreChannel {
 	return storeChannel
 }
 
+func (s SqlBestStudentStore) Update(best *model.BestStudent) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		if count, err := s.GetMaster().Update(best); err != nil {
+			result.Err = model.NewLocAppError("SqlBestStudentStore.Update", "store.sql_best_student.update.updating.app_error", nil, "student_id="+strconv.Itoa(best.Id)+", "+err.Error())
 
+		}else{
+			if count == 1 {
+				result.Data = true
+			}else{
+				result.Data = false
+			}
+
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
 
 func (s SqlBestStudentStore) Delete(best *model.BestStudent) StoreChannel {
 	storeChannel := make(StoreChannel)
@@ -50,7 +69,34 @@ func (s SqlBestStudentStore) Delete(best *model.BestStudent) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlBestStudentStore) Get(from, to int) StoreChannel {
+func (s SqlBestStudentStore) Get(id int) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		//pl := model.NewUserList()
+		var best model.BestStudentResult
+		err := s.master.SelectOne(&best, `select *
+			 from best_student
+			 where best_student_status = 1 and best_student_id=?`,id)
+
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlBestStudentStore.Get", "store.sql_best_student.get.app_error", nil, err.Error())
+			storeChannel <- result
+			close(storeChannel)
+			return
+		}
+
+		//pl.AddUser(&user)
+		//user.Sanitize()
+		result.Data = best
+
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
+
+func (s SqlBestStudentStore) GetBest(from, to int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}

@@ -14,8 +14,8 @@ func TestSqlMessageStore_CreateMessage(t *testing.T) {
 		Title:      "Test",
 		Content:    "This is a test message",
 		Attachment: "",
-		From:       "admin@system.com",
-		To:         "user@system.com",
+		From:      1,
+		To:         10,
 		Status:     1,
 		TimeStamp:  time.Now(),
 		DateSent:   time.Now(),
@@ -35,7 +35,7 @@ func TestSqlMessageStore_RetrieveMessage(t *testing.T) {
 }
 
 func TestSqlMessageStore_RetrieveAll(t *testing.T) {
-	res := <-msgStore.RetrieveAll()
+	res := <-msgStore.RetrieveAll(1)
 	if res.Err != nil {
 		t.Errorf("RetrieveAllMessages Failed with", res.Err)
 

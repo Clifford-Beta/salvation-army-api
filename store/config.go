@@ -48,6 +48,7 @@ func ConfigureApp(env string) bool {
 	viper.AddConfigPath("config")
 	viper.AddConfigPath("/config")
 	viper.AddConfigPath("./config")
+	viper.AddConfigPath("../config")
 
 	err := viper.ReadInConfig()
 

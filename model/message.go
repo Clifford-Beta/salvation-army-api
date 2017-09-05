@@ -5,7 +5,6 @@ import (
 	"io"
 	"time"
 	"github.com/go-ozzo/ozzo-validation"
-	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 type Message struct {
@@ -13,10 +12,21 @@ type Message struct {
 	Title      string    `db:"message_title" json:"title"`
 	Content    string    `db:"message_content" json:"content"`
 	Attachment string    `db:"message_file" json:"attachment"`
+	From       int    `db:"message_from" json:"from"`
+	To         int    `db:"message_to" json:"to"`
+	Status     int       `db:"message_status" json:"status"`
+	TimeStamp  time.Time `db:"timestamp" json:"time_stamp"`
+	DateSent   time.Time `db:"date_sent" json:"date_sent"`
+}
+
+type MessageResult struct {
+	Id         int       `db:"message_id" json:"id"`
+	Title      string    `db:"message_title" json:"title"`
+	Content    string    `db:"message_content" json:"content"`
+	Attachment string    `db:"message_file" json:"attachment"`
 	From       string    `db:"message_from" json:"from"`
 	To         string    `db:"message_to" json:"to"`
 	Status     int       `db:"message_status" json:"status"`
-	TimeStamp  time.Time `db:"timestamp" json:"time_stamp"`
 	DateSent   time.Time `db:"date_sent" json:"date_sent"`
 }
 
@@ -41,8 +51,8 @@ type File struct {
 
 func (o Message) Validate() error {
 	return validation.ValidateStruct(&o,
-		validation.Field(&o.From, validation.Required, validation.Length(2, 50), is.Alphanumeric),
-		validation.Field(&o.To, validation.Required, validation.Length(3, 50), is.Alphanumeric),
+		validation.Field(&o.From, validation.Required),
+		validation.Field(&o.To, validation.Required),
 		validation.Field(&o.Title, validation.Required),
 		validation.Field(&o.Content, validation.Required),
 	)

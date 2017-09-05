@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"salvation-army-api/model"
 	"strconv"
-	"fmt"
 )
 
 type SqlUserStore struct {
@@ -16,12 +15,6 @@ func (s SqlUserStore) Save(user *model.User) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		//user.Presave()
-		//if result.Err = user.IsValid(); result.Err != nil {
-		//	storeChannel <- result
-		//	close(storeChannel)
-		//	return
-		//}
 
 		if err := s.GetMaster().Insert(user); err != nil {
 			if IsUniqueConstraintError(err.Error(), []string{"Email", "users_email_key", "idx_users_email_unique"}) {
@@ -47,29 +40,37 @@ func (s SqlUserStore) Update(user *model.User) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		//oldUserResult, err := s.GetMaster().Get(model.User{}, user.Id)
-		if oldUserResult, err := s.GetMaster().Get(model.User{}, user.Id); err != nil {
-			result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.finding.app_error", nil, "user_id="+strconv.Itoa(user.Id))
-
+		if sqlResult, err := s.GetMaster().Exec(
+			`UPDATE
+				user
+			SET
+				username = :Name,
+				email = :Email
+			WHERE
+				user_id = :Id
+			`,
+			map[string]interface{}{
+				"Id":             user.Id,
+				"Name":      user.Name,
+				"Email": 	user.Email,
+				"Status":         user.Status,
+			}); err != nil {
+			result.Err = model.NewLocAppError("SqlUserStore.UpdateOptimistically",
+				"store.sql_user.update.app_error", nil, "id="+strconv.Itoa(user.Id)+", "+err.Error())
 		} else {
-			oldUser := oldUserResult.(*model.User)
-			user.DateAdd = oldUser.DateAdd
-			user.Password = model.HashPassword(user.Password)
-			if count, err := s.GetMaster().Update(user); err != nil {
-				if IsUniqueConstraintError(err.Error(), []string{"Email", "users_email_key", "idx_user_email_unique"}) {
-					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.email_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-				} else if IsUniqueConstraintError(err.Error(), []string{"Phone", "users_phone_key", "idx_users_phone_unique"}) {
-					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.phone_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-				} else {
-					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.updating.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-				}
-			} else if count != 1 {
-				result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.app_error", nil, fmt.Sprintf("user_id=%v, count=%v", user.Id, count))
+			rows, err := sqlResult.RowsAffected()
+
+			if err != nil {
+				result.Err = model.NewLocAppError("SqlJobStore.UpdateStatus",
+					"store.sql_job.update.app_error", nil, "id="+strconv.Itoa(user.Id)+", "+err.Error())
 			} else {
-				result.Data = [2]*model.User{user, oldUser}
+				if rows == 1 {
+					result.Data = true
+				} else {
+					result.Data = false
+				}
 			}
 		}
-
 		storeChannel <- result
 		close(storeChannel)
 	}()

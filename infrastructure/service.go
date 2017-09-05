@@ -9,8 +9,9 @@ import (
 // StringService provides operations on strings.
 type InfrastructureService interface {
 	Create(message model.Infrastructure) (*model.Infrastructure, error)
+	Update(message model.Infrastructure) (bool, error)
 	CreateType(message model.InfrastructureType) (*model.InfrastructureType, error)
-	GetOne(int) (model.InfrastructureResult, error)
+	GetOne(int) (model.Infrastructure, error)
 	GetOneType(int) (model.InfrastructureType, error)
 	GetAll() (map[string][]model.InfrastructureResult, error)
 	GetAllTypes() (map[string][]model.InfrastructureType, error)
@@ -32,6 +33,16 @@ func (Infrastructureservice) Create(inf model.Infrastructure) (*model.Infrastruc
 	return me.Data.(*model.Infrastructure), nil
 }
 
+func (Infrastructureservice) Update(msg model.Infrastructure) (bool, error) {
+	projStore := store.SqlInfrastructureStore{store.Database}
+	me := <-projStore.Update(&msg)
+	if me.Err != nil {
+		return me.Data.(bool), me.Err
+	}
+	return me.Data.(bool), nil
+}
+
+
 func (Infrastructureservice) CreateType(inf model.InfrastructureType) (*model.InfrastructureType, error) {
 	iStore := store.SqlInfrastructureStore{store.Database}
 	inf.Status = 1
@@ -45,13 +56,13 @@ func (Infrastructureservice) CreateType(inf model.InfrastructureType) (*model.In
 	return me.Data.(*model.InfrastructureType), nil
 }
 
-func (Infrastructureservice) GetOne(id int) (model.InfrastructureResult, error) {
+func (Infrastructureservice) GetOne(id int) (model.Infrastructure, error) {
 	iStore := store.SqlInfrastructureStore{store.Database}
 	me := <-iStore.RetrieveOne(id)
 	if me.Err != nil {
-		return model.InfrastructureResult{}, me.Err
+		return model.Infrastructure{}, me.Err
 	}
-	return me.Data.(model.InfrastructureResult), nil
+	return me.Data.(model.Infrastructure), nil
 }
 func (Infrastructureservice) GetOneType(id int) (model.InfrastructureType, error) {
 	iStore := store.SqlInfrastructureStore{store.Database}

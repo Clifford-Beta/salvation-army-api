@@ -25,6 +25,17 @@ func (mw InstrumentingMiddleware) Create(user model.User) (output *model.User, e
 	return
 }
 
+func (mw InstrumentingMiddleware) Update(user model.User) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "update", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Update(user)
+	return
+}
+
 func (mw InstrumentingMiddleware) GetOne(id int) (output model.User, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getone", "error", fmt.Sprint(err != nil)}

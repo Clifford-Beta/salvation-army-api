@@ -29,6 +29,34 @@ func (s SqlCategoryStore) Save(category *model.Category) StoreChannel {
 	return storeChannel
 }
 
+func (s SqlCategoryStore) Update(user *model.Category) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		oldUserResult, err := s.GetMaster().Get(model.Category{}, user.Id)
+		if err != nil || oldUserResult == nil {
+			result.Err = model.NewLocAppError("SqlCategoryStore.Update", "store.sql_insurer_user.update.finding.app_error", nil, "user_id="+strconv.Itoa(user.Id))
+		} else {
+			oldUser := oldUserResult.(*model.Category)
+			user.Status = oldUser.Status
+			if count, err := s.GetMaster().Update(user); err != nil {
+				if err != nil {
+					result.Err = model.NewLocAppError("SqlCategoryStore.Update", "store.sql_school.update.updating.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
+				}
+			} else if count != 1 {
+				result.Err = model.NewLocAppError("SqlCategoryStore.Update", "store.sql_school.update.updating.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", more than one record found")
+
+			} else {
+				result.Data = user
+			}
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
+
+
 func (s SqlCategoryStore) Delete(category *model.Category) StoreChannel {
 	storeChannel := make(StoreChannel)
 	go func() {

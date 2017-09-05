@@ -24,7 +24,7 @@ func (mw LoggingMiddleware) Create(project model.Project) (output *model.Project
 	return
 }
 
-func (mw LoggingMiddleware) GetOne(id int) (output model.ProjectResult, err error) {
+func (mw LoggingMiddleware) GetOne(id int) (output model.Project, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  id,

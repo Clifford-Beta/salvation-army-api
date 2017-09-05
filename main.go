@@ -801,7 +801,7 @@ func main() {
 	recordBestPerformingStudentHandler := httptransport.NewServer(
 
 		bestPerformingStudentEndpoint,
-		staffsvc.DecodeRetrieveBestPerformingStudentRequest,
+		staffsvc.DecodeRecordBestPerformingStudentRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
@@ -1131,8 +1131,8 @@ func main() {
 		},
 		Route{
 			"Message",
-			"GET",
-			"/message",
+			"POST",
+			"/mymessage",
 			getAllMessagesHandler,
 		},
 		//project routes
@@ -1224,6 +1224,8 @@ func main() {
 	}
 	r := APINewRouter(routes)
 	handler := cors.Default().Handler(r)
+	//allowedOrigins := []string{"http://localhost:8080"}
+	//cors.New(cors.Options{allowedOrigins})
 	version1 := r.PathPrefix("/v1").Subrouter()
 	//version2 := r.PathPrefix("/v2").Subrouter()
 	AddRoutes(version1, routes)
@@ -1262,9 +1264,9 @@ func corsHandler(h http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "OPTIONS" {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET,PUT,DELETE,PATCH,OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-			w.WriteHeader(204)
+			//w.WriteHeader(204)
 			logrus.Debug("I got here")
 			return
 		}

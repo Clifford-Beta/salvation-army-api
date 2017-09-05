@@ -35,7 +35,8 @@ func MakeGetOneEndpoint(svc MessageService) endpoint.Endpoint {
 
 func MakeGetAllEndpoint(svc MessageService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		v, err := svc.GetAll()
+		req := request.(msgRequest)
+		v, err := svc.GetAll(req.User)
 		if err != nil {
 			return v, err
 		}
@@ -64,9 +65,9 @@ func DecodeGetOneRequest(_ context.Context, r *http.Request) (interface{}, error
 
 func DecodeGetAllRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request msgRequest
-	//if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-	//	return nil, err
-	//}
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		return nil, err
+	}
 	return request, nil
 }
 
@@ -88,6 +89,7 @@ func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface
 
 type msgRequest struct {
 	Id int `json:"id"`
+	User int `json:"user"`
 }
 
 //type userResponse struct {

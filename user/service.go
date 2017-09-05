@@ -12,7 +12,7 @@ type UserService interface {
 	GetOne(int) (model.User, error)
 	GetAll() (map[string][]*model.User, error)
 	Login(email, password string) (model.User, error)
-	//Update(user model.User) (model.User, error)
+	Update(user model.User) (bool, error)
 }
 
 type Userservice struct{}
@@ -45,6 +45,15 @@ func (Userservice) GetOne(id int) (model.User, error) {
 	return us, nil
 }
 
+func (Userservice) Update(user model.User) (bool, error) {
+	userStore := store.SqlUserStore{store.Database}
+	me := <-userStore.Update(&user)
+	if me.Err != nil {
+		return me.Data.(bool), me.Err
+	}
+	return me.Data.(bool), nil
+}
+
 func (Userservice) Login(email, password string) (model.User, error) {
 	userStore := store.SqlUserStore{store.Database}
 	me := <-userStore.GetByEmailAndPassword(email, password)
@@ -62,6 +71,6 @@ func (Userservice) GetAll() (map[string][]*model.User, error) {
 	return map[string][]*model.User{"data": me.Data.([]*model.User)}, nil
 }
 
-//func (Userservice) Update(a,b int) (int, error) {
-//	return a+b, nil
+//func (Userservice) Update(user model.User) (model.User, error) {
+//	return model.User{},nil
 //}

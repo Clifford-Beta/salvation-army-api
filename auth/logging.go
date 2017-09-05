@@ -10,7 +10,7 @@ type LoggingAuthMiddleware struct {
 	Next   Authservice
 }
 
-func (mw LoggingAuthMiddleware) Auth(clientID int, clientSecret string) (token string, err error) {
+func (mw LoggingAuthMiddleware) Auth(clientID string, clientSecret string) (token map[string]interface{}, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"clientID": clientID,

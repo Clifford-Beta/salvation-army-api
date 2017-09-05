@@ -9,6 +9,7 @@ import (
 // StringService provides operations on strings.
 type FileService interface {
 	Create(file model.File) (*model.File, error)
+	Update(file model.File) (bool, error)
 	CreateType(file model.FileType) (*model.FileType, error)
 	GetOne(int) (model.File, error)
 	GetOneType(int) (model.FileType, error)
@@ -30,6 +31,15 @@ func (Fileservice) Create(file model.File) (*model.File, error) {
 		return &model.File{}, me.Err
 	}
 	return me.Data.(*model.File), nil
+}
+
+func (Fileservice) Update(msg model.File) (bool, error) {
+	projStore := store.SqlFileStore{store.Database}
+	me := <-projStore.Update(&msg)
+	if me.Err != nil {
+		return me.Data.(bool), me.Err
+	}
+	return me.Data.(bool), nil
 }
 
 func (Fileservice) CreateType(file model.FileType) (*model.FileType, error) {

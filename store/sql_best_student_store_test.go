@@ -15,7 +15,7 @@ func TestSqlBestStudentStore_Save(t *testing.T) {
 	}
 }
 func TestSqlBestStudentStore_Get(t *testing.T) {
-	res := <-bestStore.Get(2015, 2016)
+	res := <-bestStore.Get(1)
 	if res.Err != nil {
 		t.Errorf("best student get test failed with error ", res.Err)
 	}

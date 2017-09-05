@@ -37,7 +37,7 @@ func (mw LoggingMiddleware) GetOne(id int) (output model.Message, err error) {
 	return
 }
 
-func (mw LoggingMiddleware) GetAll() (output map[string][]model.Message, err error) {
+func (mw LoggingMiddleware) GetAll(user int) (output map[string][]model.MessageResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  "",
@@ -46,6 +46,6 @@ func (mw LoggingMiddleware) GetAll() (output map[string][]model.Message, err err
 			"took":   time.Since(begin)}).Info("service = ", "message ", "method = ", "getall")
 
 	}(time.Now())
-	output, err = mw.Next.GetAll()
+	output, err = mw.Next.GetAll(user)
 	return
 }

@@ -36,7 +36,7 @@ func (mw LoggingMiddleware) CreateType(inf model.InfrastructureType) (output *mo
 	return
 }
 
-func (mw LoggingMiddleware) GetOne(id int) (output model.InfrastructureResult, err error) {
+func (mw LoggingMiddleware) GetOne(id int) (output model.Infrastructure, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  id,

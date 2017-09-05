@@ -1,6 +1,9 @@
 package store
 
-import "salvation-army-api/model"
+import (
+	"salvation-army-api/model"
+		"strconv"
+)
 
 type SqlInfrastructureStore struct {
 	*SqlStore
@@ -23,6 +26,27 @@ func (s SqlInfrastructureStore) Create(inf *model.Infrastructure) StoreChannel {
 		close(storeChannel)
 	}()
 
+	return storeChannel
+}
+
+func (s SqlInfrastructureStore) Update(inf *model.Infrastructure) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		if count, err := s.GetMaster().Update(inf); err != nil {
+			result.Err = model.NewLocAppError("SqlInfrastructureStore.Update", "store.sql_infrastructure.update.updating.app_error", nil, "user_id="+strconv.Itoa(inf.Id)+", "+err.Error())
+
+		}else{
+			if count == 1 {
+				result.Data = true
+			}else{
+				result.Data = false
+			}
+
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
 	return storeChannel
 }
 
@@ -50,15 +74,11 @@ func (s SqlInfrastructureStore) RetrieveOne(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var inf model.InfrastructureResult
-		err := s.master.SelectOne(&inf, `select infrastructure.infrastructure_id as id, school.school_name as school,
-												infrastructure_name as name, i_type.i_type_name as type,
-												infrastructure_quantity as quantity, infrastructure_description as description,
-												infrastructure.date_created as date_created
+		var inf model.Infrastructure
+		err := s.master.SelectOne(&inf, `select *
 												from infrastructure
-												inner join school on infrastructure.school_id = school.school_id
-												inner join i_type on infrastructure.infrastructure_type = i_type.i_type_id
 												where infrastructure.infrastructure_id = ? and infrastructure_status=1`, id)
+
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlInfrastructureStore.Get", "store.sql_inf.get.app_error", nil, err.Error())
 			storeChannel <- result

@@ -8,6 +8,7 @@ import (
 
 type SchoolService interface {
 	Create(model.School) (*model.School, error)
+	Update(model.School) (bool, error)
 	GetOne(int) (model.School, error)
 	GetAll() (map[string][]*model.SchoolResult, error)
 	RecordPerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
@@ -41,6 +42,16 @@ func (Schoolservice) GetOne(id int) (model.School, error) {
 	return sch.Data.(model.School), nil
 
 }
+
+func (Schoolservice) Update(school model.School) (bool, error) {
+	userStore := store.SqlSchoolStore{store.Database}
+	me := <-userStore.Update(&school)
+	if me.Err != nil {
+		return me.Data.(bool), me.Err
+	}
+	return me.Data.(bool), nil
+}
+
 
 func (Schoolservice) GetAll() (map[string][]*model.SchoolResult, error) {
 	schoolStore := store.SqlSchoolStore{store.Database}

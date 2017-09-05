@@ -22,6 +22,17 @@ func MakeCreateEndpoint(svc UserService) endpoint.Endpoint {
 	}
 }
 
+func MakeUpdateteEndpoint(svc UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.User)
+		v, err := svc.Update(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeGetOneEndpoint(svc UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(userRequest)
@@ -102,6 +113,11 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 }
 
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	return json.NewEncoder(w).Encode(response)
+}
+
+func EncodeLoginResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	return json.NewEncoder(w).Encode(response)
 }

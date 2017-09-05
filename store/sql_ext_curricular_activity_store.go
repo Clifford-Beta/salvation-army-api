@@ -2,6 +2,7 @@ package store
 
 import (
 	"salvation-army-api/model"
+	"strconv"
 )
 
 type SqlExtraCurricularStore struct {
@@ -25,6 +26,27 @@ func (s SqlExtraCurricularStore) CreateNewActivity(act *model.ExtraCurricular) S
 
 }
 
+func (s SqlExtraCurricularStore) Update(ext *model.ExtraCurricular) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		if count, err := s.GetMaster().Update(ext); err != nil {
+			result.Err = model.NewLocAppError("SqlExtraCurricularStore.Update", "store.sql_extra_curricular.update.updating.app_error", nil, "activity_id="+strconv.Itoa(ext.Id)+", "+err.Error())
+
+		}else{
+			if count == 1 {
+				result.Data = true
+			}else{
+				result.Data = false
+			}
+
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
+
 func (s SqlExtraCurricularStore) GetActivity(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
@@ -37,9 +59,6 @@ func (s SqlExtraCurricularStore) GetActivity(id int) StoreChannel {
 			close(storeChannel)
 			return
 		}
-
-		//pl.AddUser(&user)
-		//user.Sanitize()
 		result.Data = act
 
 		storeChannel <- result
@@ -62,8 +81,6 @@ func (s SqlExtraCurricularStore) GetAllActivities() StoreChannel {
 			return
 		}
 
-		//pl.AddUser(&user)
-		//user.Sanitize()
 		result.Data = acts
 
 		storeChannel <- result

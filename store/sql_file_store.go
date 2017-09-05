@@ -1,6 +1,9 @@
 package store
 
-import "salvation-army-api/model"
+import (
+	"salvation-army-api/model"
+	"strconv"
+)
 
 type SqlFileStore struct {
 	*SqlStore
@@ -23,6 +26,27 @@ func (s SqlFileStore) Create(inf *model.File) StoreChannel {
 		close(storeChannel)
 	}()
 
+	return storeChannel
+}
+
+func (s SqlFileStore) Update(file *model.File) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		if count, err := s.GetMaster().Update(file); err != nil {
+			result.Err = model.NewLocAppError("SqlFileStore.Update", "store.sql_file.update.updating.app_error", nil, "file_id="+strconv.Itoa(file.Id)+", "+err.Error())
+
+		}else{
+			if count == 1 {
+				result.Data = true
+			}else{
+				result.Data = false
+			}
+
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
 	return storeChannel
 }
 

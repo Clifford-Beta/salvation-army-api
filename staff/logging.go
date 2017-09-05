@@ -24,6 +24,19 @@ func (mw LoggingMiddleware) AddStaff(staff model.Staff) (output *model.Staff, er
 	return
 }
 
+func (mw LoggingMiddleware) UpdateStaff(staff model.Staff) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  staff,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "staff ", "method = ", "update_staff")
+
+	}(time.Now())
+	output, err = mw.Next.UpdateStaff(staff)
+	return
+}
+
 func (mw LoggingMiddleware) AddStaffRole(role model.StaffRole) (output *model.StaffRole, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
@@ -37,7 +50,7 @@ func (mw LoggingMiddleware) AddStaffRole(role model.StaffRole) (output *model.St
 	return
 }
 
-func (mw LoggingMiddleware) RetrieveStaff(id int) (output model.StaffResult, err error) {
+func (mw LoggingMiddleware) RetrieveStaff(id int) (output model.Staff, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  id,
@@ -60,6 +73,32 @@ func (mw LoggingMiddleware) RetrieveStaffRole(id int) (output model.StaffRole, e
 
 	}(time.Now())
 	output, err = mw.Next.RetrieveStaffRole(id)
+	return
+}
+
+func (mw LoggingMiddleware) GetTeacher(id int) (output model.BestTeacher, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  id,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "staff ", "method = ", "retrieve_staff_role")
+
+	}(time.Now())
+	output, err = mw.Next.GetTeacher(id)
+	return
+}
+
+func (mw LoggingMiddleware) GetStudent(id int) (output model.BestStudent, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  id,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "staff ", "method = ", "retrieve_staff_role")
+
+	}(time.Now())
+	output, err = mw.Next.GetStudent(id)
 	return
 }
 
@@ -102,6 +141,19 @@ func (mw LoggingMiddleware) RecordBestPerformingStaff(teacher model.BestTeacher)
 	return
 }
 
+func (mw LoggingMiddleware) UpdateBestPerformingStaff(teacher model.BestTeacher) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  teacher,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "staff ", "method = ", "update_best_performing_teacher")
+
+	}(time.Now())
+	output, err = mw.Next.UpdateBestPerformingStaff(teacher)
+	return
+}
+
 func (mw LoggingMiddleware) RecordBestPerformingStudent(student model.BestStudent) (output *model.BestStudent, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
@@ -112,6 +164,19 @@ func (mw LoggingMiddleware) RecordBestPerformingStudent(student model.BestStuden
 
 	}(time.Now())
 	output, err = mw.Next.RecordBestPerformingStudent(student)
+	return
+}
+
+func (mw LoggingMiddleware) UpdateBestPerformingStudent(student model.BestStudent) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  student,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "staff ", "method = ", "update_best_performing_student")
+
+	}(time.Now())
+	output, err = mw.Next.UpdateBestPerformingStudent(student)
 	return
 }
 

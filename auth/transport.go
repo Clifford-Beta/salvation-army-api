@@ -11,11 +11,11 @@ import (
 func MakeAuthEndpoint(svc AuthService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(authRequest)
-		token, err := svc.Auth(req.ClientID, req.ClientSecret)
+		v, err := svc.Auth(req.ClientID, req.ClientSecret)
 		if err != nil {
-			return nil, err
+			return v, err
 		}
-		return authResponse{token, ""}, nil
+		return v, nil
 	}
 }
 
@@ -28,13 +28,13 @@ func DecodeAuthRequest(_ context.Context, r *http.Request) (interface{}, error) 
 }
 
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	return json.NewEncoder(w).Encode(response)
 }
 
 type authRequest struct {
-	ClientID     int    `json:"clientId"`
-	ClientSecret string `json:"clientSecret"`
+	ClientID     string    `json:"email"`
+	ClientSecret string `json:"password"`
 }
 
 type authResponse struct {
