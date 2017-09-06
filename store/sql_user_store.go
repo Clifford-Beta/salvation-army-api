@@ -81,13 +81,12 @@ func (s SqlUserStore) Delete(user *model.User) StoreChannel {
 	storeChannel := make(StoreChannel)
 	go func() {
 		result := StoreResult{}
-		res, err := s.GetMaster().Exec("Update insurer_user SET status=0 where insurer_user_id=?", user.Id)
+		res, err := s.GetMaster().Exec("Update user SET status=0 where user_id=?", user.Id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlInsurerUserStore.Delete", "store.sql_insurer_user.delete.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
 
 		} else {
 			result.Data = res
-			//result.Err =
 		}
 		storeChannel <- result
 		close(storeChannel)

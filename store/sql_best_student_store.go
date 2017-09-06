@@ -60,7 +60,6 @@ func (s SqlBestStudentStore) Delete(best *model.BestStudent) StoreChannel {
 
 		} else {
 			result.Data = res
-			//result.Err =
 		}
 		storeChannel <- result
 		close(storeChannel)
@@ -73,8 +72,7 @@ func (s SqlBestStudentStore) Get(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		//pl := model.NewUserList()
-		var best model.BestStudentResult
+		var best model.BestStudent
 		err := s.master.SelectOne(&best, `select *
 			 from best_student
 			 where best_student_status = 1 and best_student_id=?`,id)

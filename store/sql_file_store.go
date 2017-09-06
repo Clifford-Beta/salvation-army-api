@@ -50,6 +50,7 @@ func (s SqlFileStore) Update(file *model.File) StoreChannel {
 	return storeChannel
 }
 
+
 func (s SqlFileStore) CreateFileType(inf *model.FileType) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
@@ -63,6 +64,24 @@ func (s SqlFileStore) CreateFileType(inf *model.FileType) StoreChannel {
 			result.Data = inf
 		}
 
+		storeChannel <- result
+		close(storeChannel)
+	}()
+
+	return storeChannel
+}
+
+func (s SqlFileStore) Delete(file *model.File) StoreChannel {
+	storeChannel := make(StoreChannel)
+	go func() {
+		result := StoreResult{}
+		res, err := s.GetMaster().Exec("Update file SET file_status=0 where file_id=?", file.Id)
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlFileStore.Delete", "store.sql_file.delete.app_error", nil, "file_id="+strconv.Itoa(file.Id)+", "+err.Error())
+
+		} else {
+			result.Data = res
+		}
 		storeChannel <- result
 		close(storeChannel)
 	}()

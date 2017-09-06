@@ -12,6 +12,8 @@ type SchoolService interface {
 	GetOne(int) (model.School, error)
 	GetAll() (map[string][]*model.SchoolResult, error)
 	RecordPerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
+	//UpdatePerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
+	//RetrievePerformance(int) (model.SchoolPerformance, error)
 	GetBestSchool(from, to int) (model.SchoolPerformanceResult, error)
 	RankAllSchools(from, to int) (map[string][]model.SchoolPerformanceResult, error)
 }

@@ -33,6 +33,17 @@ func MakeUpdateteEndpoint(svc UserService) endpoint.Endpoint {
 	}
 }
 
+func MakeDeleteEndpoint(svc UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.User)
+		v, err := svc.Delete(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeGetOneEndpoint(svc UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(userRequest)

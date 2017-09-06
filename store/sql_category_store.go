@@ -57,6 +57,7 @@ func (s SqlCategoryStore) Update(user *model.Category) StoreChannel {
 }
 
 
+
 func (s SqlCategoryStore) Delete(category *model.Category) StoreChannel {
 	storeChannel := make(StoreChannel)
 	go func() {

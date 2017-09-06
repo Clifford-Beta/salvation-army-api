@@ -13,6 +13,7 @@ type UserService interface {
 	GetAll() (map[string][]*model.User, error)
 	Login(email, password string) (model.User, error)
 	Update(user model.User) (bool, error)
+	Delete(user model.User) (bool, error)
 }
 
 type Userservice struct{}
@@ -52,6 +53,15 @@ func (Userservice) Update(user model.User) (bool, error) {
 		return me.Data.(bool), me.Err
 	}
 	return me.Data.(bool), nil
+}
+
+func (Userservice) Delete(user model.User) (bool, error) {
+	userStore := store.SqlUserStore{store.Database}
+	me := <-userStore.Delete(&user)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
 }
 
 func (Userservice) Login(email, password string) (model.User, error) {

@@ -1416,7 +1416,6 @@ func main() {
 			"/teacher/{id}",
 			retrieveTeacherStaffHandler,
 		},
-
 		Route{
 			"Best Student",
 			"POST",

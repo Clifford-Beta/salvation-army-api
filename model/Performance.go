@@ -20,6 +20,7 @@ type SchoolPerformance struct {
 
 type SchoolPerformanceResult struct {
 	Id             int       `db:"id" json:"id"`
+	Rank             int       `db:"rank" json:"rank"`
 	Mark           float64   `db:"mark" json:"mark"`
 	School         string    `db:"school" json:"school"`
 	Category       string    `db:"category" json:"category"`

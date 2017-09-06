@@ -50,6 +50,24 @@ func (s SqlInfrastructureStore) Update(inf *model.Infrastructure) StoreChannel {
 	return storeChannel
 }
 
+func (s SqlInfrastructureStore) Delete(inf *model.Infrastructure) StoreChannel {
+	storeChannel := make(StoreChannel)
+	go func() {
+		result := StoreResult{}
+		res, err := s.GetMaster().Exec("Update infrastructure SET infrastructure_status=0 where infrastructure_id=?", inf.Id)
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlStaffStore.Delete", "store.sql_staff.delete.app_error", nil, "staff_id="+strconv.Itoa(inf.Id)+", "+err.Error())
+
+		} else {
+			result.Data = res
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+
+	return storeChannel
+}
+
 func (s SqlInfrastructureStore) CreateIType(inf *model.InfrastructureType) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {

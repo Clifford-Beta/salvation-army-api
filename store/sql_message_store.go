@@ -51,6 +51,25 @@ func (s SqlMessageStore) Update(message *model.Message) StoreChannel {
 	return storeChannel
 }
 
+func (s SqlMessageStore) Delete(msg *model.Message) StoreChannel {
+	storeChannel := make(StoreChannel)
+	go func() {
+		result := StoreResult{}
+		res, err := s.GetMaster().Exec("Update message SET message_status=0 where message_id=?", msg.Id)
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlMessageStore.Delete", "store.sql_message.delete.app_error", nil, "staff_id="+strconv.Itoa(msg.Id)+", "+err.Error())
+
+		} else {
+			result.Data = res
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+
+	return storeChannel
+}
+
+
 
 func (s SqlMessageStore) RetrieveMessage(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)

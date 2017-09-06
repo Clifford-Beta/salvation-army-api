@@ -47,6 +47,25 @@ func (s SqlExtraCurricularStore) Update(ext *model.ExtraCurricular) StoreChannel
 	return storeChannel
 }
 
+
+func (s SqlExtraCurricularStore) Delete(act *model.ExtraCurricular) StoreChannel {
+	storeChannel := make(StoreChannel)
+	go func() {
+		result := StoreResult{}
+		res, err := s.GetMaster().Exec("Update ext_curricular SET ext_curricular_status=0 where ext_curricular_id=?", act.Id)
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlExtraCurricularStore.Delete", "store.sql_ext_curricular.delete.app_error", nil, "id="+strconv.Itoa(act.Id)+", "+err.Error())
+
+		} else {
+			result.Data = res
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+
+	return storeChannel
+}
+
 func (s SqlExtraCurricularStore) GetActivity(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {

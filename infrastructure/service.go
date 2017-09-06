@@ -37,7 +37,7 @@ func (Infrastructureservice) Update(msg model.Infrastructure) (bool, error) {
 	projStore := store.SqlInfrastructureStore{store.Database}
 	me := <-projStore.Update(&msg)
 	if me.Err != nil {
-		return me.Data.(bool), me.Err
+		return false, me.Err
 	}
 	return me.Data.(bool), nil
 }

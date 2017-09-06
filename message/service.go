@@ -33,7 +33,7 @@ func (Messsageservice) Update(msg model.Message) (bool, error) {
 	projStore := store.SqlMessageStore{store.Database}
 	me := <-projStore.Update(&msg)
 	if me.Err != nil {
-		return me.Data.(bool), me.Err
+		return false, me.Err
 	}
 	return me.Data.(bool), nil
 }

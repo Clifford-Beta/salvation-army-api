@@ -66,7 +66,7 @@ func (Staffservice) UpdateStaff(user model.Staff) (bool, error) {
 	userStore := store.SqlStaffStore{store.Database}
 	me := <-userStore.Update(&user)
 	if me.Err != nil {
-		return me.Data.(bool), me.Err
+		return false, me.Err
 	}
 	return me.Data.(bool), nil
 }
@@ -75,7 +75,7 @@ func (Staffservice) UpdateBestPerformingStaff(user model.BestTeacher) (bool, err
 	userStore := store.SqlBestTeacherStore{store.Database}
 	me := <-userStore.Update(&user)
 	if me.Err != nil {
-		return me.Data.(bool), me.Err
+		return false, me.Err
 	}
 	return me.Data.(bool), nil
 }
@@ -84,7 +84,7 @@ func (Staffservice) UpdateBestPerformingStudent(user model.BestStudent) (bool, e
 	userStore := store.SqlBestStudentStore{store.Database}
 	me := <-userStore.Update(&user)
 	if me.Err != nil {
-		return me.Data.(bool), me.Err
+		return false, me.Err
 	}
 	return me.Data.(bool), nil
 }

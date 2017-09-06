@@ -120,7 +120,7 @@ func (s SqlSchoolStore) Update(school *model.School) StoreChannel {
 				school_category = :Category,
 				school_logo = :Logo,
 				school_location = :Location,
-				school_description = :Description,
+				school_description = :Description
 			WHERE
 				school_id = :Id`,
 			map[string]interface{}{
@@ -163,13 +163,12 @@ func (s SqlSchoolStore) Delete(school *model.School) StoreChannel {
 	storeChannel := make(StoreChannel)
 	go func() {
 		result := StoreResult{}
-		res, err := s.GetMaster().Exec("Update school SET status=0 where school_id=?", school.Id)
+		res, err := s.GetMaster().Exec("Update school SET school_status=0 where school_id=?", school.Id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlSchoolStore.Delete", "store.sql_school.delete.app_error", nil, "user_id="+strconv.Itoa(school.Id)+", "+err.Error())
 
 		} else {
 			result.Data = res
-			//result.Err =
 		}
 		storeChannel <- result
 		close(storeChannel)

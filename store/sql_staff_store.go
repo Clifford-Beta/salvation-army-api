@@ -79,18 +79,18 @@ func (s SqlStaffStore) Update(staff *model.Staff) StoreChannel {
 			`UPDATE
 				staff
 			SET
-				staff_name = :Name,
+				staff_name = :Jina,
 				staff_phone = :Phone,
 				staff_email = :Email,
 				staff_role = :Role,
 				staff_photo = :Photo,
 				staff_title = :Title,
-				school_id = :School,
+				school_id = :School
 			WHERE
-				staff_id = :Id
-			`,
+				staff_id = :Id`,
 			map[string]interface{}{
 				"Id":             staff.Id,
+				"Jina":             staff.Name,
 				"Phone":      staff.Phone,
 				"Email": 	staff.Email,
 				"Role":         staff.Role,
@@ -118,6 +118,24 @@ func (s SqlStaffStore) Update(staff *model.Staff) StoreChannel {
 		storeChannel <- result
 		close(storeChannel)
 	}()
+	return storeChannel
+}
+
+func (s SqlStaffStore) Delete(staff *model.Staff) StoreChannel {
+	storeChannel := make(StoreChannel)
+	go func() {
+		result := StoreResult{}
+		res, err := s.GetMaster().Exec("Update staff SET staff_status=0 where staff_id=?", staff.Id)
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlStaffStore.Delete", "store.sql_staff.delete.app_error", nil, "staff_id="+strconv.Itoa(staff.Id)+", "+err.Error())
+
+		} else {
+			result.Data = res
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+
 	return storeChannel
 }
 
