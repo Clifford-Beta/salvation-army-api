@@ -37,6 +37,19 @@ func (mw LoggingMiddleware) UpdateStaff(staff model.Staff) (output bool, err err
 	return
 }
 
+func (mw LoggingMiddleware) DeleteStaff(staff model.Staff) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  staff,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "staff ", "method = ", "update_staff")
+
+	}(time.Now())
+	output, err = mw.Next.DeleteStaff(staff)
+	return
+}
+
 func (mw LoggingMiddleware) AddStaffRole(role model.StaffRole) (output *model.StaffRole, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
@@ -154,6 +167,19 @@ func (mw LoggingMiddleware) UpdateBestPerformingStaff(teacher model.BestTeacher)
 	return
 }
 
+func (mw LoggingMiddleware) DeleteBestPerformingStaff(teacher model.BestTeacher) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  teacher,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "staff ", "method = ", "delete_best_performing_teacher")
+
+	}(time.Now())
+	output, err = mw.Next.DeleteBestPerformingStaff(teacher)
+	return
+}
+
 func (mw LoggingMiddleware) RecordBestPerformingStudent(student model.BestStudent) (output *model.BestStudent, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
@@ -177,6 +203,19 @@ func (mw LoggingMiddleware) UpdateBestPerformingStudent(student model.BestStuden
 
 	}(time.Now())
 	output, err = mw.Next.UpdateBestPerformingStudent(student)
+	return
+}
+
+func (mw LoggingMiddleware) DeleteBestPerformingStudent(student model.BestStudent) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  student,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "staff ", "method = ", "delete_best_performing_student")
+
+	}(time.Now())
+	output, err = mw.Next.DeleteBestPerformingStudent(student)
 	return
 }
 

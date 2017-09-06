@@ -36,6 +36,19 @@ func (mw LoggingMiddleware) Update(file model.File) (output bool, err error) {
 	output, err = mw.Next.Update(file)
 	return
 }
+
+func (mw LoggingMiddleware) Delete(file model.File) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  file,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "file ", "method = ", "delete")
+
+	}(time.Now())
+	output, err = mw.Next.Delete(file)
+	return
+}
 func (mw LoggingMiddleware) CreateType(file model.FileType) (output *model.FileType, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{

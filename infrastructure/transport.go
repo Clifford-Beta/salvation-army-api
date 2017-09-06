@@ -33,6 +33,17 @@ func MakeUpdateEndpoint(svc InfrastructureService) endpoint.Endpoint {
 	}
 }
 
+func MakeDeleteEndpoint(svc InfrastructureService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.Infrastructure)
+		v, err := svc.Delete(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeCreateTypeEndpoint(svc InfrastructureService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.InfrastructureType)

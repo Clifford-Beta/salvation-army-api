@@ -32,6 +32,17 @@ func MakeUpdateStaffEndpoint(svc StaffService) endpoint.Endpoint {
 		return v, nil
 	}
 }
+
+func MakeDeleteStaffEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.Staff)
+		v, err := svc.DeleteStaff(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
 func MakeRetrieveStaffEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
@@ -97,6 +108,17 @@ func MakeUpdateBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint {
 	}
 }
 
+func MakeDeleteBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.BestTeacher)
+		v, err := svc.DeleteBestPerformingStaff(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeRecordBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.BestStudent)
@@ -112,6 +134,17 @@ func MakeUpdateBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.BestStudent)
 		v, err := svc.UpdateBestPerformingStudent(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeDeleteBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.BestStudent)
+		v, err := svc.DeleteBestPerformingStudent(req)
 		if err != nil {
 			return v, err
 		}

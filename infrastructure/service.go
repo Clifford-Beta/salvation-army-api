@@ -10,6 +10,7 @@ import (
 type InfrastructureService interface {
 	Create(message model.Infrastructure) (*model.Infrastructure, error)
 	Update(message model.Infrastructure) (bool, error)
+	Delete(message model.Infrastructure) (bool, error)
 	CreateType(message model.InfrastructureType) (*model.InfrastructureType, error)
 	GetOne(int) (model.Infrastructure, error)
 	GetOneType(int) (model.InfrastructureType, error)
@@ -40,6 +41,15 @@ func (Infrastructureservice) Update(msg model.Infrastructure) (bool, error) {
 		return false, me.Err
 	}
 	return me.Data.(bool), nil
+}
+
+func (Infrastructureservice) Delete(msg model.Infrastructure) (bool, error) {
+	projStore := store.SqlInfrastructureStore{store.Database}
+	me := <-projStore.Delete(&msg)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
 }
 
 

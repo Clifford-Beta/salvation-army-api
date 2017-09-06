@@ -9,6 +9,7 @@ import (
 type ActivityService interface {
 	Create(activity model.ExtraCurricular) (*model.ExtraCurricular, error)
 	Update(activity model.ExtraCurricular) (bool, error)
+	Delete(activity model.ExtraCurricular) (bool, error)
 	CreateLevel(level model.ExtraCurricularLevel) (*model.ExtraCurricularLevel, error)
 	RecordPerformance(performance model.ExtraCurricularActivity) (*model.ExtraCurricularActivity, error)
 	GetOneActivity(id int) (model.ExtraCurricular, error)
@@ -41,6 +42,15 @@ func (Activityservice) Update(msg model.ExtraCurricular) (bool, error) {
 		return me.Data.(bool), me.Err
 	}
 	return me.Data.(bool), nil
+}
+
+func (Activityservice) Delete(msg model.ExtraCurricular) (bool, error) {
+	projStore := store.SqlExtraCurricularStore{store.Database}
+	me := <-projStore.Delete(&msg)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
 }
 
 

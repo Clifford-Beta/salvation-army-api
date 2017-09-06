@@ -36,6 +36,18 @@ func (mw LoggingMiddleware) Update(school model.School) (output bool, err error)
 	return
 }
 
+func (mw LoggingMiddleware) Delete(school model.School) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  school,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "delete")
+	}(time.Now())
+	output, err = mw.Next.Delete(school)
+	return
+}
+
 func (mw LoggingMiddleware) GetOne(id int) (output model.School, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{

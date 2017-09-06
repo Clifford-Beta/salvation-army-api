@@ -33,6 +33,17 @@ func MakeUpdateEndpoint(svc FileService) endpoint.Endpoint {
 	}
 }
 
+func MakeDeleteEndpoint(svc FileService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.File)
+		v, err := svc.Delete(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeCreateTypeEndpoint(svc FileService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.FileType)

@@ -37,6 +37,17 @@ func (mw InstrumentingMiddleware) Update(file model.File) (output bool, err erro
 	return
 }
 
+func (mw InstrumentingMiddleware) Delete(file model.File) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "delete", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Delete(file)
+	return
+}
+
 func (mw InstrumentingMiddleware) CreateType(file model.FileType) (output *model.FileType, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "create_type", "error", fmt.Sprint(err != nil)}

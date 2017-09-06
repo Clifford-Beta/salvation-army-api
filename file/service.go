@@ -10,6 +10,7 @@ import (
 type FileService interface {
 	Create(file model.File) (*model.File, error)
 	Update(file model.File) (bool, error)
+	Delete(file model.File) (bool, error)
 	CreateType(file model.FileType) (*model.FileType, error)
 	GetOne(int) (model.File, error)
 	GetOneType(int) (model.FileType, error)
@@ -40,6 +41,15 @@ func (Fileservice) Update(msg model.File) (bool, error) {
 		return me.Data.(bool), me.Err
 	}
 	return me.Data.(bool), nil
+}
+
+func (Fileservice) Delete(msg model.File) (bool, error) {
+	projStore := store.SqlFileStore{store.Database}
+	me := <-projStore.Delete(&msg)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
 }
 
 func (Fileservice) CreateType(file model.FileType) (*model.FileType, error) {

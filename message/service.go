@@ -11,6 +11,7 @@ type MessageService interface {
 	GetOne(int) (model.Message, error)
 	GetAll(user int) (map[string][]model.MessageResult, error)
 	Update(msg model.Message) (bool, error)
+	Delete(msg model.Message) (bool, error)
 }
 
 type Messsageservice struct{}
@@ -36,6 +37,15 @@ func (Messsageservice) Update(msg model.Message) (bool, error) {
 		return false, me.Err
 	}
 	return me.Data.(bool), nil
+}
+
+func (Messsageservice) Delete(msg model.Message) (bool, error) {
+	projStore := store.SqlMessageStore{store.Database}
+	me := <-projStore.Delete(&msg)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
 }
 
 

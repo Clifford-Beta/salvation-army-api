@@ -12,6 +12,7 @@ type ProjectService interface {
 	GetOne(int) (model.Project, error)
 	GetAll() (map[string][]model.ProjectResult, error)
 	Update(project model.Project)(bool,error)
+	Delete(project model.Project)(bool,error)
 }
 
 type Projectservice struct{}
@@ -38,6 +39,16 @@ func (Projectservice) Update(project model.Project) (bool, error) {
 		return me.Data.(bool), me.Err
 	}
 	return me.Data.(bool), nil
+}
+
+
+func (Projectservice) Delete(project model.Project) (bool, error) {
+	projStore := store.SqlProjectStore{store.Database}
+	me := <-projStore.Delete(&project)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
 }
 
 func (Projectservice) GetOne(id int) (model.Project, error) {

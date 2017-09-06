@@ -37,6 +37,19 @@ func (mw LoggingMiddleware) Update(project model.Project) (output bool, err erro
 	return
 }
 
+func (mw LoggingMiddleware) Delete(project model.Project) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  project,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "project ", "method = ", "delete")
+
+	}(time.Now())
+	output, err = mw.Next.Delete(project)
+	return
+}
+
 func (mw LoggingMiddleware) GetOne(id int) (output model.Project, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{

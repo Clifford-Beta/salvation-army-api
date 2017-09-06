@@ -36,6 +36,17 @@ func (mw InstrumentingMiddleware) Update(message model.Message) (output bool, er
 	return
 }
 
+func (mw InstrumentingMiddleware) Delete(message model.Message) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "delete", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Delete(message)
+	return
+}
+
 func (mw InstrumentingMiddleware) GetOne(id int) (output model.Message, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getone", "error", fmt.Sprint(err != nil)}

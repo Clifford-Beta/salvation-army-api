@@ -9,6 +9,7 @@ import (
 type SchoolService interface {
 	Create(model.School) (*model.School, error)
 	Update(model.School) (bool, error)
+	Delete(model.School) (bool, error)
 	GetOne(int) (model.School, error)
 	GetAll() (map[string][]*model.SchoolResult, error)
 	RecordPerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
@@ -52,6 +53,15 @@ func (Schoolservice) Update(school model.School) (bool, error) {
 		return me.Data.(bool), me.Err
 	}
 	return me.Data.(bool), nil
+}
+
+func (Schoolservice) Delete(school model.School) (bool, error) {
+	userStore := store.SqlSchoolStore{store.Database}
+	me := <-userStore.Delete(&school)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
 }
 
 

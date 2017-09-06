@@ -9,6 +9,7 @@ import (
 type StaffService interface {
 	AddStaff(staff model.Staff) (*model.Staff, error)
 	UpdateStaff(staff model.Staff) (bool, error)
+	DeleteStaff(staff model.Staff) (bool, error)
 	RetrieveStaff(id int) (model.Staff, error)
 	RetrieveAllStaff() (map[string][]model.StaffResult, error)
 	AddStaffRole(role model.StaffRole) (*model.StaffRole, error)
@@ -16,8 +17,10 @@ type StaffService interface {
 	RetrieveAllRoles() (map[string][]*model.StaffRole, error)
 	RecordBestPerformingStaff(teacher model.BestTeacher) (*model.BestTeacher, error)
 	UpdateBestPerformingStaff(teacher model.BestTeacher) (bool, error)
+	DeleteBestPerformingStaff(teacher model.BestTeacher) (bool, error)
 	RecordBestPerformingStudent(student model.BestStudent) (*model.BestStudent, error)
 	UpdateBestPerformingStudent(student model.BestStudent) (bool, error)
+	DeleteBestPerformingStudent(student model.BestStudent) (bool, error)
 	RetrieveBestPerformingStaff(from, to int) (model.BestTeacherResult, error)
 	GetTeacher(id int) (model.BestTeacher, error)
 	GetStudent(id int) (model.BestStudent, error)
@@ -71,6 +74,15 @@ func (Staffservice) UpdateStaff(user model.Staff) (bool, error) {
 	return me.Data.(bool), nil
 }
 
+func (Staffservice) DeleteStaff(user model.Staff) (bool, error) {
+	userStore := store.SqlStaffStore{store.Database}
+	me := <-userStore.Delete(&user)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
+}
+
 func (Staffservice) UpdateBestPerformingStaff(user model.BestTeacher) (bool, error) {
 	userStore := store.SqlBestTeacherStore{store.Database}
 	me := <-userStore.Update(&user)
@@ -80,6 +92,15 @@ func (Staffservice) UpdateBestPerformingStaff(user model.BestTeacher) (bool, err
 	return me.Data.(bool), nil
 }
 
+func (Staffservice) DeleteBestPerformingStaff(user model.BestTeacher) (bool, error) {
+	userStore := store.SqlBestTeacherStore{store.Database}
+	me := <-userStore.Delete(&user)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
+}
+
 func (Staffservice) UpdateBestPerformingStudent(user model.BestStudent) (bool, error) {
 	userStore := store.SqlBestStudentStore{store.Database}
 	me := <-userStore.Update(&user)
@@ -87,6 +108,15 @@ func (Staffservice) UpdateBestPerformingStudent(user model.BestStudent) (bool, e
 		return false, me.Err
 	}
 	return me.Data.(bool), nil
+}
+
+func (Staffservice) DeleteBestPerformingStudent(user model.BestStudent) (bool, error) {
+	userStore := store.SqlBestStudentStore{store.Database}
+	me := <-userStore.Delete(&user)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
 }
 
 func (Staffservice) GetStudent(id int) (model.BestStudent, error) {

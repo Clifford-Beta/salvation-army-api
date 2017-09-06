@@ -36,6 +36,19 @@ func (mw LoggingMiddleware) Update(activity model.ExtraCurricular) (output bool,
 	return
 }
 
+
+func (mw LoggingMiddleware) Delete(activity model.ExtraCurricular) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  activity,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "activity ", "method = ", "delete")
+	}(time.Now())
+	output, err = mw.Next.Delete(activity)
+	return
+}
+
 func (mw LoggingMiddleware) CreateLevel(level model.ExtraCurricularLevel) (output *model.ExtraCurricularLevel, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{

@@ -36,6 +36,17 @@ func (mw InstrumentingMiddleware) Update(school model.School) (output bool, err 
 	return
 }
 
+func (mw InstrumentingMiddleware) Delete(school model.School) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "delete", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Delete(school)
+	return
+}
+
 func (mw InstrumentingMiddleware) RecordPerformance(performance *model.SchoolPerformance) (output *model.SchoolPerformance, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "RecordPerformance", "error", fmt.Sprint(err != nil)}

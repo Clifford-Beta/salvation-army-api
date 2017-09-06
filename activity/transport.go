@@ -34,6 +34,18 @@ func MakeUpdateActivityEndpoint(svc ActivityService) endpoint.Endpoint {
 	}
 }
 
+
+func MakeDeleteActivityEndpoint(svc ActivityService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.ExtraCurricular)
+		v, err := svc.Delete(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeCreateLevelEndpoint(svc ActivityService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.ExtraCurricularLevel)
