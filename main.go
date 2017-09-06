@@ -593,7 +593,7 @@ func main() {
 		jwtOptions...,
 	)
 
-	updateFileHandler := httptransport.NewServer(
+	deleteFileHandler := httptransport.NewServer(
 
 		deleteFileEndpoint,
 		filesvc.DecodeCreateRequest,
