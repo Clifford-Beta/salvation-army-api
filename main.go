@@ -141,6 +141,12 @@ func main() {
 		userUpdateEndpoint = usersvc.MakeUpdateteEndpoint(user)
 		userUpdateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory,)(userUpdateEndpoint)
 	}
+
+	var userDeleteEndpoint endpoint.Endpoint
+	{
+		userUpdateEndpoint = usersvc.MakeDeleteEndpoint(user)
+		userDeleteEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory,)(userDeleteEndpoint)
+	}
 	var getOneUserEndpoint endpoint.Endpoint
 	{
 		getOneUserEndpoint = usersvc.MakeGetOneEndpoint(user)
@@ -164,6 +170,13 @@ func main() {
 
 	updateUserHandler := httptransport.NewServer(
 		userUpdateEndpoint,
+		usersvc.DecodeCreateRequest,
+		usersvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	deleteUserHandler := httptransport.NewServer(
+		userDeleteEndpoint,
 		usersvc.DecodeCreateRequest,
 		usersvc.EncodeResponse,
 		jwtOptions...,
@@ -280,6 +293,12 @@ func main() {
 		schoolUpdateEndpoint = schoolsvc.MakeUpdateEndpoint(school)
 		schoolUpdateEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(schoolUpdateEndpoint)
 	}
+
+	var schoolDeleteEndpoint endpoint.Endpoint
+	{
+		schoolDeleteEndpoint = schoolsvc.MakeDeleteEndpoint(school)
+		schoolDeleteEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(schoolDeleteEndpoint)
+	}
 	var getOneSchoolEndpoint endpoint.Endpoint
 	{
 		getOneSchoolEndpoint = schoolsvc.MakeGetOneEndpoint(school)
@@ -320,6 +339,13 @@ func main() {
 
 	updateSchoolHandler := httptransport.NewServer(
 		schoolUpdateEndpoint,
+		schoolsvc.DecodeCreateRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	deleteSchoolHandler := httptransport.NewServer(
+		schoolDeleteEndpoint,
 		schoolsvc.DecodeCreateRequest,
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
@@ -374,6 +400,12 @@ func main() {
 		updateActivityEndpoint = actsvc.MakeUpdateActivityEndpoint(activity)
 		updateActivityEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateActivityEndpoint)
 	}
+
+	var deleteActivityEndpoint endpoint.Endpoint
+	{
+		deleteActivityEndpoint = actsvc.MakeDeleteActivityEndpoint(activity)
+		deleteActivityEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(deleteActivityEndpoint)
+	}
 	var createLevelEndpoint endpoint.Endpoint
 	{
 		createLevelEndpoint = actsvc.MakeCreateLevelEndpoint(activity)
@@ -427,6 +459,13 @@ func main() {
 
 	updateActivityHandler := httptransport.NewServer(
 		updateActivityEndpoint,
+		actsvc.DecodeCreateActivityRequest,
+		actsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	deleteActivityHandler := httptransport.NewServer(
+		deleteActivityEndpoint,
 		actsvc.DecodeCreateActivityRequest,
 		actsvc.EncodeResponse,
 		jwtOptions...,
@@ -501,6 +540,12 @@ func main() {
 		updateFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateFileEndpoint)
 	}
 
+	var deleteFileEndpoint endpoint.Endpoint
+	{
+		deleteFileEndpoint = filesvc.MakeDeleteEndpoint(file)
+		deleteFileEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(deleteFileEndpoint)
+	}
+
 	var createFileTypeEndpoint endpoint.Endpoint
 	{
 		createFileTypeEndpoint = filesvc.MakeCreateTypeEndpoint(file)
@@ -543,6 +588,14 @@ func main() {
 	updateFileHandler := httptransport.NewServer(
 
 		updateFileEndpoint,
+		filesvc.DecodeCreateRequest,
+		filesvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	updateFileHandler := httptransport.NewServer(
+
+		deleteFileEndpoint,
 		filesvc.DecodeCreateRequest,
 		filesvc.EncodeResponse,
 		jwtOptions...,
@@ -600,6 +653,12 @@ func main() {
 		updateInfEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateInfEndpoint)
 	}
 
+	var deleteInfEndpoint endpoint.Endpoint
+	{
+		deleteInfEndpoint = infsvc.MakeDeleteEndpoint(infs)
+		deleteInfEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(deleteInfEndpoint)
+	}
+
 	var createInfTypeEndpoint endpoint.Endpoint
 	{
 		createInfTypeEndpoint = infsvc.MakeCreateTypeEndpoint(infs)
@@ -641,6 +700,14 @@ func main() {
 	updateInfHandler := httptransport.NewServer(
 
 		updateInfEndpoint,
+		infsvc.DecodeCreateRequest,
+		infsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	deleteInfHandler := httptransport.NewServer(
+
+		deleteInfEndpoint,
 		infsvc.DecodeCreateRequest,
 		infsvc.EncodeResponse,
 		jwtOptions...,
@@ -695,6 +762,12 @@ func main() {
 		updateMessageEndpoint = msgsvc.MakeUpdateEndpoint(message)
 		updateMessageEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateMessageEndpoint)
 	}
+
+	var deleteMessageEndpoint endpoint.Endpoint
+	{
+		deleteMessageEndpoint = msgsvc.MakeDeleteEndpoint(message)
+		deleteMessageEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(deleteMessageEndpoint)
+	}
 	var getOneMessageEndpoint endpoint.Endpoint
 	{
 		getOneMessageEndpoint = msgsvc.MakeGetOneEndpoint(message)
@@ -718,6 +791,14 @@ func main() {
 	updateMessageHandler := httptransport.NewServer(
 
 		updateMessageEndpoint,
+		msgsvc.DecodeCreateRequest,
+		msgsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	deleteMessageHandler := httptransport.NewServer(
+
+		deleteMessageEndpoint,
 		msgsvc.DecodeCreateRequest,
 		msgsvc.EncodeResponse,
 		jwtOptions...,
@@ -749,6 +830,12 @@ func main() {
 		updateProjectEndpoint = projectsvc.MakeUpdateEndpoint(project)
 		updateProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateProjectEndpoint)
 	}
+
+	var deleteProjectEndpoint endpoint.Endpoint
+	{
+		deleteProjectEndpoint = projectsvc.MakeDeleteEndpoint(project)
+		deleteProjectEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(deleteProjectEndpoint)
+	}
 	var getOneProjectEndpoint endpoint.Endpoint
 	{
 		getOneProjectEndpoint = projectsvc.MakeGetOneEndpoint(project)
@@ -773,6 +860,14 @@ func main() {
 	updateProjectHandler := httptransport.NewServer(
 
 		updateProjectEndpoint,
+		projectsvc.DecodeCreateRequest,
+		projectsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	deleteProjectHandler := httptransport.NewServer(
+
+		deleteProjectEndpoint,
 		projectsvc.DecodeCreateRequest,
 		projectsvc.EncodeResponse,
 		jwtOptions...,
@@ -802,6 +897,12 @@ func main() {
 	{
 		updateStaffEndpoint = staffsvc.MakeUpdateStaffEndpoint(staff)
 		updateStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateStaffEndpoint)
+	}
+
+	var deleteStaffEndpoint endpoint.Endpoint
+	{
+		deleteStaffEndpoint = staffsvc.MakeDeleteStaffEndpoint(staff)
+		deleteStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(deleteStaffEndpoint)
 	}
 	var retrieveStaffEndpoint endpoint.Endpoint
 	{
@@ -835,6 +936,12 @@ func main() {
 		updateBestPerformingStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updateBestPerformingStaffEndpoint)
 	}
 
+	var deleteBestPerformingStaffEndpoint endpoint.Endpoint
+	{
+		deleteBestPerformingStaffEndpoint = staffsvc.MakeDeleteBestPerformingStaffEndpoint(staff)
+		deleteBestPerformingStaffEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(deleteBestPerformingStaffEndpoint)
+	}
+
 	var bestPerformingStudentEndpoint endpoint.Endpoint
 	{
 		bestPerformingStudentEndpoint = staffsvc.MakeRecordBestPerformingStudentEndpoint(staff)
@@ -845,6 +952,12 @@ func main() {
 	{
 		updatebestPerformingStudentEndpoint = staffsvc.MakeUpdateBestPerformingStudentEndpoint(staff)
 		updatebestPerformingStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(updatebestPerformingStudentEndpoint)
+	}
+
+	var deletebestPerformingStudentEndpoint endpoint.Endpoint
+	{
+		deletebestPerformingStudentEndpoint = staffsvc.MakeDeleteBestPerformingStudentEndpoint(staff)
+		deletebestPerformingStudentEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(deletebestPerformingStudentEndpoint)
 	}
 	var retrieveTeacherEndpoint endpoint.Endpoint
 	{
@@ -895,6 +1008,14 @@ func main() {
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
+
+	deleteStaffHandler := httptransport.NewServer(
+
+		deleteStaffEndpoint,
+		staffsvc.DecodeAddStaffRequest,
+		staffsvc.EncodeResponse,
+		jwtOptions...,
+	)
 	retrieveStaffHandler := httptransport.NewServer(
 
 		retrieveStaffEndpoint,
@@ -938,6 +1059,13 @@ func main() {
 		staffsvc.EncodeResponse,
 		jwtOptions...,
 	)
+	deleteBestPerformingStaffHandler := httptransport.NewServer(
+
+		deleteBestPerformingStaffEndpoint,
+		staffsvc.DecodeRecordBestPerformingStaffRequest,
+		staffsvc.EncodeResponse,
+		jwtOptions...,
+	)
 	recordBestPerformingStudentHandler := httptransport.NewServer(
 
 		bestPerformingStudentEndpoint,
@@ -948,6 +1076,14 @@ func main() {
 	updateBestPerformingStudentHandler := httptransport.NewServer(
 
 		updatebestPerformingStudentEndpoint,
+		staffsvc.DecodeRecordBestPerformingStudentRequest,
+		staffsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	deleteBestPerformingStudentHandler := httptransport.NewServer(
+
+		deletebestPerformingStudentEndpoint,
 		staffsvc.DecodeRecordBestPerformingStudentRequest,
 		staffsvc.EncodeResponse,
 		jwtOptions...,
@@ -1058,6 +1194,11 @@ func main() {
 			"PATCH",
 			"/user",
 			updateUserHandler,
+		},Route{
+			"User",
+			"DELETE",
+			"/user",
+			deleteUserHandler,
 		},
 		Route{
 			"User ",
@@ -1126,6 +1267,12 @@ func main() {
 			updateSchoolHandler,
 		},
 		Route{
+			"School",
+			"DELETE",
+			"/school",
+			deleteSchoolHandler,
+		},
+		Route{
 			"School Performance",
 			"POST",
 			"/school_performance",
@@ -1175,6 +1322,12 @@ func main() {
 			"PATCH",
 			"/activity",
 			updateActivityHandler,
+		},
+		Route{
+			"Activity",
+			"DELETE",
+			"/activity",
+			deleteActivityHandler,
 		},
 		Route{
 			"Activity",
@@ -1239,6 +1392,12 @@ func main() {
 		},
 		Route{
 			"File ",
+			"DELETE",
+			"/file",
+			deleteFileHandler,
+		},
+		Route{
+			"File ",
 			"GET",
 			"/file/{id}",
 			getOneFileHandler,
@@ -1279,6 +1438,12 @@ func main() {
 			"PATCH",
 			"/infrastructure",
 			updateInfHandler,
+		},
+		Route{
+			"Infrastructure",
+			"DELETE",
+			"/infrastructure",
+			deleteInfHandler,
 		},
 		Route{
 			"Infrastructure",
@@ -1326,6 +1491,12 @@ func main() {
 		},
 		Route{
 			"Message",
+			"DELETE",
+			"/message",
+			deleteMessageHandler,
+		},
+		Route{
+			"Message",
 			"GET",
 			"/message/{id}",
 			getOneMessageHandler,
@@ -1351,6 +1522,12 @@ func main() {
 		},
 		Route{
 			"Project",
+			"DELETE",
+			"/project",
+			deleteProjectHandler,
+		},
+		Route{
+			"Project",
 			"GET",
 			"/project/{id}",
 			getOneProjectHandler,
@@ -1373,6 +1550,12 @@ func main() {
 			"PATCH",
 			"/staff",
 			updateStaffHandler,
+		},
+		Route{
+			"Staff",
+			"DELETE",
+			"/staff",
+			deleteStaffHandler,
 		},
 		Route{
 			"Staff",
@@ -1412,6 +1595,12 @@ func main() {
 		},
 		Route{
 			"Best Teacher",
+			"DELETE",
+			"/teacher",
+			deleteBestPerformingStaffHandler,
+		},
+		Route{
+			"Best Teacher",
 			"GET",
 			"/teacher/{id}",
 			retrieveTeacherStaffHandler,
@@ -1427,6 +1616,12 @@ func main() {
 			"PATCH",
 			"/student",
 			updateBestPerformingStudentHandler,
+		},
+		Route{
+			"Best Student",
+			"DELETE",
+			"/student",
+			deleteBestPerformingStudentHandler,
 		},
 
 		Route{
