@@ -1697,7 +1697,7 @@ func corsHandler(h http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "OPTIONS" {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Methods", "POST, GET,PUT,DELETE,PATCH,OPTIONS")
+			w.Header().Set("Access-Control-Allow-Methods", "POST,GET,PUT,DELETE,PATCH,OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
 			//w.WriteHeader(204)
 			logrus.Debug("I got here")
