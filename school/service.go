@@ -6,9 +6,14 @@ import (
 	"time"
 )
 
+type UpdateResponse struct{
+	Status bool `json:"status"`
+}
+
+
 type SchoolService interface {
 	Create(model.School) (*model.School, error)
-	Update(model.School) (bool, error)
+	Update(model.School) (UpdateResponse, error)
 	Delete(model.School) (bool, error)
 	GetOne(int) (model.School, error)
 	GetAll() (map[string][]*model.SchoolResult, error)
@@ -46,13 +51,18 @@ func (Schoolservice) GetOne(id int) (model.School, error) {
 
 }
 
-func (Schoolservice) Update(school model.School) (bool, error) {
+func (Schoolservice) Update(school model.School) (UpdateResponse, error) {
 	userStore := store.SqlSchoolStore{store.Database}
 	me := <-userStore.Update(&school)
 	if me.Err != nil {
-		return me.Data.(bool), me.Err
+
+		return UpdateResponse{
+			Status:me.Data.(bool),
+		}, me.Err
 	}
-	return me.Data.(bool), nil
+	return UpdateResponse{
+		Status:me.Data.(bool),
+	}, nil
 }
 
 func (Schoolservice) Delete(school model.School) (bool, error) {

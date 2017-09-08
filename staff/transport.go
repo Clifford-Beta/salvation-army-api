@@ -333,6 +333,8 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST,PUT,GET,DELETE,PATCH")
 	return json.NewEncoder(w).Encode(response)
 }
 

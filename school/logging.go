@@ -24,7 +24,7 @@ func (mw LoggingMiddleware) Create(school model.School) (output *model.School, e
 	return
 }
 
-func (mw LoggingMiddleware) Update(school model.School) (output bool, err error) {
+func (mw LoggingMiddleware) Update(school model.School) (output UpdateResponse, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"input":  school,

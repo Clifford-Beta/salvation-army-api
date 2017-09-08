@@ -1191,13 +1191,13 @@ func main() {
 		},
 		Route{
 			"User",
-			"PATCH",
-			"/user",
+			"PUT",
+			"/user/{id}",
 			updateUserHandler,
 		},Route{
 			"User",
 			"DELETE",
-			"/user",
+			"/user/{id}",
 			deleteUserHandler,
 		},
 		Route{
@@ -1262,8 +1262,8 @@ func main() {
 		},
 		Route{
 			"School",
-			"PATCH",
-			"/school",
+			"PUT",
+			"/school/{id}",
 			updateSchoolHandler,
 		},
 		Route{
@@ -1319,14 +1319,14 @@ func main() {
 
 		Route{
 			"Activity",
-			"PATCH",
-			"/activity",
+			"PUT",
+			"/activity/{id}",
 			updateActivityHandler,
 		},
 		Route{
 			"Activity",
 			"DELETE",
-			"/activity",
+			"/activity/{id}",
 			deleteActivityHandler,
 		},
 		Route{
@@ -1386,14 +1386,14 @@ func main() {
 		},
 		Route{
 			"File ",
-			"PATCH",
-			"/file",
+			"PUT",
+			"/file/{id}",
 			updateFileHandler,
 		},
 		Route{
 			"File ",
 			"DELETE",
-			"/file",
+			"/file/{id}",
 			deleteFileHandler,
 		},
 		Route{
@@ -1435,14 +1435,14 @@ func main() {
 		},
 		Route{
 			"Infrastructure",
-			"PATCH",
-			"/infrastructure",
+			"PUT",
+			"/infrastructure/{id}",
 			updateInfHandler,
 		},
 		Route{
 			"Infrastructure",
 			"DELETE",
-			"/infrastructure",
+			"/infrastructure/{id}",
 			deleteInfHandler,
 		},
 		Route{
@@ -1485,14 +1485,14 @@ func main() {
 
 		Route{
 			"Message",
-			"PATCH",
-			"/message",
+			"PUT",
+			"/message/{id}",
 			updateMessageHandler,
 		},
 		Route{
 			"Message",
 			"DELETE",
-			"/message",
+			"/message/{id}",
 			deleteMessageHandler,
 		},
 		Route{
@@ -1516,14 +1516,14 @@ func main() {
 		},
 		Route{
 			"Project",
-			"PATCH",
-			"/project",
+			"PUT",
+			"/project/{id}",
 			updateProjectHandler,
 		},
 		Route{
 			"Project",
 			"DELETE",
-			"/project",
+			"/project/{id}",
 			deleteProjectHandler,
 		},
 		Route{
@@ -1547,14 +1547,14 @@ func main() {
 		},
 		Route{
 			"Staff",
-			"PATCH",
-			"/staff",
+			"PUT",
+			"/staff/{id}",
 			updateStaffHandler,
 		},
 		Route{
 			"Staff",
 			"DELETE",
-			"/staff",
+			"/staff/{id}",
 			deleteStaffHandler,
 		},
 		Route{
@@ -1589,14 +1589,14 @@ func main() {
 		},
 		Route{
 			"Best Teacher",
-			"PATCH",
-			"/teacher",
+			"PUT",
+			"/teacher/{id}",
 			updateBestPerformingStaffHandler,
 		},
 		Route{
 			"Best Teacher",
 			"DELETE",
-			"/teacher",
+			"/teacher/{id}",
 			deleteBestPerformingStaffHandler,
 		},
 		Route{
@@ -1613,14 +1613,14 @@ func main() {
 		},
 		Route{
 			"Best Student",
-			"PATCH",
-			"/student",
+			"PUT",
+			"/student/{id}",
 			updateBestPerformingStudentHandler,
 		},
 		Route{
 			"Best Student",
 			"DELETE",
-			"/student",
+			"/student/{id}",
 			deleteBestPerformingStudentHandler,
 		},
 

@@ -25,7 +25,7 @@ func (mw InstrumentingMiddleware) Create(school model.School) (output *model.Sch
 	return
 }
 
-func (mw InstrumentingMiddleware) Update(school model.School) (output bool, err error) {
+func (mw InstrumentingMiddleware) Update(school model.School) (output UpdateResponse, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "update", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
