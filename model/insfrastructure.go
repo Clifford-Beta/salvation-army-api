@@ -48,8 +48,8 @@ func (o Infrastructure) Validate() error {
 	return validation.ValidateStruct(&o,
 		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
 		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
-		validation.Field(&o.Type, validation.Required, validation.Min(3)),
-		validation.Field(&o.School, validation.Required, validation.Min(3)),
+		validation.Field(&o.Type, validation.Required, validation.Min(1)),
+		validation.Field(&o.School, validation.Required, validation.Min(1)),
 	)
 }
 

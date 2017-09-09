@@ -53,7 +53,6 @@ func (s SqlUserStore) Update(user *model.User) StoreChannel {
 				"Id":             user.Id,
 				"Name":      user.Name,
 				"Email": 	user.Email,
-				"Status":         user.Status,
 			}); err != nil {
 			result.Err = model.NewLocAppError("SqlUserStore.UpdateOptimistically",
 				"store.sql_user.update.app_error", nil, "id="+strconv.Itoa(user.Id)+", "+err.Error())
