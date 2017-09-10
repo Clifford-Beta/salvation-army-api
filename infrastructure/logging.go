@@ -1,10 +1,9 @@
 package infrastructure
 
 import (
-	"time"
-	"salv_prj/model"
 	log "github.com/sirupsen/logrus"
-
+	"salvation-army-api/model"
+	"time"
 )
 
 type LoggingMiddleware struct {
@@ -15,22 +14,50 @@ type LoggingMiddleware struct {
 func (mw LoggingMiddleware) Create(inf model.Infrastructure) (output *model.Infrastructure, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": inf,
+			"input":  inf,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","infrastructure ","method = ", "create")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "create")
 
 	}(time.Now())
 	output, err = mw.Next.Create(inf)
 	return
 }
+
+func (mw LoggingMiddleware) Update(inf model.Infrastructure) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  inf,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "update")
+
+	}(time.Now())
+	output, err = mw.Next.Update(inf)
+	return
+}
+
+func (mw LoggingMiddleware) Delete(inf model.Infrastructure) (output bool, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"input":  inf,
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "delete")
+
+	}(time.Now())
+	output, err = mw.Next.Delete(inf)
+	return
+}
+
+
 func (mw LoggingMiddleware) CreateType(inf model.InfrastructureType) (output *model.InfrastructureType, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": inf,
+			"input":  inf,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","infrastructure ","method = ", "create_type")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "create_type")
 
 	}(time.Now())
 	output, err = mw.Next.CreateType(inf)
@@ -40,10 +67,10 @@ func (mw LoggingMiddleware) CreateType(inf model.InfrastructureType) (output *mo
 func (mw LoggingMiddleware) GetOne(id int) (output model.Infrastructure, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": id,
+			"input":  id,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","infrastructure ","method = ", "getone")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "getone")
 
 	}(time.Now())
 	output, err = mw.Next.GetOne(id)
@@ -53,38 +80,36 @@ func (mw LoggingMiddleware) GetOne(id int) (output model.Infrastructure, err err
 func (mw LoggingMiddleware) GetOneType(id int) (output model.InfrastructureType, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": id,
+			"input":  id,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","infrastructure ","method = ", "get_one_type")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "get_one_type")
 
 	}(time.Now())
 	output, err = mw.Next.GetOneType(id)
 	return
 }
 
-
-
-func (mw LoggingMiddleware) GetAll() (output map[string][]*model.Infrastructure, err error) {
+func (mw LoggingMiddleware) GetAll() (output map[string][]model.InfrastructureResult, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": "",
+			"input":  "",
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","infrastructure ","method = ", "getall")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "getall")
 
 	}(time.Now())
 	output, err = mw.Next.GetAll()
 	return
 }
 
-func (mw LoggingMiddleware) GetAllTypes() (output map[string][]*model.InfrastructureType, err error) {
+func (mw LoggingMiddleware) GetAllTypes() (output map[string][]model.InfrastructureType, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": "",
+			"input":  "",
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","infrastructure ","method = ", "getall")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "infrastructure ", "method = ", "getall")
 
 	}(time.Now())
 	output, err = mw.Next.GetAllTypes()

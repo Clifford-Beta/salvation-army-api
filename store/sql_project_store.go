@@ -1,12 +1,15 @@
 package store
 
-import "salv_prj/model"
+import (
+	"salvation-army-api/model"
+	"strconv"
+)
 
 type SqlProjectStore struct {
 	*SqlStore
 }
 
-func (s SqlProjectStore)Create(project *model.Project) StoreChannel {
+func (s SqlProjectStore) Create(project *model.Project) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
@@ -25,16 +28,58 @@ func (s SqlProjectStore)Create(project *model.Project) StoreChannel {
 	return storeChannel
 }
 
+func (s SqlProjectStore) Update(project *model.Project) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+			if count, err := s.GetMaster().Update(project); err != nil {
+					result.Err = model.NewLocAppError("SqlProjectStore.Update", "store.sql_school.update.updating.app_error", nil, "user_id="+strconv.Itoa(project.Id)+", "+err.Error())
+
+			}else{
+				if count == 1 {
+					result.Data = true
+				}else{
+					result.Data = false
+				}
+
+			}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
+
+func (s SqlProjectStore) Delete(project *model.Project) StoreChannel {
+	storeChannel := make(StoreChannel)
+	go func() {
+		result := StoreResult{}
+		res, err := s.GetMaster().Exec("Update project SET project_status=0 where user_id=?", project.Id)
+		if err != nil {
+			result.Err = model.NewLocAppError("SqlProjectStore.Delete", "store.sql_project.delete.app_error", nil, "staff_id="+strconv.Itoa(project.Id)+", "+err.Error())
+
+		} else {
+			result.Data = res
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+
+	return storeChannel
+}
 
 
-func (s SqlProjectStore)Retrieve(id int) StoreChannel {
+func (s SqlProjectStore) Retrieve(id int) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var project model.Project
-		err := s.master.SelectOne(&project,"select * from project where project_id=?",id)
+		err := s.master.SelectOne(&project, `
+			select *
+			from project
+			where project_status=1 and project_id=?`, id)
+		//oldUserResult, err := s.GetMaster().SelectOne(model.Project{}, id)
 		if err != nil {
-			result.Err = model.NewLocAppError("SqlProjectStore.GetType", "store.sql_project_type.get.app_error", nil, err.Error())
+			result.Err = model.NewLocAppError("SqlProjectStore.Retrieve", "store.sql_project_type.get.app_error", nil, err.Error())
 			storeChannel <- result
 			close(storeChannel)
 			return
@@ -47,12 +92,12 @@ func (s SqlProjectStore)Retrieve(id int) StoreChannel {
 	return storeChannel
 }
 
-func (s SqlProjectStore)RetrieveAll()StoreChannel  {
+func (s SqlProjectStore) RetrieveAll() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
 		var project []model.ProjectResult
-		_,err := s.master.Select(&project,
+		_, err := s.master.Select(&project,
 			`
 			select project.project_id as id, school.school_name as school, project.project_name as name,
 			project.project_start as start, project.project_duration as duration,
@@ -78,4 +123,3 @@ func (s SqlProjectStore)RetrieveAll()StoreChannel  {
 	}()
 	return storeChannel
 }
-

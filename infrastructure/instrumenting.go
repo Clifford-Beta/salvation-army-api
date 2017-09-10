@@ -1,11 +1,10 @@
 package infrastructure
 
-
 import (
 	"fmt"
-	"time"
 	"github.com/go-kit/kit/metrics"
-	"salv_prj/model"
+	"salvation-army-api/model"
+	"time"
 )
 
 type InstrumentingMiddleware struct {
@@ -23,6 +22,28 @@ func (mw InstrumentingMiddleware) Create(inf model.Infrastructure) (output *mode
 	}(time.Now())
 
 	output, err = mw.Next.Create(inf)
+	return
+}
+
+func (mw InstrumentingMiddleware) Update(inf model.Infrastructure) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "update", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Update(inf)
+	return
+}
+
+func (mw InstrumentingMiddleware) Delete(inf model.Infrastructure) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "delete", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Delete(inf)
 	return
 }
 
@@ -59,9 +80,7 @@ func (mw InstrumentingMiddleware) GetOneType(id int) (output model.Infrastructur
 	return
 }
 
-
-
-func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.Infrastructure, err error) {
+func (mw InstrumentingMiddleware) GetAll() (output map[string][]model.InfrastructureResult, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getall", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
@@ -72,7 +91,7 @@ func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.Infrastru
 	return
 }
 
-func (mw InstrumentingMiddleware) GetAllTypes() (output map[string][]*model.InfrastructureType, err error) {
+func (mw InstrumentingMiddleware) GetAllTypes() (output map[string][]model.InfrastructureType, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_all", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)

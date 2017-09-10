@@ -1,64 +1,100 @@
 package school
 
 import (
-	"salv_prj/model"
-	"salv_prj/store"
+	"salvation-army-api/model"
+	"salvation-army-api/store"
 	"time"
 )
 
-type SchoolService interface {
-	Create(model.School)(*model.School, error)
-	GetOne(int)(model.School,error)
-	GetAll()(map[string][]*model.SchoolResult,error)
-	RecordPerformance(performance *model.SchoolPerformance)(*model.SchoolPerformance,error)
-	GetBestSchool(from,to int)(model.SchoolPerformanceResult,error)
-	RankAllSchools(from,to int)(map[string][]*model.SchoolPerformanceResult,error)
+type UpdateResponse struct{
+	Status bool `json:"status"`
 }
 
-type Schoolservice struct {}
 
-func ( Schoolservice)Create(school model.School)(*model.School,error)  {
+type SchoolService interface {
+	Create(model.School) (*model.School, error)
+	Update(model.School) (UpdateResponse, error)
+	Delete(model.School) (bool, error)
+	GetOne(int) (model.School, error)
+	GetAll() (map[string][]*model.SchoolResult, error)
+	RecordPerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
+	//UpdatePerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
+	//RetrievePerformance(int) (model.SchoolPerformance, error)
+	GetBestSchool(from, to int) (model.SchoolPerformanceResult, error)
+	RankAllSchools(from, to int) (map[string][]model.SchoolPerformanceResult, error)
+}
+
+type Schoolservice struct{}
+
+func (Schoolservice) Create(school model.School) (*model.School, error) {
 	schoolStore := store.SqlSchoolStore{store.Database}
 	school.Status = 1
 	school.DateRegistered = time.Now()
-	sch := <- schoolStore.Save(&school)
-	if sch.Err != nil {
-		return &model.School{},sch.Err
+	if err := school.Validate(); err != nil {
+		return &model.School{},err
 	}
-	return sch.Data.(*model.School),nil
+	sch := <-schoolStore.Save(&school)
+	if sch.Err != nil {
+		return &model.School{}, sch.Err
+	}
+	return sch.Data.(*model.School), nil
 
 }
 
-func (Schoolservice)GetOne(id int)(model.School,error)  {
+func (Schoolservice) GetOne(id int) (model.School, error) {
 	schoolStore := store.SqlSchoolStore{store.Database}
-	sch := <- schoolStore.Get(id)
+	sch := <-schoolStore.Get(id)
 	if sch.Err != nil {
-		return model.School{},sch.Err
+		return model.School{}, sch.Err
 	}
-	return sch.Data.(model.School),nil
+	return sch.Data.(model.School), nil
 
 }
 
-func (Schoolservice) GetAll()(map[string][]*model.SchoolResult,error) {
-	schoolStore := store.SqlSchoolStore{store.Database}
-	sch := <- schoolStore.GetMany()
-	if sch.Err != nil {
-		return map[string][]*model.SchoolResult{"data":[]*model.SchoolResult{}},sch.Err
+func (Schoolservice) Update(school model.School) (UpdateResponse, error) {
+	userStore := store.SqlSchoolStore{store.Database}
+	me := <-userStore.Update(&school)
+	if me.Err != nil {
+
+		return UpdateResponse{
+			Status:me.Data.(bool),
+		}, me.Err
 	}
-	return map[string][]*model.SchoolResult{"data":sch.Data.([]*model.SchoolResult)},nil
+	return UpdateResponse{
+		Status:me.Data.(bool),
+	}, nil
+}
+
+func (Schoolservice) Delete(school model.School) (bool, error) {
+	userStore := store.SqlSchoolStore{store.Database}
+	me := <-userStore.Delete(&school)
+	if me.Err != nil {
+		return false, me.Err
+	}
+	return true, nil
+}
+
+
+func (Schoolservice) GetAll() (map[string][]*model.SchoolResult, error) {
+	schoolStore := store.SqlSchoolStore{store.Database}
+	sch := <-schoolStore.GetMany()
+	if sch.Err != nil {
+		return map[string][]*model.SchoolResult{"data": []*model.SchoolResult{}}, sch.Err
+	}
+	return map[string][]*model.SchoolResult{"data": sch.Data.([]*model.SchoolResult)}, nil
 
 }
 
-func (Schoolservice) RecordPerformance(performance *model.SchoolPerformance)(*model.SchoolPerformance,error) {
+func (Schoolservice) RecordPerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error) {
 	schoolStore := store.SqlSchoolStore{store.Database}
-	pf := <- schoolStore.RecordPerformance(performance)
+	pf := <-schoolStore.RecordPerformance(performance)
 	if pf.Err != nil {
-		return &model.SchoolPerformance{},pf.Err
+		return &model.SchoolPerformance{}, pf.Err
 	}
-	return pf.Data.(*model.SchoolPerformance),nil
+	return pf.Data.(*model.SchoolPerformance), nil
 }
 
-func (Schoolservice) GetBestSchool(from,to int)(model.SchoolPerformanceResult,error) {
+func (Schoolservice) GetBestSchool(from, to int) (model.SchoolPerformanceResult, error) {
 	schoolStore := store.SqlSchoolStore{store.Database}
 	filters := map[string]interface{}{}
 	if from != 0 {
@@ -66,19 +102,19 @@ func (Schoolservice) GetBestSchool(from,to int)(model.SchoolPerformanceResult,er
 		if to != 0 {
 			filters["to"] = to
 
-		}else{
+		} else {
 			filters["to"] = from
 
 		}
 	}
-	bestSchool := <- schoolStore.RetrieveBestPerfomingSchool(filters)
+	bestSchool := <-schoolStore.RetrieveBestPerfomingSchool(filters)
 	if bestSchool.Err != nil {
-		return model.SchoolPerformanceResult{},bestSchool.Err
+		return model.SchoolPerformanceResult{}, bestSchool.Err
 	}
-	return bestSchool.Data.(model.SchoolPerformanceResult),nil
+	return bestSchool.Data.(model.SchoolPerformanceResult), nil
 }
 
-func (Schoolservice) RankAllSchools(from,to int)(map[string][]*model.SchoolPerformanceResult,error) {
+func (Schoolservice) RankAllSchools(from, to int) (map[string][]model.SchoolPerformanceResult, error) {
 	schoolStore := store.SqlSchoolStore{store.Database}
 	filters := map[string]interface{}{}
 	if from != 0 {
@@ -86,14 +122,14 @@ func (Schoolservice) RankAllSchools(from,to int)(map[string][]*model.SchoolPerfo
 		if to != 0 {
 			filters["to"] = to
 
-		}else{
+		} else {
 			filters["to"] = from
 
 		}
 	}
-	bestSchool := <- schoolStore.RankAllSchools()
+	bestSchool := <-schoolStore.RankAllSchools()
 	if bestSchool.Err != nil {
-		return map[string][]*model.SchoolPerformanceResult{"data":[]*model.SchoolPerformanceResult{}},bestSchool.Err
+		return map[string][]model.SchoolPerformanceResult{"data": []model.SchoolPerformanceResult{}}, bestSchool.Err
 	}
-	return map[string][]*model.SchoolPerformanceResult{"data":bestSchool.Data.([]*model.SchoolPerformanceResult)},nil
+	return map[string][]model.SchoolPerformanceResult{"data": bestSchool.Data.([]model.SchoolPerformanceResult)}, nil
 }

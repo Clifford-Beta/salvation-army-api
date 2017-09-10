@@ -2,14 +2,13 @@ package store
 
 import (
 	//"encoding/json"
+	"encoding/json"
 	"errors"
 	"github.com/go-gorp/gorp"
-	"salv_prj/model"
-	"encoding/json"
+	"salvation-army-api/model"
 )
 
 var Database = InitConnection()
-
 
 type StoreResult struct {
 	Data interface{}
@@ -20,9 +19,7 @@ type StoreChannel chan StoreResult
 
 type Store interface {
 	User() UserStore
-
 }
-
 
 type UserStore interface {
 	Save(user *model.User) StoreChannel
@@ -33,7 +30,6 @@ type UserStore interface {
 	GetByEmailAndPassword(email, password string) StoreChannel
 	GetByPhoneAndPassword(phone, password string) StoreChannel
 }
-
 
 type userConverter struct{}
 

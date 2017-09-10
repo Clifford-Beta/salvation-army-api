@@ -1,11 +1,10 @@
 package file
 
-
 import (
 	"fmt"
-	"time"
 	"github.com/go-kit/kit/metrics"
-	"salv_prj/model"
+	"salvation-army-api/model"
+	"time"
 )
 
 type InstrumentingMiddleware struct {
@@ -26,6 +25,29 @@ func (mw InstrumentingMiddleware) Create(file model.File) (output *model.File, e
 	return
 }
 
+
+func (mw InstrumentingMiddleware) Update(file model.File) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "update", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Update(file)
+	return
+}
+
+func (mw InstrumentingMiddleware) Delete(file model.File) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "delete", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Delete(file)
+	return
+}
+
 func (mw InstrumentingMiddleware) CreateType(file model.FileType) (output *model.FileType, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "create_type", "error", fmt.Sprint(err != nil)}
@@ -37,7 +59,7 @@ func (mw InstrumentingMiddleware) CreateType(file model.FileType) (output *model
 	return
 }
 
-func (mw InstrumentingMiddleware) GetOne( id int) (output model.File, err error) {
+func (mw InstrumentingMiddleware) GetOne(id int) (output model.File, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_one", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
@@ -48,7 +70,7 @@ func (mw InstrumentingMiddleware) GetOne( id int) (output model.File, err error)
 	return
 }
 
-func (mw InstrumentingMiddleware) GetOneType( id int) (output model.FileType, err error) {
+func (mw InstrumentingMiddleware) GetOneType(id int) (output model.FileType, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_one", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
@@ -59,9 +81,7 @@ func (mw InstrumentingMiddleware) GetOneType( id int) (output model.FileType, er
 	return
 }
 
-
-
-func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.File, err error) {
+func (mw InstrumentingMiddleware) GetAll() (output map[string][]model.File, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getall", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
@@ -72,7 +92,7 @@ func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.File, err
 	return
 }
 
-func (mw InstrumentingMiddleware) GetAllTypes() (output map[string][]*model.FileType, err error) {
+func (mw InstrumentingMiddleware) GetAllTypes() (output map[string][]model.FileType, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "get_all", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)

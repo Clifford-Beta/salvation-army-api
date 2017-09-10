@@ -1,9 +1,9 @@
 package category
 
 import (
-	"time"
-	"salv_prj/model"
 	log "github.com/sirupsen/logrus"
+	"salvation-army-api/model"
+	"time"
 )
 
 type LoggingMiddleware struct {
@@ -11,74 +11,72 @@ type LoggingMiddleware struct {
 	Next   CategoryService
 }
 
-func (mw LoggingMiddleware) Create(category model.Category)(output *model.Category, err error) {
+func (mw LoggingMiddleware) Create(category model.Category) (output *model.Category, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": category,
+			"input":  category,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info( "service = ","category ","method = ", "create")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "category ", "method = ", "create")
 	}(time.Now())
 	output, err = mw.Next.Create(category)
 	return
 }
 
-func (mw LoggingMiddleware) CreateTier(category model.Tier)(output *model.Tier, err error) {
+func (mw LoggingMiddleware) CreateTier(category model.Tier) (output *model.Tier, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": category,
+			"input":  category,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info( "service = ","category ","method = ", "create_tier")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "category ", "method = ", "create_tier")
 	}(time.Now())
 	output, err = mw.Next.CreateTier(category)
 	return
 }
 
-
-func (mw LoggingMiddleware) GetOne(id int)(output model.Category, err error) {
+func (mw LoggingMiddleware) GetOne(id int) (output model.Category, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": id ,
+			"input":  id,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","category ","method = ", "get_one",)
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "category ", "method = ", "get_one")
 	}(time.Now())
 	output, err = mw.Next.GetOne(id)
 	return
 }
 
-func (mw LoggingMiddleware) GetOneTier(id int)(output model.Tier, err error) {
+func (mw LoggingMiddleware) GetOneTier(id int) (output model.Tier, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
-			"input": id ,
+			"input":  id,
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","category ","method = ", "get_one_tier",)
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "category ", "method = ", "get_one_tier")
 	}(time.Now())
 	output, err = mw.Next.GetOneTier(id)
 	return
 }
 
-func (mw LoggingMiddleware) GetAll()(output []*model.Category, err error) {
+func (mw LoggingMiddleware) GetAll() (output map[string][]*model.Category, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","category ","method = ", "get_all")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "category ", "method = ", "get_all")
 	}(time.Now())
 	output, err = mw.Next.GetAll()
 	return
 }
 
-func (mw LoggingMiddleware) GetAllTiers()(output []*model.Tier, err error) {
+func (mw LoggingMiddleware) GetAllTiers() (output map[string][]*model.Tier, err error) {
 	defer func(begin time.Time) {
 		mw.Logger.WithFields(log.Fields{
 			"output": output,
-			"err": err,
-			"took": time.Since(begin)}).Info("service = ","category ","method = ", "get_all_tiers")
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "category ", "method = ", "get_all_tiers")
 	}(time.Now())
 	output, err = mw.Next.GetAllTiers()
 	return
 }
-

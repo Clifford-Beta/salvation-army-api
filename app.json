@@ -1,0 +1,14 @@
+{
+  "name": "Salvation Army API: Go",
+  "description": "API for managing salvation army schools",
+  "keywords": [
+    "api",
+    "go",
+    "salvation",
+    "army"
+  ],
+  "image": "heroku/go:1.8",
+  "mount_dir": "src/github.com/Clifford-Beta/salvation-army-api",
+  "website": "https://github.com/Clifford-Beta/salvation-army-api",
+  "repository": "https://github.com/Clifford-Beta/salvation-army-api"
+}

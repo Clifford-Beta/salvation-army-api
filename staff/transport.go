@@ -3,18 +3,40 @@ package staff
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"salv_prj/model"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/gorilla/mux"
+	"net/http"
+	"salvation-army-api/model"
 	"strconv"
-	"fmt"
 )
 
 func MakeAddStaffEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.Staff)
 		v, err := svc.AddStaff(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeUpdateStaffEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.Staff)
+		v, err := svc.UpdateStaff(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeDeleteStaffEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.Staff)
+		v, err := svc.DeleteStaff(req)
 		if err != nil {
 			return v, err
 		}
@@ -55,8 +77,8 @@ func MakeAddStaffRoleEndpoint(svc StaffService) endpoint.Endpoint {
 
 func MakeRetrieveStaffRoleEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(staffRequest)
-		v, err := svc.RetrieveStaffRole(req.Id)
+		//req := request.(staffRequest)
+		v, err := svc.RetrieveAllRoles()
 		if err != nil {
 			return v, err
 		}
@@ -75,6 +97,28 @@ func MakeRecordBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint {
 	}
 }
 
+func MakeUpdateBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.BestTeacher)
+		v, err := svc.UpdateBestPerformingStaff(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeDeleteBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.BestTeacher)
+		v, err := svc.DeleteBestPerformingStaff(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeRecordBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.BestStudent)
@@ -86,10 +130,54 @@ func MakeRecordBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint
 	}
 }
 
+func MakeUpdateBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.BestStudent)
+		v, err := svc.UpdateBestPerformingStudent(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeDeleteBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.BestStudent)
+		v, err := svc.DeleteBestPerformingStudent(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeRetrieveBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
-		v, err := svc.RetrieveBestPerformingStaff(req.From,req.To)
+		v, err := svc.RetrieveBestPerformingStaff(req.From, req.To)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeRetrieveTeacherEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(staffRequest)
+		v, err := svc.GetTeacher(req.Id)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeRetrieveStudentEndpoint(svc StaffService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(staffRequest)
+		v, err := svc.GetStudent(req.Id)
 		if err != nil {
 			return v, err
 		}
@@ -100,7 +188,7 @@ func MakeRetrieveBestPerformingStaffEndpoint(svc StaffService) endpoint.Endpoint
 func MakeRetrieveBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
-		v, err := svc.RetrieveBestPerformingStudent(req.From,req.To)
+		v, err := svc.RetrieveBestPerformingStudent(req.From, req.To)
 		if err != nil {
 			return v, err
 		}
@@ -111,7 +199,7 @@ func MakeRetrieveBestPerformingStudentEndpoint(svc StaffService) endpoint.Endpoi
 func MakeRankStaffPerformanceEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
-		v, err := svc.RankStaffPerformance(req.From,req.To)
+		v, err := svc.RankStaffPerformance(req.From, req.To)
 		if err != nil {
 			return v, err
 		}
@@ -122,7 +210,7 @@ func MakeRankStaffPerformanceEndpoint(svc StaffService) endpoint.Endpoint {
 func MakeRankStudentPerformanceEndpoint(svc StaffService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(staffRequest)
-		v, err := svc.RankStudentPerformance(req.From,req.To)
+		v, err := svc.RankStudentPerformance(req.From, req.To)
 		if err != nil {
 			return v, err
 		}
@@ -162,13 +250,12 @@ func DecodeRecordBestPerformingStudentRequest(_ context.Context, r *http.Request
 	return request, nil
 }
 
-
 func DecodeRetrieveStaffRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request staffRequest
 	vars := mux.Vars(r)
-	id,err := strconv.Atoi(vars["id"])
-	if  err != nil {
-		return request,err
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return request, err
 	}
 	request.Id = id
 	return request, nil
@@ -187,9 +274,9 @@ func DecodeRetrieveStaffRoleRequest(_ context.Context, r *http.Request) (interfa
 
 func DecodeRetrieveAllStaffRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request staffRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return nil, err
-	}
+	//if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+	//	return nil, err
+	//}
 	return request, nil
 }
 
@@ -227,9 +314,9 @@ func DecodeRankStudentPerformanceRequest(_ context.Context, r *http.Request) (in
 
 func DecodeRetrieveAllRolesStaffRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request staffRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return nil, err
-	}
+	//if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+	//	return nil, err
+	//}
 	return request, nil
 }
 
@@ -244,15 +331,17 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	})
 }
 
-
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST,PUT,GET,DELETE,PATCH")
 	return json.NewEncoder(w).Encode(response)
 }
+
 type staffRequest struct {
-	Id int `json:"id"`
+	Id   int `json:"id"`
 	From int `json:"from"`
-	To int `json:"to"`
+	To   int `json:"to"`
 }
 
 //type userResponse struct {

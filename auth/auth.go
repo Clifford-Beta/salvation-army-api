@@ -2,16 +2,15 @@ package auth
 
 import (
 	"errors"
-	"time"
-	"salv_prj/store"
 	jwt "github.com/dgrijalva/jwt-go"
-	"salv_prj/model"
-	"log"
+	"salvation-army-api/model"
+	"salvation-army-api/store"
+	"time"
 )
 
 // AuthService provides authentication service
 type AuthService interface {
-	Auth(int, string) (string, error)
+	Auth(string, string) (map[string]interface{}, error)
 }
 
 type Authservice struct {
@@ -21,44 +20,44 @@ type Authservice struct {
 
 type CustomClaims struct {
 	ClientID string `json:"clientId"`
+	AccessLevel int `json:"access_level"`
 	jwt.StandardClaims
 }
 
-const expiration = 1200000000
+const expiration = 12000000
 
 func generateToken(signingKey []byte, clientID string) (string, error) {
 
 	claims := CustomClaims{
 		clientID,
+		1,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Second * expiration).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
-
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(signingKey)
 }
 
-func (as Authservice) Auth(clientID int, clientSecret string) (string, error) {
-	clientStore := store.SqlUserStore{store.Database}
-	client := <-clientStore.Get(clientID)
-	if client.Err != nil {
-		return "", ErrAuth
+func (as Authservice) Auth(clientID string, clientSecret string) (map[string]interface{}, error) {
+	userStore := store.SqlUserStore{store.Database}
+	me := <-userStore.GetByEmailAndPassword(clientID, clientSecret)
+	if me.Err != nil {
+		return map[string]interface{}{}, me.Err
 	}
-	log.Println("this is the user",client.Data)
-		signed, err := generateToken(as.Key, client.Data.(model.User).Name)
-		if err != nil {
-			return "", errors.New(err.Error())
-		}
-		return signed, nil
-		//if as.Clients[clientID] == clientSecret {
-		//	signed, err := generateToken(as.Key, client.Data.(model.User))
-		//	if err != nil {
-		//		return "", errors.New(err.Error())
-		//	}
-		//	return signed, nil
-		//}
+	signed, err := generateToken(as.Key, clientID)
+	if err != nil {
+		return map[string]interface{}{}, errors.New(err.Error())
+	}
+	return map[string]interface{}{"user":me.Data.(model.User),"token":signed}, nil
 }
+
+func MapClaimsFactory() jwt.Claims {
+	return jwt.MapClaims{}
+}
+
 // ErrAuth is returned when credentials are incorrect
 var ErrAuth = errors.New("Incorrect credentials")
+
+

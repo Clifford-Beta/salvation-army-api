@@ -3,12 +3,12 @@ package category
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"salv_prj/model"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/gorilla/mux"
+	"net/http"
+	"salvation-army-api/model"
 	"strconv"
-	"fmt"
 )
 
 func MakeCreateEndpoint(svc CategoryService) endpoint.Endpoint {
@@ -93,9 +93,9 @@ func DecodeCreateTierRequest(_ context.Context, r *http.Request) (interface{}, e
 func DecodeGetOneRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request catRequest
 	vars := mux.Vars(r)
-	id,err := strconv.Atoi(vars["id"])
-	if  err != nil {
-		return request,err
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return request, err
 	}
 	request.Id = id
 	return request, nil
@@ -117,11 +117,13 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	})
 }
 
-
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST,PUT,GET,DELETE,PATCH")
 	return json.NewEncoder(w).Encode(response)
 }
+
 type catRequest struct {
 	Id int `json:"id"`
 }

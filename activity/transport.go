@@ -3,18 +3,42 @@ package activity
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"salv_prj/model"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/gorilla/mux"
+	"net/http"
+	"salvation-army-api/model"
 	"strconv"
-	"fmt"
 )
 
 func MakeCreateActivityEndpoint(svc ActivityService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.ExtraCurricular)
 		v, err := svc.Create(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+
+func MakeUpdateActivityEndpoint(svc ActivityService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.ExtraCurricular)
+		v, err := svc.Update(req)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+
+func MakeDeleteActivityEndpoint(svc ActivityService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(model.ExtraCurricular)
+		v, err := svc.Delete(req)
 		if err != nil {
 			return v, err
 		}
@@ -43,7 +67,6 @@ func MakeRecordPerformanceEndpoint(svc ActivityService) endpoint.Endpoint {
 		return v, nil
 	}
 }
-
 
 func MakeGetOneActivityEndpoint(svc ActivityService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
@@ -78,7 +101,6 @@ func MakeGetOnePerformanceEndpoint(svc ActivityService) endpoint.Endpoint {
 	}
 }
 
-
 func MakeGetAllActivitiesEndpoint(svc ActivityService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		//req := request.(userRequest)
@@ -112,7 +134,6 @@ func MakeGetAllPerformancesEndpoint(svc ActivityService) endpoint.Endpoint {
 	}
 }
 
-
 func DecodeCreateActivityRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request model.ExtraCurricular
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -137,13 +158,12 @@ func DecodeRecordPerformanceRequest(_ context.Context, r *http.Request) (interfa
 	return request, nil
 }
 
-
 func DecodeGetOneRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request catRequest
 	vars := mux.Vars(r)
-	id,err := strconv.Atoi(vars["id"])
-	if  err != nil {
-		return request,err
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return request, err
 	}
 	request.Id = id
 	return request, nil
@@ -165,11 +185,13 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	})
 }
 
-
 func EncodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST,PUT,GET,DELETE,PATCH")
 	return json.NewEncoder(w).Encode(response)
 }
+
 type catRequest struct {
 	Id int `json:"id"`
 }

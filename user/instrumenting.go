@@ -1,11 +1,10 @@
 package user
 
-
 import (
 	"fmt"
-	"time"
 	"github.com/go-kit/kit/metrics"
-	"salv_prj/model"
+	"salvation-army-api/model"
+	"time"
 )
 
 type InstrumentingMiddleware struct {
@@ -26,6 +25,28 @@ func (mw InstrumentingMiddleware) Create(user model.User) (output *model.User, e
 	return
 }
 
+func (mw InstrumentingMiddleware) Update(user model.User) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "update", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Update(user)
+	return
+}
+
+func (mw InstrumentingMiddleware) Delete(user model.User) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "delete", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Delete(user)
+	return
+}
+
 func (mw InstrumentingMiddleware) GetOne(id int) (output model.User, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getone", "error", fmt.Sprint(err != nil)}
@@ -37,14 +58,14 @@ func (mw InstrumentingMiddleware) GetOne(id int) (output model.User, err error) 
 	return
 }
 
-func (mw InstrumentingMiddleware) Login(email,password string)(output model.User, err error) {
+func (mw InstrumentingMiddleware) Login(email, password string) (output model.User, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "login", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
 		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	output, err = mw.Next.Login(email,password)
+	output, err = mw.Next.Login(email, password)
 	return
 }
 

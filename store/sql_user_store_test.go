@@ -2,37 +2,24 @@ package store
 
 import (
 	//"testing"
-	"salv_prj/model"
+	"fmt"
+	"salvation-army-api/model"
 	"testing"
 	"time"
-	"fmt"
 )
 
 var pass string = "BT1290%R65snh8"
 var user = model.User{
-	//Id:1,
-	Name:"Willyss Beta",
-	Email:"betawillys@gmail.com",
-	Password:"12345",
-	Status:1,
-	DateAdd:time.Now(),
-
-}
-
-func TestSqlUserStore_Save(t *testing.T) {
-	userStore := SqlUserStore{Database}
-
-	//go TimeOut()
-	me := <-userStore.Save(&user)
-	if me.Err != nil {
-		t.Fatal("Saving insurer user failed with", me.Err)
-	}
+	Id:1,
+	Name:     "Clifford Beta",
+	Email:    "betaclifford@gmail.com",
+	Password: "12345",
+	Status:   1,
+	DateAdd:  time.Now(),
 }
 
 func TestSqlUserStore_Get(t *testing.T) {
 	userStore := SqlUserStore{Database}
-
-	//go TimeOut()
 	me := <-userStore.Get(1)
 	if me.Err != nil {
 		t.Fatal("Getting  insurer user failed with", me.Err)
@@ -40,20 +27,31 @@ func TestSqlUserStore_Get(t *testing.T) {
 	fmt.Println(me.Data)
 }
 
-func TestSqlUserStore_GetManyt(t *testing.T) {
+func TestSqlUserStore_Update(t *testing.T) {
 	userStore := SqlUserStore{Database}
 
 	//go TimeOut()
-	me := <-userStore.GetMany()
+	me := <-userStore.Update(&user)
 	if me.Err != nil {
 		t.Fatal("Getting  insurer user failed with", me.Err)
 	}
-	for _,v := range me.Data.([] *model.User) {
-		fmt.Println(*v)
-
-	}
-	//fmt.Println(me.Data.([] *model.User))
+	fmt.Println(me.Data)
 }
+
+//func TestSqlUserStore_GetManyt(t *testing.T) {
+//	userStore := SqlUserStore{Database}
+//
+//	//go TimeOut()
+//	me := <-userStore.GetMany()
+//	if me.Err != nil {
+//		t.Fatal("Getting  insurer user failed with", me.Err)
+//	}
+//	for _, v := range me.Data.([]*model.User) {
+//		fmt.Println(*v)
+//
+//	}
+//	//fmt.Println(me.Data.([] *model.User))
+//}
 
 //func TestSqlUserStore_GetByEmail(t *testing.T) {
 //	userStore := SqlUserStore{dataStore}

@@ -1,31 +1,58 @@
 package model
 
 import (
-	"time"
 	"encoding/json"
 	"io"
+	"time"
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 type Infrastructure struct {
-	Id int `db:"infrastructure_id" json:"id"`
-	School int `db:"school_id" json:"school"`
-	Name string `db:"infrastructure_name" json:"name"`
-	Type int `db:"infrastructure_type" json:"type"`
-	Quantity int `db:"infrastructure_quantity" json:"quantity"`
-	Description string `db:"infrastructure_description" json:"description"`
+	Id          int       `db:"infrastructure_id" json:"id"`
+	School      int       `db:"school_id" json:"school"`
+	Name        string    `db:"infrastructure_name" json:"name"`
+	Type        int       `db:"infrastructure_type" json:"type"`
+	Quantity    int       `db:"infrastructure_quantity" json:"quantity"`
+	Description string    `db:"infrastructure_description" json:"description"`
 	DateCreated time.Time `db:"date_created" json:"date_created"`
-	TimeStamp time.Time `db:"timestamp" json:"time_stamp"`
-	Status	int	`db:"infrastructure_status" json:"status"`
+	TimeStamp   time.Time `db:"timestamp" json:"time_stamp"`
+	Status      int       `db:"infrastructure_status" json:"status"`
 }
 
+type InfrastructureResult struct {
+	Id          int       `db:"id" json:"id"`
+	School      string       `db:"school" json:"school"`
+	Name        string    `db:"name" json:"name"`
+	Type        string       `db:"type" json:"type"`
+	Quantity    int       `db:"quantity" json:"quantity"`
+	Description string    `db:"description" json:"description"`
+	DateCreated time.Time `db:"date_created" json:"date_created"`
+}
 
 type InfrastructureType struct {
-	Id int `db:"i_type_id" json:"id"`
-	Name string `db:"i_type_name" json:"name"`
-	Description string `db:"i_type_description" json:"description"`
-	TimeStamp time.Time `db:"timestamp" json:"time_stamp"`
-	Status	int	`db:"i_type_status" json:"status"`
+	Id          int       `db:"i_type_id" json:"id"`
+	Name        string    `db:"i_type_name" json:"name"`
+	Description string    `db:"i_type_description" json:"description"`
+	TimeStamp   time.Time `db:"timestamp" json:"time_stamp"`
+	Status      int       `db:"i_type_status" json:"status"`
 }
+
+func (o InfrastructureType) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+	)
+}
+
+func (o Infrastructure) Validate() error {
+	return validation.ValidateStruct(&o,
+		validation.Field(&o.Name, validation.Required, validation.Length(2, 20)),
+		validation.Field(&o.Description, validation.Required, validation.Length(3, 200)),
+		validation.Field(&o.Type, validation.Required, validation.Min(1)),
+		validation.Field(&o.School, validation.Required, validation.Min(1)),
+	)
+}
+
 
 func (o *Infrastructure) ToJson() string {
 	b, err := json.Marshal(o)
@@ -46,8 +73,6 @@ func InfrastructureFromJson(data io.Reader) *Infrastructure {
 		return nil
 	}
 }
-
-
 
 func (o *InfrastructureType) ToJson() string {
 	b, err := json.Marshal(o)

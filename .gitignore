@@ -6,7 +6,7 @@
 .idea
 *.iml
 *.raml
-vendor/
+
 Backend/
 out
 gen### Go template

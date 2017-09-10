@@ -1,10 +1,10 @@
 package store
 
 import (
-	"salv_prj/model"
-	"net/http"
-	"strconv"
 	"log"
+	"net/http"
+	"salvation-army-api/model"
+	"strconv"
 )
 
 type SqlUserStore struct {
@@ -15,12 +15,6 @@ func (s SqlUserStore) Save(user *model.User) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		//user.Presave()
-		//if result.Err = user.IsValid(); result.Err != nil {
-		//	storeChannel <- result
-		//	close(storeChannel)
-		//	return
-		//}
 
 		if err := s.GetMaster().Insert(user); err != nil {
 			if IsUniqueConstraintError(err.Error(), []string{"Email", "users_email_key", "idx_users_email_unique"}) {
@@ -42,56 +36,56 @@ func (s SqlUserStore) Save(user *model.User) StoreChannel {
 	return storeChannel
 }
 
-//func (s SqlUserStore) Update(user *model.User) StoreChannel {
-//	storeChannel := make(StoreChannel, 1)
-//	go func() {
-//		result := StoreResult{}
-//		if result.Err = user.IsValid(); result.Err != nil {
-//			storeChannel <- result
-//			close(storeChannel)
-//			return
-//		}
-//		oldUserResult, err := s.GetMaster().Get(model.User{}, user.Id)
-//		if err != nil || oldUserResult == nil {
-//			result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.finding.app_error", nil, "user_id="+strconv.Itoa(user.Id))
-//			//} else if oldInsurerResult == nil {
-//			//	result.Err = model.NewLocAppError("SqlInsurerStore.Update", "store.sql_insurer.update.find.app_error", nil, "insurer_id="+strconv.Itoa(insurer.Id))
-//		} else {
-//			oldUser := oldUserResult.(*model.User)
-//			user.DateAdd = oldUser.DateAdd
-//			user.Password = model.HashPassword(user.Password)
-//			if count, err := s.GetMaster().Update(user); err != nil {
-//				if IsUniqueConstraintError(err.Error(), []string{"Email", "users_email_key", "idx_user_email_unique"}) {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.email_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				} else if IsUniqueConstraintError(err.Error(), []string{"Phone", "users_phone_key", "idx_users_phone_unique"}) {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.phone_taken.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				} else {
-//					result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.updating.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
-//				}
-//			} else if count != 1 {
-//				result.Err = model.NewLocAppError("SqlInsurerUserStore.Update", "store.sql_insurer_user.update.app_error", nil, fmt.Sprintf("user_id=%v, count=%v", user.Id, count))
-//			} else {
-//				result.Data = [2]*model.User{user, oldUser}
-//			}
-//		}
-//
-//		storeChannel <- result
-//		close(storeChannel)
-//	}()
-//	return storeChannel
-//}
+func (s SqlUserStore) Update(user *model.User) StoreChannel {
+	storeChannel := make(StoreChannel, 1)
+	go func() {
+		result := StoreResult{}
+		if sqlResult, err := s.GetMaster().Exec(
+			`UPDATE
+				user
+			SET
+				username = :Name,
+				email = :Email
+			WHERE
+				user_id = :Id
+			`,
+			map[string]interface{}{
+				"Id":             user.Id,
+				"Name":      user.Name,
+				"Email": 	user.Email,
+			}); err != nil {
+			result.Err = model.NewLocAppError("SqlUserStore.UpdateOptimistically",
+				"store.sql_user.update.app_error", nil, "id="+strconv.Itoa(user.Id)+", "+err.Error())
+		} else {
+			rows, err := sqlResult.RowsAffected()
+
+			if err != nil {
+				result.Err = model.NewLocAppError("SqlJobStore.UpdateStatus",
+					"store.sql_job.update.app_error", nil, "id="+strconv.Itoa(user.Id)+", "+err.Error())
+			} else {
+				if rows == 1 {
+					result.Data = true
+				} else {
+					result.Data = false
+				}
+			}
+		}
+		storeChannel <- result
+		close(storeChannel)
+	}()
+	return storeChannel
+}
 
 func (s SqlUserStore) Delete(user *model.User) StoreChannel {
 	storeChannel := make(StoreChannel)
 	go func() {
 		result := StoreResult{}
-		res, err := s.GetMaster().Exec("Update insurer_user SET status=0 where insurer_user_id=?", user.Id)
+		res, err := s.GetMaster().Exec("Update user SET status=0 where user_id=?", user.Id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlInsurerUserStore.Delete", "store.sql_insurer_user.delete.app_error", nil, "user_id="+strconv.Itoa(user.Id)+", "+err.Error())
 
 		} else {
 			result.Data = res
-			//result.Err =
 		}
 		storeChannel <- result
 		close(storeChannel)
@@ -207,14 +201,14 @@ func (s SqlUserStore) GetByEmailAndPassword(email, password string) StoreChannel
 		var user model.User
 		err := s.master.SelectOne(&user, "SELECT * from user WHERE email= :email", map[string]interface{}{"email": email})
 		//err := s.master.SelectOne(&user, "select * from user where email = :email and password = 12345",map[string]interface{}{"email": email,"password": password})
-		log.Println("This is the password provided",password, email)
+		log.Println("This is the password provided", password, email)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlUserStore.GetByEmailAndPassword", "store.sql_user.get.app_error", nil, "user ="+email+", "+err.Error())
 			storeChannel <- result
 			close(storeChannel)
 			return
 		}
-		log.Println("This is the user password",user.Password, "And this is the provided password",model.HashPassword(password))
+		log.Println("This is the user password", user.Password, "And this is the provided password", model.HashPassword(password))
 		if !model.ComparePassword(user.Password, password) {
 			result.Err = model.NewLocAppError("SqlUserStore.GetEmailAndPassword", "store.sql_user.get.app_error", nil,
 				"user ="+email+":, The password provided does not match your current password")
@@ -233,18 +227,17 @@ func (s SqlUserStore) GetByEmailAndPassword(email, password string) StoreChannel
 	return storeChannel
 }
 
-
-func (s SqlUserStore)GetMany() StoreChannel  {
+func (s SqlUserStore) GetMany() StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 	go func() {
 		result := StoreResult{}
-		var users [] *model.User
+		var users []*model.User
 		_, err := s.GetMaster().Select(&users, "SELECT * FROM user WHERE status=1")
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlUsertore.GetMany", "store.sql_insurer_user.getmany.app_error", nil, err.Error())
 
-		}else {
-			for _,user := range users {
+		} else {
+			for _, user := range users {
 				user.Sanitize()
 			}
 			if len(users) == 0 {
@@ -253,12 +246,11 @@ func (s SqlUserStore)GetMany() StoreChannel  {
 			}
 			result.Data = users
 		}
-		storeChannel<-result
+		storeChannel <- result
 		close(storeChannel)
 	}()
 	return storeChannel
 }
-
 
 //func (s SqlUserStore)GetManyByInsurer(id int) StoreChannel  {
 //	storeChannel := make(StoreChannel, 1)

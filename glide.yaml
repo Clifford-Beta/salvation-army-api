@@ -1,4 +1,4 @@
-package: sendyit/private_api
+package: salvation-army-api
 import:
 - package: github.com/dgrijalva/jwt-go
 - package: github.com/go-kit/kit

@@ -1,25 +1,46 @@
 package store
 
 import (
-
-	"github.com/spf13/viper"
 	l4g "github.com/alecthomas/log4go"
+	"github.com/spf13/viper"
 )
 
-var(
-	DB_USER = "root"
-	DB_PASSWORD = ""
-	DB_URL = "localhost:3306"
-	DB_DATASTORE = "salvation_army_db"
-	DB_DRIVER = "mysql"
-	DB_POOL = 10
-	DB_MAX_IDLE = 3
-	CACHE_USER = ""
+//var (
+//	DB_USER        = "c25ccz1z5g278kqu"
+//	DB_PASSWORD    = "ixjg7e9rw4c3tmda"
+//	DB_URL         = "p2d0untihotgr5f6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306"
+//	DB_DATASTORE   = "ev7x2lf58ardm8lg"
+//	DB_DRIVER      = "mysql"
+//	DB_POOL        = 10
+//	DB_MAX_IDLE    = 3
+//	CACHE_USER     = "redistogo"
+//	CACHE_PASSWORD = "a91baadf53ef530bccfeaa71ebab2aaf"
+//	CACHE_URL      = "angelfish.redistogo.com:11928"
+//	CACHE_DB       = 0
+//)
+var (
+	DB_USER        = ""
+	DB_PASSWORD    = ""
+	DB_URL         = ""
+	DB_DATASTORE   = ""
+	DB_DRIVER      = ""
+	DB_POOL        = 10
+	DB_MAX_IDLE    = 3
+	CACHE_USER     = ""
 	CACHE_PASSWORD = ""
-	CACHE_URL = "localhost:6379"
-	CACHE_DB = 0
-
+	CACHE_URL      = ""
+	CACHE_DB       = 0
 )
+//
+//"local": {
+//"ConnectionUrl":"p2d0untihotgr5f6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306",
+//"User":"c25ccz1z5g278kqu",
+//"Password":"ixjg7e9rw4c3tmda",
+//"Database":"ev7x2lf58ardm8lg",
+//"Driver":"mysql",
+//"ConnectionPool":10,
+//"MaxIdleConnections":3
+//},
 
 func ConfigureApp(env string) bool {
 
@@ -27,11 +48,12 @@ func ConfigureApp(env string) bool {
 	viper.AddConfigPath("config")
 	viper.AddConfigPath("/config")
 	viper.AddConfigPath("./config")
+	viper.AddConfigPath("../config")
 
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		l4g.Critical("No configuration file loaded - using defaults",err.Error())
+		l4g.Critical("No configuration file loaded - using defaults", err.Error())
 		return false
 	}
 	if env == "staging" {
@@ -50,8 +72,7 @@ func ConfigureApp(env string) bool {
 		CACHE_DB = viper.GetInt("Cache.staging.Database")
 
 		//configure server
-	}else if env == "production" {
-
+	} else if env == "production" {
 
 		//load DB configs
 		DB_USER = viper.GetString("Databases.production.User")
@@ -68,6 +89,42 @@ func ConfigureApp(env string) bool {
 		CACHE_DB = viper.GetInt("Cache.production.Database")
 
 		//configure server
+
+	} else if env == "heroku" {
+
+	//load DB configs
+	DB_USER = viper.GetString("Databases.heroku.User")
+	DB_PASSWORD = viper.GetString("Databases.heroku.Password")
+	DB_URL = viper.GetString("Databases.heroku.ConnectionUrl")
+	DB_DATASTORE = viper.GetString("Databases.heroku.Database")
+	DB_DRIVER = viper.GetString("Databases.heroku.Driver")
+	DB_POOL = viper.GetInt("Databases.heroku.ConnectionPool")
+	DB_MAX_IDLE = viper.GetInt("Databases.heroku.MaxIdleConnections")
+	//load cache configs
+	CACHE_USER = viper.GetString("Cache.heroku.User")
+	CACHE_PASSWORD = viper.GetString("Cache.heroku.Password")
+	CACHE_URL = viper.GetString("Cache.heroku.ConnectionUrl")
+	CACHE_DB = viper.GetInt("Cache.heroku.Database")
+
+	//configure server
+
+	} else {
+
+	//load DB configs
+	DB_USER = viper.GetString("Databases.local.User")
+	DB_PASSWORD = viper.GetString("Databases.local.Password")
+	DB_URL = viper.GetString("Databases.local.ConnectionUrl")
+	DB_DATASTORE = viper.GetString("Databases.local.Database")
+	DB_DRIVER = viper.GetString("Databases.local.Driver")
+	DB_POOL = viper.GetInt("Databases.local.ConnectionPool")
+	DB_MAX_IDLE = viper.GetInt("Databases.local.MaxIdleConnections")
+	//load cache configs
+	CACHE_USER = viper.GetString("Cache.local.User")
+	CACHE_PASSWORD = viper.GetString("Cache.local.Password")
+	CACHE_URL = viper.GetString("Cache.local.ConnectionUrl")
+	CACHE_DB = viper.GetInt("Cache.local.Database")
+
+	//configure server
 
 	}
 

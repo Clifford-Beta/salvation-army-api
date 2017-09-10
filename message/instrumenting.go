@@ -1,11 +1,10 @@
 package message
 
-
 import (
 	"fmt"
-	"time"
 	"github.com/go-kit/kit/metrics"
-	"salv_prj/model"
+	"salvation-army-api/model"
+	"time"
 )
 
 type InstrumentingMiddleware struct {
@@ -26,6 +25,28 @@ func (mw InstrumentingMiddleware) Create(message model.Message) (output *model.M
 	return
 }
 
+func (mw InstrumentingMiddleware) Update(message model.Message) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "update", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Update(message)
+	return
+}
+
+func (mw InstrumentingMiddleware) Delete(message model.Message) (output bool, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "delete", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.Delete(message)
+	return
+}
+
 func (mw InstrumentingMiddleware) GetOne(id int) (output model.Message, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getone", "error", fmt.Sprint(err != nil)}
@@ -37,15 +58,13 @@ func (mw InstrumentingMiddleware) GetOne(id int) (output model.Message, err erro
 	return
 }
 
-
-
-func (mw InstrumentingMiddleware) GetAll() (output map[string][]*model.Message, err error) {
+func (mw InstrumentingMiddleware) GetAll(user int) (output map[string][]model.MessageResult, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "getall", "error", fmt.Sprint(err != nil)}
 		mw.RequestCount.With(lvs...).Add(1)
 		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 	}(time.Now())
 
-	output, err = mw.Next.GetAll()
+	output, err = mw.Next.GetAll(user)
 	return
 }
