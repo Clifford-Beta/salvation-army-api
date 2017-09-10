@@ -53,7 +53,7 @@ func (s SqlProjectStore) Delete(project *model.Project) StoreChannel {
 	storeChannel := make(StoreChannel)
 	go func() {
 		result := StoreResult{}
-		res, err := s.GetMaster().Exec("Update project SET project_status=0 where user_id=?", project.Id)
+		res, err := s.GetMaster().Exec("Update project SET project_status=0 where project_id=?", project.Id)
 		if err != nil {
 			result.Err = model.NewLocAppError("SqlProjectStore.Delete", "store.sql_project.delete.app_error", nil, "staff_id="+strconv.Itoa(project.Id)+", "+err.Error())
 
@@ -100,7 +100,7 @@ func (s SqlProjectStore) RetrieveAll() StoreChannel {
 		_, err := s.master.Select(&project,
 			`
 			select project.project_id as id, school.school_name as school, project.project_name as name,
-			project.project_start as start, project.project_duration as duration,
+			project.project_start as start, project.project_duration as duration,project.project_desc as description,
 			project.project_progress as progress, project.timestamp as time_stamp
 
 			from project
