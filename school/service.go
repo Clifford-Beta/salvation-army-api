@@ -18,10 +18,10 @@ type SchoolService interface {
 	GetOne(int) (model.School, error)
 	GetAll() (map[string][]*model.SchoolResult, error)
 	RecordPerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
-	//UpdatePerformance(performance *model.SchoolPerformance) (*model.SchoolPerformance, error)
-	//RetrievePerformance(int) (model.SchoolPerformance, error)
+	GetDashboardData() (map[string]interface{}, error)
 	GetBestSchool(from, to int) (model.SchoolPerformanceResult, error)
 	RankAllSchools(from, to int) (map[string][]model.SchoolPerformanceResult, error)
+	RankSchoolByCategory(category int, from,to time.Time) (map[string]interface{}, error)
 }
 
 type Schoolservice struct{}
@@ -132,4 +132,34 @@ func (Schoolservice) RankAllSchools(from, to int) (map[string][]model.SchoolPerf
 		return map[string][]model.SchoolPerformanceResult{"data": []model.SchoolPerformanceResult{}}, bestSchool.Err
 	}
 	return map[string][]model.SchoolPerformanceResult{"data": bestSchool.Data.([]model.SchoolPerformanceResult)}, nil
+}
+
+func (Schoolservice) GetDashboardData() (map[string]interface{}, error){
+	schoolStore := store.SqlReportStore{store.Database}
+	filters := map[string]interface{}{}
+	count := <- schoolStore.DashCount()
+	var err error
+	if count.Err != nil{
+		err = count.Err
+		filters["count"] = store.DashCountResponse{}
+	}else{
+		filters["count"] = count.Data.(store.DashCountResponse)
+	}
+	trend := <- schoolStore.DashSchoolTrend()
+	if trend.Err != nil{
+		err = trend.Err
+		filters["trend"] = store.DashSchoolTrendResponse{}
+	}else{
+		filters["trend"] = trend.Data.([]*store.DashSchoolTrendResponse)
+	}
+	return filters,err
+}
+
+func (Schoolservice) RankSchoolByCategory(category int, from,to time.Time) (map[string]interface{}, error){
+	schoolStore := store.SqlReportStore{store.Database}
+	count := <- schoolStore.SchoolRankingByCategory(category,from,to)
+	if count.Err != nil{
+		return map[string]interface{}{"data":[]*store.SchoolPerformanceByCatResponse{}},count.Err
+	}
+	return map[string]interface{}{"data":count.Data.([]*store.SchoolPerformanceByCatResponse)},nil
 }

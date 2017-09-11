@@ -327,6 +327,18 @@ func main() {
 		rankAllSchoolsEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(rankAllSchoolsEndpoint)
 	}
 
+	var getDashBoardDataEndpoint endpoint.Endpoint
+	{
+		getDashBoardDataEndpoint = schoolsvc.MakeGetDashEndpoint(school)
+		getDashBoardDataEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(getDashBoardDataEndpoint)
+	}
+
+	var rankSchoolsByCategoryEndpoint endpoint.Endpoint
+	{
+		rankSchoolsByCategoryEndpoint = schoolsvc.MakeRankSchoolByCategoryEndpoint(school)
+		rankSchoolsByCategoryEndpoint = jwt.NewParser(keys, stdjwt.SigningMethodHS256,auth.MapClaimsFactory)(rankSchoolsByCategoryEndpoint)
+	}
+
 	//school handlers
 
 	schoolHandler := httptransport.NewServer(
@@ -384,6 +396,19 @@ func main() {
 
 		rankAllSchoolsEndpoint,
 		schoolsvc.DecodeRankAllSchoolsRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
+	getDashBoardDataHandler := httptransport.NewServer(
+		getDashBoardDataEndpoint,
+		schoolsvc.DecodeGetAllRequest,
+		schoolsvc.EncodeResponse,
+		jwtOptions...,
+	)
+
+	rankSchoolsByCategoryHandler := httptransport.NewServer(
+		rankSchoolsByCategoryEndpoint,
+		schoolsvc.DecodeRankByCatRequest,
 		schoolsvc.EncodeResponse,
 		jwtOptions...,
 	)
@@ -1285,6 +1310,12 @@ func main() {
 			getOneSchoolHandler,
 		},
 		Route{
+			"Dashboard ",
+			"GET",
+			"/dashboard",
+			getDashBoardDataHandler,
+		},
+		Route{
 			"Best School ",
 			"POST",
 			"/best_school",
@@ -1301,6 +1332,12 @@ func main() {
 			"POST",
 			"/ranking",
 			rankAllSchoolsHandler,
+		},
+		Route{
+			"Rank Schools By Category ",
+			"POST",
+			"/rank",
+			rankSchoolsByCategoryHandler,
 		},
 
 		Route{

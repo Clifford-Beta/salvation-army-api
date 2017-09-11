@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"salvation-army-api/model"
 	"strconv"
+	"time"
 )
 
 func MakeCreateEndpoint(svc SchoolService) endpoint.Endpoint {
@@ -88,6 +89,27 @@ func MakeGetAllEndpoint(svc SchoolService) endpoint.Endpoint {
 	}
 }
 
+func MakeRankSchoolByCategoryEndpoint(svc SchoolService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(Query)
+		v, err := svc.RankSchoolByCategory(req.Category,req.From,req.To)
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
+func MakeGetDashEndpoint(svc SchoolService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		v, err := svc.GetDashboardData()
+		if err != nil {
+			return v, err
+		}
+		return v, nil
+	}
+}
+
 func MakeRankAllSchoolsEndpoint(svc SchoolService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(schoolRequest)
@@ -101,6 +123,14 @@ func MakeRankAllSchoolsEndpoint(svc SchoolService) endpoint.Endpoint {
 
 func DecodeCreateRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request model.School
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		return nil, err
+	}
+	return request, nil
+}
+
+func DecodeRankByCatRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request Query
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
@@ -169,6 +199,12 @@ type schoolRequest struct {
 	Id   int `json:"id"`
 	From int `json:"from"`
 	To   int `json:"to"`
+}
+
+type Query struct {
+	Category   int `json:"category"`
+	From time.Time `json:"from"`
+	To   time.Time `json:"to"`
 }
 
 //type userResponse struct {

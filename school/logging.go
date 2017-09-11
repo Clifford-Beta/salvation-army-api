@@ -106,3 +106,25 @@ func (mw LoggingMiddleware) RankAllSchools(from, to int) (output map[string][]mo
 	output, err = mw.Next.RankAllSchools(from, to)
 	return
 }
+
+func (mw LoggingMiddleware) GetDashboardData() (output map[string]interface{}, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "get_dashboard_data")
+	}(time.Now())
+	output, err = mw.Next.GetDashboardData()
+	return
+}
+
+func (mw LoggingMiddleware) RankSchoolByCategory(category int, from,to time.Time) (output map[string]interface{}, err error) {
+	defer func(begin time.Time) {
+		mw.Logger.WithFields(log.Fields{
+			"output": output,
+			"err":    err,
+			"took":   time.Since(begin)}).Info("service = ", "school ", "method = ", "rank_school_by_category")
+	}(time.Now())
+	output, err = mw.Next.RankSchoolByCategory(category,from,to)
+	return
+}

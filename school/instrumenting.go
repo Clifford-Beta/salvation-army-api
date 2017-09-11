@@ -110,3 +110,24 @@ func (mw InstrumentingMiddleware) RankAllSchools(from, to int) (output map[strin
 	output, err = mw.Next.RankAllSchools(from, to)
 	return
 }
+
+func (mw InstrumentingMiddleware) GetDashboardData() (output map[string]interface{}, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "GetDashboardData", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.GetDashboardData()
+	return
+}
+func (mw InstrumentingMiddleware) RankSchoolByCategory(category int, from,to time.Time) (output map[string]interface{}, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "RankSchoolByCategory", "error", fmt.Sprint(err != nil)}
+		mw.RequestCount.With(lvs...).Add(1)
+		mw.RequestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	output, err = mw.Next.RankSchoolByCategory(category,from,to)
+	return
+}

@@ -368,7 +368,7 @@ func (s SqlSchoolStore) RankAllSchoolsPerCategoryAndYear(tier,from,to int) Store
 //where school_status = 1 ) as school_ranks
 //where (school_ranks.rank <= 3)
 //order by tier, rank
-//
+
 ////get top n schools overally
 //
 //select * from (
